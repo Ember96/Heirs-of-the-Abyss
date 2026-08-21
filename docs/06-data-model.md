@@ -4,6 +4,8 @@
 
 ERD (D6) generated from the Pydantic models
 
+> **Note** — `GAME_SESSION` is the **root aggregate**: every per-session store (`HOMETOWN_STATE`, `GENERATED_LORE`, `PREGEN_CACHE`) hangs off it and is purged with it (retention cascade). Regenerated from `server/app/game/models.py` by `docs:check`.
+
 ## Diagrams
 
 ### D6 — Data model (ERD, regenerated from Pydantic models)

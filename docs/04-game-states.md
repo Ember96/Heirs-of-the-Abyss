@@ -4,12 +4,18 @@
 
 State machines: meta (D3), combat/soulslike (D7), floor lifecycle, room types
 
+> **Diagram legend** — 🟠 critical/gate · 🟢 checkpoint/success · 🔴 terminal/failure · 🔵 info
+
 ## Diagrams
 
 ### D3 — Meta game-state machine (engine)
 
 ```mermaid
 stateDiagram-v2
+  classDef ok   fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B5E20,font-weight:bold
+  classDef bad  fill:#FFEBEE,stroke:#C62828,stroke-width:2px,color:#B71C1C
+  classDef info fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+
   [*] --> HOMETOWN
   HOMETOWN --> FLOOR: descend (from anchor)
   FLOOR --> COMBAT: enter enemy/boss room
@@ -23,12 +29,18 @@ stateDiagram-v2
   SHRINE --> HOMETOWN: return_home (keep inventory)
   COMBAT --> GAMEOVER: hp <= 0 (session terminal)
   GAMEOVER --> [*]
+  class SHRINE ok
+  class MARKET ok
+  class GAMEOVER bad
 ```
 
 ### D7 — Soulslike combat state machine (deterministic, client sim + server validate)
 
 ```mermaid
 stateDiagram-v2
+  classDef crit fill:#FFF3E0,stroke:#F57C00,stroke-width:2px,color:#E65100,font-weight:bold
+  classDef ok   fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B5E20,font-weight:bold
+
   [*] --> IDLE
   IDLE --> ROLLING: roll (i-frames)
   ROLLING --> IDLE: recovery
@@ -42,6 +54,8 @@ stateDiagram-v2
   STAGGERED --> IDLE: recover
   RIPOSTE --> IDLE: riposte ends
   note right of IDLE: stamina gates every action; regen while IDLE; parry/riposte and posture are seeded-deterministic for replay
+  class STAGGERED crit
+  class RIPOSTE ok
 ```
 
 <!-- content to follow -->

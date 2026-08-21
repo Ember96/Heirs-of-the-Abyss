@@ -2,6 +2,8 @@
 
 Status: **Plan** — implements `spec.md`. Source of truth for HOW. Maps 1:1 to `tasks.md`.
 
+> **Legend** — 🟠 critical rule / invariant · 🟢 success / mitigation · 🔴 risk / failure · 🔵 info
+
 ## 1. Architecture
 
 ```
@@ -18,9 +20,11 @@ Godot 4.7 client (GDScript)          Python 3.12 server (FastAPI + uv)
                               LangSmith (tracing + evals)   Qdrant (docker compose)
 ```
 
-**Authority model**: engine owns all state/combat/AI; LLM emits validated JSON variants + narrative. `commit_encounter` is the single mutator of `Room.enemies[]`.
+> [!IMPORTANT]
+> **Authority model** — the engine owns all state/combat/AI; the LLM emits validated JSON variants + narrative only. `commit_encounter` is the **single mutator** of `Room.enemies[]`.
 
-**Combat authority**: Option A (client-sim + server re-sim of tick-stamped input log) with B-ready protocol (`fight_snapshot` frame + shared sim core). Flip to B = deployment + client-render change only.
+> [!NOTE]
+> **Combat authority** — Option A (client-sim + server re-sim of a tick-stamped input log) with B-ready protocol (`fight_snapshot` frame + shared sim core). Flip to B = deployment + client-render change only.
 
 ## 2. Tech stack (pinned)
 
@@ -44,6 +48,7 @@ Godot 4.7 client (GDScript)          Python 3.12 server (FastAPI + uv)
 server/
   app/
     main.py              # FastAPI + WS /game endpoint
+    protocol.py          # envelope + schemas + HMAC + SeqTracker (T1.2)
     game/
       models.py           # Pydantic: Player, Floor, Room, Enemy, FightState, GameSession…
       rules.py            # combat sim spec + engine rules
@@ -75,7 +80,7 @@ specs/                    # spec.md, plan.md, tasks.md (this SDD)
 - **`commit_encounter`** (`tools.py`): synchronous critical section (placement check + clamp + append, zero awaits) under a per-session engine lock; verdict-required (synthetic fallback verdict); only mutator of `Room.enemies[]`.
 - **Verifier loop** (`verifiers.py`): `compose → clamp → 4 judges → commit`; judges gate committed content only; streamed narrative grounded structurally (typed facts), never judge-gated.
 - **Generation lifecycle** (`generator.py` + WS handler): per-narrative `asyncio.timeout(GENERATION_TIMEOUT)` tracker; exactly one terminal frame on every path; pre-gen off critical path; cache key `(session_id, content_version, seed, floor_index, build_hash)`.
-- **Protocol** (`docs/05-protocol.md` + `main.py`): envelope `{v,type,id,seq,payload,hmac}`; HMAC-SHA256 over `type|id|seq|payload`; per-frame id semantics; 64KB cap (state_sync multi-frame exempt); `fight_input_ack`, `fight_snapshot` (B-ready), `fight_submit` without full log.
+- **Protocol** (`docs/05-protocol.md` + `protocol.py`): envelope `{v,type,id,seq,payload,hmac}`; HMAC-SHA256 over `type|id|seq|payload`; per-frame id semantics; 64KB cap (state_sync multi-frame exempt); `fight_input_ack`, `fight_snapshot` (B-ready), `fight_submit` without full log.
 
 ## 5. Data model (Pydantic → SQLite)
 
@@ -85,14 +90,14 @@ Tables: `sessions`, `pregen_cache`, `generated_lore`, `action_ids` (dedup, last 
 
 ## 6. Implementation phases (maps to tasks.md)
 
-| Phase | Content | Exit |
-|-------|---------|------|
-| 1 Foundation | scaffold, protocol spec, WS gateway (HMAC/seq/rate-limit/tracker), Godot NetworkManager, e2e socket conformance, docs gate | hardened socket + docs gate green |
-| 2 Core | models + seeded RNG, combat sim spec, dual sim core + conformance, floorgen, persistence + headless player | headless playable (AI off) |
-| 3 Director | graph + checkpointer + mutex, tools (commit_encounter), input pipeline, generator, resume/retention, verifiers | full AI loop, verifier-gated |
-| 4 RAG | catalog seed, Qdrant hybrid, composer + clamps, corpus ingestion, lore quarantine | retrieval + compose gates green |
-| 5 Client | isometric render, sim-core wiring, real-time combat + fight-log validation, scenes, reconnect | human-playable soulslike loop |
-| 6 Hardening | evals, latency/cost, anti-tamper verification, docs/quickstart/balance | all gates green |
+| # | Phase | Content | ✅ Exit (done-claim) |
+|---|-------|---------|----------------------|
+| 1 | 🏗️ Foundation | scaffold, protocol spec, WS gateway (HMAC/seq/rate-limit/tracker), Godot NetworkManager, e2e socket conformance, docs gate | hardened socket + docs gate green |
+| 2 | ⚙️ Core | models + seeded RNG, combat sim spec, dual sim core + conformance, floorgen, persistence + headless player | headless playable (AI off) |
+| 3 | 🧠 Director | graph + checkpointer + mutex, tools (commit_encounter), input pipeline, generator, resume/retention, verifiers | full AI loop, verifier-gated |
+| 4 | 📚 RAG | catalog seed, Qdrant hybrid, composer + clamps, corpus ingestion, lore quarantine | retrieval + compose gates green |
+| 5 | 🗡️ Client | isometric render, sim-core wiring, real-time combat + fight-log validation, scenes, reconnect | human-playable soulslike loop |
+| 6 | 🛡️ Hardening | evals, latency/cost, anti-tamper verification, docs/quickstart/balance | all gates green |
 
 ## 7. Testing strategy
 
@@ -103,8 +108,11 @@ Tables: `sessions`, `pregen_cache`, `generated_lore`, `action_ids` (dedup, last 
 
 ## 8. Risks & mitigations
 
-| Risk | Mitigation |
-|------|-----------|
+> [!CAUTION]
+> **Risks** (left column) — each has a concrete mitigation (right column), not just awareness.
+
+| 🔴 Risk | 🟢 Mitigation |
+|---------|---------------|
 | Real-time combat engineering surface | shared sim core + conformance corpus; no Godot physics in sim; tick-stamped protocol |
 | LLM latency | combat LLM-free; pre-gen + cache; streaming; small-model routing |
 | LLM balance drift | Pydantic schema + clamps + 4 verifier judges + bounded retry |

@@ -4,19 +4,26 @@
 
 Catalog schema, RAG retrieval, variant composition + clamps, floor template & pacing (D10), token budget, content pipeline (D8)
 
+> **Diagram legend** — 🟠 critical/gate · 🟢 pass/success · 🔴 fail/fallback · 🔵 info
+
 ## Diagrams
 
 ### D8 — Content pipeline: pre-gen → compose → clamp → verify → commit
 
 ```mermaid
 flowchart LR
+  classDef crit fill:#FFF3E0,stroke:#F57C00,stroke-width:2px,color:#E65100,font-weight:bold
+  classDef ok   fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B5E20,font-weight:bold
+  classDef bad  fill:#FFEBEE,stroke:#C62828,stroke-width:2px,color:#B71C1C
+  classDef info fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D47A1
+
   A["Sector entry / floor progress"] --> B["Pre-gen background task (asyncio, async LLM, token-capped)"]
   B --> C["RAG retrieval (Qdrant hybrid + payload filters on build weakness)"]
   C --> D["compose_variant (Pydantic schema, ToolStrategy retry <=2)"]
-  D --> E["Deterministic clamp layer (budget ±25%, ids verified, derived stats recomputed)"]
-  E --> F["Verification agents (balance/rules/lore/progression)"]
-  F -->|pass| G["commit_encounter (atomic, placement-validated, single write path)"]
-  F -->|fail| H["fallback (engine-standard) + generation_failed"]
+  D --> E["Deterministic clamp layer (budget ±25%, ids verified, derived stats recomputed)"]:::info
+  E --> F["Verification agents (balance/rules/lore/progression)"]:::ok
+  F -->|pass| G["commit_encounter (atomic, placement-validated, single write path)"]:::crit
+  F -->|fail| H["fallback (engine-standard) + generation_failed"]:::bad
   G --> I["Cache: (session_id, content_version, seed, floor_index, build_hash) LRU + TTL"]
 ```
 
@@ -24,16 +31,20 @@ flowchart LR
 
 ```mermaid
 flowchart TD
+  classDef crit fill:#FFF3E0,stroke:#F57C00,stroke-width:2px,color:#E65100,font-weight:bold
+  classDef ok   fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B5E20,font-weight:bold
+  classDef info fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D47A1
+
   T["Floor template (deterministic, schema-capped JSON, fixed token budget)"] --> R1["Room 1: enemy"]
   T --> R2["Room 2: enemy"]
   T --> R3["Room 3: enemy"]
   T --> R4["Room 4: SPECIAL from layer-state pool"]
   R4 --> P{"Layer state rules"}
-  P -->|early sector| A["loot / event likely"]
-  P -->|floor 1 of every sector| B["shrine (guaranteed checkpoint)"]
-  P -->|sector end (floor 5)| C["boss room mandatory"]
-  P -->|player low HP / struggling| D["tilt: easier event or shrine (anti-punish)"]
-  P -->|player dominant| E["raise: harder encounter (anti-spoil)"]
+  P -->|early sector| A["loot / event likely"]:::info
+  P -->|floor 1 of every sector| B["shrine (guaranteed checkpoint)"]:::ok
+  P -->|sector end (floor 5)| C["boss room mandatory"]:::crit
+  P -->|player low HP / struggling| D["tilt: easier event or shrine (anti-punish)"]:::ok
+  P -->|player dominant| E["raise: harder encounter (anti-spoil)"]:::info
   note right of T: budget per floor gen; 1 floor = 4 rooms; special room picked by layer state; difficulty band enforced by Progression Auditor
 ```
 

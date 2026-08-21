@@ -1,8 +1,17 @@
-# EndlessDungeon
+# 🗡️ EndlessDungeon
 
-A single-player **soulslike roguelike** with unbounded AI-generated floors. A LangGraph "dungeon master" agent composes enemies, encounters, and narrative from your actions and character build — grounded in a game-design corpus, gated by four verification agents — while a deterministic Python engine owns all rules and combat. Godot 4 renders the isometric client.
+A single-player **soulslike roguelike** with unbounded AI-generated floors. A LangGraph "dungeon master" agent composes enemies, encounters, and narrative from your actions and character build — grounded in a game-design corpus, gated by four verification agents — while a deterministic Python engine owns all rules and combat.
 
-> Status: **Wave 1 — foundation**. See [`specs/`](specs/) for the spec-driven plan (`spec.md` → `plan.md` → `tasks.md`) and [`docs/`](docs/) for the living documentation.
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![Godot](https://img.shields.io/badge/Godot-4.7-478CBF?logo=godot-engine&logoColor=white)
+![LangGraph](https://img.shields.io/badge/LangGraph-1.2-1C3C3C?logo=langchain&logoColor=white)
+![LangSmith](https://img.shields.io/badge/LangSmith-traced-000000?logo=langchain&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-2E7D32)
+![Status](https://img.shields.io/badge/status-Wave_1_%E2%80%94_foundation-F57C00)
+
+> **Status** — 🟠 Wave 1 foundation (T1.1, T1.2 done). See [`specs/`](specs/) for the spec-driven plan (`spec.md` → `plan.md` → `tasks.md`) and [`docs/`](docs/) for the living documentation.
+
+> **Conventions used across these docs** — 🟠 critical rule/invariant · 🟢 success/goal/done · 🔴 problem/must-not/risk · 🔵 info
 
 ## Architecture (one line)
 
@@ -10,7 +19,10 @@ A single-player **soulslike roguelike** with unbounded AI-generated floors. A La
 Godot 4.7 client (GDScript)  ⇄  FastAPI/WebSocket  ⇄  deterministic engine + LangGraph director + RAG (Qdrant)
 ```
 
-The engine owns **all** stats, combat, and enemy AI. The LLM only emits validated JSON content. Combat is real-time, **dice-free**, and deterministic — the client simulates, the server re-simulates the input log to verify.
+> [!IMPORTANT]
+> The engine owns **all** stats, combat, and enemy AI. The LLM only emits validated JSON content — it never writes mechanics.
+
+Combat is real-time, **dice-free**, and deterministic: the client simulates, the server re-simulates the input log to verify — so a hacked client can't lie about results.
 
 ## Prerequisites
 
