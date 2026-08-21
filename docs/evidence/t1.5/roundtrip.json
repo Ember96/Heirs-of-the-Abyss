@@ -1,0 +1,20 @@
+{
+  "todo": "t1.5",
+  "generated": "2026-08-20",
+  "command": "uv run pytest tests/test_e2e_socket.py -q",
+  "result": "12 passed",
+  "cases": {
+    "full_handshake_hmac": "PASS",
+    "roundtrip_under_100ms": "PASS (0.4ms)",
+    "action_ordering": "PASS (a1 before a2)",
+    "out_of_context_decision_rule_violation": "PASS",
+    "stale_seq_closes": "PASS",
+    "resume_stub_session_not_found": "PASS",
+    "generation_lifecycle_narrative_frames": "PASS (delta then end)",
+    "generation_hang_terminal_frame": "PASS (generation_failed)",
+    "busy_during_generation": "PASS",
+    "100_pingpong_monotonic": "PASS",
+    "oversized_frame_frame_too_large": "PASS (connection stays open)",
+    "server_seq_monotonic": "PASS"
+  }
+}

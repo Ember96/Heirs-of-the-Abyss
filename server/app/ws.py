@@ -78,25 +78,27 @@ class Connection:
         self,
         websocket: WebSocket,
         *,
-        dev_token: str = config.DEV_TOKEN,
-        signing_enabled: bool = config.ENABLE_SIGNING,
-        generation_timeout: float = config.GENERATION_TIMEOUT,
-        message_rate: float = config.MESSAGE_RATE,
-        message_burst: int = config.MESSAGE_BURST,
+        dev_token: str | None = None,
+        signing_enabled: bool | None = None,
+        generation_timeout: float | None = None,
+        message_rate: float | None = None,
+        message_burst: int | None = None,
     ) -> None:
         self.ws = websocket
-        self.dev_token = dev_token
-        self.signing_enabled = signing_enabled
-        self.generation_timeout = generation_timeout
-
-        self._limiter = TokenBucket(message_rate, message_burst)
+        self.dev_token = config.DEV_TOKEN if dev_token is None else dev_token
+        self.signing_enabled = config.ENABLE_SIGNING if signing_enabled is None else signing_enabled
+        self.generation_timeout = config.GENERATION_TIMEOUT if generation_timeout is None else generation_timeout
+        self._limiter = TokenBucket(
+            config.MESSAGE_RATE if message_rate is None else message_rate,
+            config.MESSAGE_BURST if message_burst is None else message_burst,
+        )
         self.authenticated = False
         self.session_id: str | None = None
         self.resume_token: str | None = None
         self.hmac_key: bytes | None = None
         self._in_seq = P.SeqTracker()
         self._out_seq = 0
-        self._generations = GenerationTracker(generation_timeout, self._on_generation_timeout)
+        self._generations = GenerationTracker(self.generation_timeout, self._on_generation_timeout)
 
     # ── lifecycle ──────────────────────────────────────────────────────────
     async def run(self) -> None:
@@ -168,8 +170,7 @@ class Connection:
         elif type_ == "ping":
             await self._send("pong", id_, {})
         elif type_ == "action":
-            # stub — engine dispatch lands in T2
-            await self._send("turn_result", id_, {"action_id_echo": id_, "result": {}})
+            await self._handle_action(id_, payload)
         elif type_ == "decision":
             err = P.decision_error(is_generating=bool(self._generations.in_flight), is_parked=False)
             await self.send_error(err, "no pending decision", recoverable=True)
@@ -179,6 +180,25 @@ class Connection:
             await self.send_error("generation_not_ready", "combat lands in Wave 2", recoverable=True)
         else:
             await self.send_error("rule_violation", f"unexpected frame type {type_}", recoverable=True)
+
+    async def _handle_action(self, id_: str, payload: dict) -> None:
+        action = payload.get("action", "")
+        if action == "talk":
+            narrative_id = f"n-{secrets.token_urlsafe(6)}"
+            self._generations.start(narrative_id, self._simulated_narrative(narrative_id))
+        elif action == "_test_hang":
+            narrative_id = f"n-{secrets.token_urlsafe(6)}"
+            self._generations.start(narrative_id, self._hang())
+        else:
+            await self._send("turn_result", id_, {"action_id_echo": id_, "result": {}})
+
+    async def _simulated_narrative(self, narrative_id: str) -> None:
+        await asyncio.sleep(0.05)
+        await self._send("narrative_delta", narrative_id, {"narrative_id": narrative_id, "text": "The door creaks."})
+        await self._send("narrative_end", narrative_id, {"narrative_id": narrative_id})
+
+    async def _hang(self) -> None:
+        await asyncio.Event().wait()
 
     async def _handle_hello(self, id_: str, payload: dict) -> None:
         if payload.get("token") != self.dev_token:
