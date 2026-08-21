@@ -49,6 +49,8 @@ server/
   app/
     main.py              # FastAPI + WS /game endpoint
     protocol.py          # envelope + schemas + HMAC + SeqTracker (T1.2)
+    config.py            # env config — DEV_TOKEN, ENABLE_SIGNING, GENERATION_TIMEOUT (T1.3)
+    ws.py                # Connection handler, GenerationTracker, TokenBucket (T1.3)
     game/
       models.py           # Pydantic: Player, Floor, Room, Enemy, FightState, GameSession…
       rules.py            # combat sim spec + engine rules

@@ -1,0 +1,32 @@
+EndlessDungeon — T1.3 evidence: WS gateway handshake + generation tracker
+Generated: 2026-08-20
+
+Command: cd server && uv run pytest -q
+Result: 50 passed in 0.35s
+
+Server tests (8 new):
+  [PASS] GET /health -> 200 {status: ok}
+  [PASS] hello(token) -> welcome {session_id, resume_token, hmac_key}
+  [PASS] signed ping -> pong (HMAC-SHA256 round-trip)
+  [PASS] bad token -> error auth_failed
+  [PASS] non-hello first frame -> error auth_failed
+  [PASS] bad HMAC -> error hmac_invalid (connection stays open; next valid frame succeeds)
+  [PASS] GenerationTracker force-clears on timeout (in-flight dict emptied, on_timeout called)
+  [PASS] GenerationTracker completes cleanly (no timeout, no residual)
+
+Unit tests (42 from T1.2):
+  [PASS] all protocol schema + HMAC + seq + 64KB + decision tests
+
+Acceptance:
+  [PASS] /health 200 (uvicorn boots)
+  [PASS] hello -> welcome -> signed ping -> pong (full handshake)
+  [PASS] bad token -> auth_failed + close 1008
+  [PASS] bad HMAC -> hmac_invalid, connection stays open
+  [PASS] generation tracker timeout forces clear + sends generation_failed
+
+Files:
+  server/app/config.py     — env config
+  server/app/ws.py         — Connection handler + GenerationTracker + TokenBucket
+  server/app/main.py       — FastAPI /health + WS /game
+  server/scripts/mock_server.py — standalone protocol server for client dev
+  server/tests/test_ws.py
