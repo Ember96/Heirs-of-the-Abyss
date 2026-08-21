@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# Env / secrets
+.env
+
+# Godot
+client/.godot/
+*.import
+
+# Data / runtime
+data/
+*.sqlite
+*.sqlite3
+*.db
+
+# Corpus binaries (large third-party PDFs; provenance in catalog/corpus/manifest.json)
+catalog/corpus/*
+!catalog/corpus/manifest.json
+
+# Evidence binaries >5MB (keep small logs/text, ignore media)
+docs/evidence/*.mp4
+docs/evidence/*.png
+docs/evidence/*.webm
+docs/evidence/*.zip
+
+# OS / editor
+.DS_Store
+*.swp
+opencode_session
+
+# OhMyOpenCode planning state (canonical plan lives in specs/)
+.omo/

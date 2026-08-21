@@ -1,0 +1,29 @@
+EndlessDungeon — T1.1 evidence: pinned versions
+Generated: 2026-08-20
+
+Toolchain:
+  Python  3.12
+  Godot   4.7.2.stable.arch_linux
+  uv      0.11.32
+
+Server dependencies (server/uv.lock):
+  langgraph                     1.2.11
+  langgraph-checkpoint-sqlite    3.1.1
+  langgraph-checkpoint-postgres  3.1.2
+  fastapi                        0.141.1
+  uvicorn                        0.52.4
+  websockets                     16.1.1
+  pydantic                       2.13.4
+  qdrant-client                  1.19.0
+  langchain-openai               1.6.0
+  langchain-anthropic            1.6.1
+  langsmith                      0.11.1
+
+Acceptance checks:
+  [PASS] uv run python -c "import fastapi, langgraph, qdrant_client, pydantic"
+  [PASS] godot --headless --import --path client  (exit 0)
+  [PASS] .env.example documents all env vars (LLM_PROVIDER, OPENAI_API_KEY,
+         ANTHROPIC_API_KEY, MODEL_CHAT, MODEL_FAST, MODEL_EMBED, LANGSMITH_API_KEY,
+         LANGSMITH_TRACING, QDRANT_URL, DATABASE_URL, DEV_TOKEN, ENABLE_SIGNING,
+         ENABLE_MODERATION, GENERATION_TIMEOUT)
+  [PASS] 13-doc skeleton seeded from design-docs blueprint (11 Mermaid diagrams)

@@ -1,0 +1,136 @@
+{
+  "$comment": "Game-design corpus for the EndlessDungeon RAG. License gate: only FREE + redistributable sources ingested (MIT-compatible where the corpus is redistributed). Ironsworn (CC-BY-NC-SA) and RogueBasin wiki (CC-BY-SA) are intentionally ABSENT (link-only per the license gate).",
+  "ingested_at": "2026-08-20",
+  "records": [
+    {
+      "id": "game-ai-pro",
+      "title": "Game AI Pro (volumes 1, 2, 3 + Online Edition 2021)",
+      "author": "Steve Rabin (ed.) and 100+ contributors",
+      "license": "Free per-chapter (gameaipro.com)",
+      "source_url": "https://gameaipro.com/",
+      "domain": ["game-ai", "behavior-trees", "utility-ai", "combat-ai", "pathfinding", "procedural-content"],
+      "files": "gameaipro/*.pdf (158 chapters)"
+    },
+    {
+      "id": "pcg-book",
+      "title": "Procedural Content Generation in Games: A Textbook and an Overview of Current Research",
+      "author": "Noor Shaker, Julian Togelius, Mark J. Nelson",
+      "license": "Free (pcgbook.com)",
+      "source_url": "https://pcgbook.com/",
+      "domain": ["procedural-generation", "level-design", "dungeon-generation"],
+      "files": "pcgbook/*.pdf (14 chapters + preface + interviews)"
+    },
+    {
+      "id": "soulslike-struggle",
+      "title": "Struggle as Flow: Challenge, Design, and Experience in Soulslike Games",
+      "author": "arXiv:2604.15318",
+      "license": "arXiv (free distribution)",
+      "source_url": "https://arxiv.org/abs/2604.15318",
+      "domain": ["soulslike", "game-feel", "difficulty", "player-psychology"],
+      "files": "arxiv_2604.15318_soulslike-struggle.pdf"
+    },
+    {
+      "id": "soulslike-ordeal",
+      "title": "Why Do We Suffer for Fun? Ordeal Pleasure in Souls-like Games",
+      "author": "arXiv:2603.26677",
+      "license": "arXiv (free distribution)",
+      "source_url": "https://arxiv.org/abs/2603.26677",
+      "domain": ["soulslike", "difficulty", "player-psychology", "game-feel"],
+      "files": "arxiv_2603.26677_soulslike-ordeal.pdf"
+    },
+    {
+      "id": "behavior-trees",
+      "title": "Behavior Trees in Robotics and AI: An Introduction",
+      "author": "Michele Colledanchise, Petter Ogren",
+      "license": "arXiv (free distribution)",
+      "source_url": "https://arxiv.org/abs/1709.00084",
+      "domain": ["game-ai", "behavior-trees"],
+      "files": "arxiv_1709.00084_behavior-trees.pdf"
+    },
+    {
+      "id": "dnd-srd-5.1",
+      "title": "D&D System Reference Document 5.1",
+      "author": "Wizards of the Coast",
+      "license": "CC-BY 4.0 / OGL 1.0a",
+      "source_url": "https://media.wizards.com/2016/downloads/DND/SRD-OGL_V5.1.pdf",
+      "domain": ["rpg-rules", "classes", "monsters", "items", "taxonomy"],
+      "files": "srd_dnd-5.1.pdf"
+    },
+    {
+      "id": "mda",
+      "title": "MDA: A Formal Approach to Game Design and Game Research",
+      "author": "Robin Hunicke, Marc LeBlanc, Robert Zubek",
+      "license": "Free (academic, author-hosted)",
+      "source_url": "http://www.cs.northwestern.edu/~hunicke/MDA.pdf",
+      "domain": ["game-design", "formal-design", "aesthetics"],
+      "files": "mda_hunicke-leblanc-zubek.pdf"
+    },
+    {
+      "id": "l4d-ai-director",
+      "title": "The AI Systems of Left 4 Dead",
+      "author": "Michael Booth, Valve",
+      "license": "Free (Valve publication)",
+      "source_url": "https://cdn.akamai.steamstatic.com/apps/valve/2009/ai_systems_of_l4d_mike_booth.pdf",
+      "domain": ["game-ai", "ai-director", "pacing", "difficulty"],
+      "files": "l4d_ai-director_booth.pdf"
+    },
+    {
+      "id": "riedl-bulitko",
+      "title": "Interactive Narrative: An Intelligent Systems Approach",
+      "author": "Mark O. Riedl, Vadim Bulitko",
+      "license": "Free (AI Magazine preprint, author-hosted)",
+      "source_url": "https://faculty.cc.gatech.edu/~riedl/pubs/aimag.pdf",
+      "domain": ["interactive-narrative", "storytelling", "drama-management"],
+      "files": "riedl-bulitko_interactive-narrative.pdf"
+    },
+    {
+      "id": "chen-flow-thesis",
+      "title": "Flow in Games (MFA thesis) + Flow in Games (and Everything Else) (CACM)",
+      "author": "Jenova Chen",
+      "license": "Free (author site)",
+      "source_url": "http://www.jenovachen.com/flowingames/",
+      "domain": ["game-feel", "flow", "difficulty", "player-psychology"],
+      "files": ["chen_flow-in-games_thesis.pdf", "chen_flow-in-games_cacm.pdf"]
+    },
+    {
+      "id": "schreiber-design",
+      "title": "Game Design Concepts: An experiment in game design and teaching",
+      "author": "Ian Schreiber",
+      "license": "CC-BY (author-stated)",
+      "source_url": "https://gamedesignconcepts.wordpress.com/",
+      "domain": ["game-design", "mechanics", "dynamics", "flow", "fun", "prototyping"],
+      "files": "schreiber/game-design-concepts.md (25 posts)"
+    },
+    {
+      "id": "schreiber-balance",
+      "title": "Game Balance Concepts: A continued experiment in game design and teaching",
+      "author": "Ian Schreiber",
+      "license": "CC-BY (author-stated)",
+      "source_url": "https://gamebalanceconcepts.wordpress.com/",
+      "domain": ["game-balance", "feedback-loops", "cost-curves", "randomness", "metrics"],
+      "files": "schreiber/game-balance-concepts.md (12 posts)"
+    },
+    {
+      "id": "roguelike-celebration",
+      "title": "Roguelike Celebration 2022 — talk transcripts",
+      "author": "Roguelike Celebration speakers",
+      "license": "Free (auto-captions, archive.org)",
+      "source_url": "https://archive.org/details/RoguelikeCelebration2022",
+      "domain": ["roguelike", "procedural-generation", "design", "difficulty"],
+      "files": "roguelike-celebration/*.vtt (27 transcripts)"
+    },
+    {
+      "id": "fate-core-srd",
+      "title": "Fate Core SRD + Fate Condensed + Fate Accelerated",
+      "author": "Evil Hat Productions (Leonard Balsera et al.)",
+      "license": "CC-BY 3.0",
+      "source_url": "https://fate-srd.com/ (mirrored: github.com/fate-srd/fate-srd-content)",
+      "domain": ["rpg-rules", "narrative", "aspects"],
+      "files": ["fate-core/fate-core.md", "fate-core/Fate-Condensed-SRD-CC-BY.md", "fate-core/fate-accelerated-SRD.md"]
+    }
+  ],
+  "excluded_link_only": [
+    { "id": "ironsworn", "reason": "CC-BY-NC-SA — non-commercial + share-alike fails the MIT-compatible redistribution gate" },
+    { "id": "roguebasin-wiki", "reason": "CC-BY-SA — share-alike fails the MIT-compatible redistribution gate" }
+  ]
+}
