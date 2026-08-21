@@ -1,6 +1,6 @@
 # Documentation Style Guide
 
-> **Canonical reference** — every Markdown document and Mermaid diagram in this repository **MUST** follow this guide. Enforced by `scripts/lint_docs.py` and (from T1.6) the `docs:check` drift gate. Agents: see `AGENTS.md`. Humans: see `CONTRIBUTING.md`.
+> **Canonical reference** — every Markdown document and Mermaid diagram in this repository **MUST** follow this guide. Enforced by `scripts/lint_docs.py` and (from T1.6) the `docs-check` drift gate. Agents: see `AGENTS.md`. Humans: see `CONTRIBUTING.md`.
 
 ## 1. The four statement colors
 

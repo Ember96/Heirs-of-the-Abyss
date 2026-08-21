@@ -17,6 +17,9 @@ dependencies = [
     "langsmith>=0.1",
 ]
 
+[project.scripts]
+docs-check = "app.docs_check:main"
+
 [dependency-groups]
 dev = [
     "pytest>=8.0",

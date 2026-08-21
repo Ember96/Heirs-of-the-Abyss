@@ -22,7 +22,7 @@ All Markdown and Mermaid **must** follow [`STYLE.md`](STYLE.md). The four statem
 | Add a **boss skill** | `catalog/` (per-level effect formulas) |
 | Add a **catalog entry** | `catalog/` (with `entity_kind`, `tags[]`, `tier`, `stat_profile`, `is_canonical`) |
 
-Every change to `server/app`, `client/`, or `catalog/` **must** carry its doc update in the same commit — `docs:check` fails otherwise.
+Every change to `server/app`, `client/`, or `catalog/` **must** carry its doc update in the same commit — `docs-check` fails otherwise.
 
 ## Commit rules
 

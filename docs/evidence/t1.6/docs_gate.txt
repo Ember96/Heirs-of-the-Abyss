@@ -1,0 +1,28 @@
+EndlessDungeon — T1.6 evidence: living-docs drift gate
+Generated: 2026-08-20
+
+Command: cd server && uv run docs-check
+Result: docs:check OK (exit 0)
+
+Gate layers (all enforced):
+  1. Style lint (scripts/lint_docs.py) — alerts, Mermaid palette, legend, cross-refs
+  2. Manifest structure check — each mapping targets >=1 existing doc; empty mapping fails
+  3. Manifest inverse check — every source file (server/app, client, catalog) is listed
+  4. Derivable-doc regeneration — stub until models land in T2.1
+
+Tests: 6 passed (test_docs_check.py)
+  [PASS] collect_source_files known (excludes __init__/tests)
+  [PASS] manifest clean (inverse + structure checks empty)
+  [PASS] inverse check flags unlisted source file
+  [PASS] structure check flags empty doc mapping
+  [PASS] structure check flags missing doc
+  [PASS] gate passes clean tree (main() == 0)
+
+Files:
+  docs/manifest.json         — code->doc manifest (8 mappings + 2 derivable placeholders)
+  server/app/docs_check.py   — the drift gate
+  server/pyproject.toml      — [project.scripts] docs-check entry
+  server/tests/test_docs_check.py
+
+Note: the plan references `uv run docs:check`; uv console scripts don't support
+colons, so the command is `uv run docs-check` (all doc references updated).

@@ -20,11 +20,11 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
   - Deps: T1.2 · Accept: connects to `mock_server.py`, auth+HMAC, reconnect+resume (evidence via xvfb + ffmpeg).
 - ⏳ **T1.5 E2E socket conformance** — round-trip <100ms; double-action order; generation-lifecycle terminal frame; resume ordering; out-of-context decision.
   - Deps: T1.3, T1.4 · Accept: all conformance cases headless.
-- ⏳ **T1.6 Living-docs scaffold + drift gate** — materialize `docs/`; `uv run docs:check` (regenerate derivable docs + diff, exit non-zero on drift); code→doc manifest with inverse check.
+- ⏳ **T1.6 Living-docs scaffold + drift gate** — materialize `docs/`; `uv run docs-check` (regenerate derivable docs + diff, exit non-zero on drift); code→doc manifest with inverse check.
   - Deps: T1.1 · Accept: gate green on clean tree; deliberate drift fails naming the file — satisfies NFR-7.
 
 > [!TIP]
-> **Wave 1 done-claim** — `pytest test_protocol.py test_e2e_socket.py` green; `docs:check` green; headless Godot logs `SESSION_READY`.
+> **Wave 1 done-claim** — `pytest test_protocol.py test_e2e_socket.py` green; `docs-check` green; headless Godot logs `SESSION_READY`.
 
 ## ⚙️ Wave 2 — Deterministic core (depends: Wave 1)
 
@@ -58,7 +58,7 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
   - Deps: T3.2 · Accept: unbalanced variant rejected before commit — satisfies FR-5.3, NFR-4.
 
 > [!TIP]
-> **Wave 3 done-claim** — full AI loop (action → route → pre-gen → verify → commit → narrate → decision → resume); generation always terminates; `docs:check` green.
+> **Wave 3 done-claim** — full AI loop (action → route → pre-gen → verify → commit → narrate → decision → resume); generation always terminates; `docs-check` green.
 
 ## 📚 Wave 4 — RAG (depends: Wave 3; T4.3 replaces T3.2 stub)
 
@@ -90,7 +90,7 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
   - Deps: T5.3, T1.5 · Accept: kill/restart server mid-fight → same fight state.
 
 > [!TIP]
-> **Wave 5 done-claim** — human-playable loop against the real server; `fight_result verified:true` in logs; `docs:check` green.
+> **Wave 5 done-claim** — human-playable loop against the real server; `fight_result verified:true` in logs; `docs-check` green.
 
 ## 🛡️ Wave 6 — Hardening (depends: Wave 5)
 
@@ -101,7 +101,7 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 - ⏳ **T6.3 Anti-tamper hardening verification** — fuzz malformed/replayed/forged frames; token-theft test; client audit; telemetry hook; WSS/TLS documented.
   - Deps: Wave 5 · Accept: fuzz green; audit checklist evidenced — satisfies NFR-5.
 - ⏳ **T6.4 Docs, quickstart, final balance pass** — complete GDD; final balance; README quickstart <15min; runbook.
-  - Deps: T6.1 · Accept: fresh clone runs stack <15min; `docs:check` green.
+  - Deps: T6.1 · Accept: fresh clone runs stack <15min; `docs-check` green.
 
 > [!TIP]
 > **Wave 6 done-claim** — all eval gates pass; latency budgets met/documented; hardening verified; docs complete.
@@ -111,7 +111,7 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 > [!CAUTION]
 > **Every item must APPROVE** — results surfaced before declaring complete.
 
-- **F1 Plan compliance** — every task's acceptance met with evidence; `docs:check` green; no out-of-scope additions.
+- **F1 Plan compliance** — every task's acceptance met with evidence; `docs-check` green; no out-of-scope additions.
 - **F2 Code quality** — `commit_encounter` sole mutator (grep); provenance forcing; client escapes server strings; sim conformance green; no LLM stat writes; no client content of value.
 - **F3 Manual QA** — human plays the full loop (parry/riposte feel → market/shrine/boss → skill unlock → return → resume-after-restart).
 - **F4 Scope fidelity** — OUT list respected (no generated assets/multiplayer/offline/dice/recording/PvP/3D).
@@ -121,7 +121,7 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 ## Execution rules
 
 1. One todo = one atomic commit (conventional: `feat|fix|test|docs|chore|perf(scope)`).
-2. Any commit touching `server/app`, `client/`, or `catalog/` must include its doc updates — `docs:check` fails otherwise.
+2. Any commit touching `server/app`, `client/`, or `catalog/` must include its doc updates — `docs-check` fails otherwise.
 3. Agent-executed QA (happy + failure) with evidence; self-report is never acceptance.
 4. Determinism contracts enforced from Wave 2 (no module-level `random`/`randf()`, no wall-clock in sim, fixed entity order, seeded PRNG).
 

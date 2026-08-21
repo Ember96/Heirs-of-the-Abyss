@@ -22,7 +22,7 @@ A single-player **soulslike roguelike** with unbounded procedural floors. A Lang
 | **G3** | AI-director content: floors/encounters/narrative generated from player actions/build, within token budgets, verified by 4 judges before commit |
 | **G4** | Grounded, safe GM: narrative references only engine facts; player text and corpus content cannot inject into the model |
 | **G5** | Resilient: crash-resume restores exact state; every store bounded; generation always terminates |
-| **G6** | Hardened + shareable: WSS+HMAC+strict schemas+rate limits; 13-doc package + diagrams; `docs:check` gate |
+| **G6** | Hardened + shareable: WSS+HMAC+strict schemas+rate limits; 13-doc package + diagrams; `docs-check` gate |
 
 ### 🔴 Non-goals (explicit)
 
@@ -43,7 +43,7 @@ A single-player **soulslike roguelike** with unbounded procedural floors. A Lang
 - **US4** As a player, I buy/restock items at a market with gold.
 - **US5** As a player, the dungeon adapts to my build — the AI composes enemies that probe my weaknesses, but never produces something unwinnable or trivially free.
 - **US6** As a player, if I disconnect or crash mid-fight, I reconnect and resume the same fight deterministically.
-- **US7** As a developer, I run `docs:check` and it fails any code change that didn't update its docs.
+- **US7** As a developer, I run `docs-check` and it fails any code change that didn't update its docs.
 
 ## 4. Functional requirements
 
@@ -122,7 +122,7 @@ A single-player **soulslike roguelike** with unbounded procedural floors. A Lang
 | NFR-4 | Verifier gate | verdict-required on `commit_encounter` (synthetic fallback verdict for engine-standard content) |
 | NFR-5 | Security | WSS+HMAC+strict `extra="forbid"`+rate limits; no client-side content of value; server-side sanitization |
 | NFR-6 | Bounded stores | sessions (30d/100MB), checkpoints (last 50/thread), cache (LRU+TTL), lore (ring 500), dedup (last 100) |
-| NFR-7 | Docs | `uv run docs:check` green every wave; code→doc manifest with inverse check (unlisted file = fail; empty doc mapping = fail) |
+| NFR-7 | Docs | `uv run docs-check` green every wave; code→doc manifest with inverse check (unlisted file = fail; empty doc mapping = fail) |
 | NFR-8 | Eval gates | rule-adherence ≥95%, schema-valid ≥95%, balance 100%, pacing-band 100%, verifier catch-rate ≥95%, narrative-quality ≥80% |
 
 ## 6. Invariants (must hold, verified by tests)

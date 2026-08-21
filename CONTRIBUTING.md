@@ -26,7 +26,7 @@ Do not introduce a new color or alert type for these four natures, and cross-ref
 
 1. **Fork & branch** from `main`; one focused change per PR.
 2. **Commit** conventionally: `feat|fix|test|docs|chore|perf(scope): message`.
-3. **Update docs** in the same commit as the code change — any change touching `server/app`, `client/`, or `catalog/` must carry its doc updates (enforced by `docs:check` from T1.6).
+3. **Update docs** in the same commit as the code change — any change touching `server/app`, `client/`, or `catalog/` must carry its doc updates (enforced by `docs-check` from T1.6).
 4. **Add tests** for new behavior; evidence under `docs/evidence/<todo-id>/`.
 5. **Open a PR** — CI/verification must pass before review.
 

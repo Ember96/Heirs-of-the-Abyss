@@ -28,7 +28,7 @@ A docs change that fails the lint is **not** done — fix it or don't commit it.
 ## Commit rules
 
 - One todo = one atomic commit; conventional format: `feat|fix|test|docs|chore|perf(scope): message`; scope ∈ `server|agent|rag|sim|corpus|client|catalog|evals|security|docs`.
-- Any commit touching `server/app`, `client/`, or `catalog/` must include its doc updates (the `docs:check` gate enforces this from T1.6).
+- Any commit touching `server/app`, `client/`, or `catalog/` must include its doc updates (the `docs-check` gate enforces this from T1.6).
 - Never commit: `.env`, `data/`, `client/.godot/`, corpus binaries (only `catalog/corpus/manifest.json`), API keys.
 
 ## Critical invariants (never violate — see specs/spec.md §6)

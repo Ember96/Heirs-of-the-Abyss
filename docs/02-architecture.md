@@ -1,6 +1,6 @@
 # System architecture
 
-> Status: **skeleton** — seeded in T1.1; full content lands across the waves (see `specs/tasks.md`). This file is covered by the `docs:check` drift gate.
+> Status: **skeleton** — seeded in T1.1; full content lands across the waves (see `specs/tasks.md`). This file is covered by the `docs-check` drift gate.
 
 System architecture (D1), deployment (local-first, docker compose for Qdrant), data flow, living-docs sync (D11)
 
@@ -48,7 +48,7 @@ flowchart LR
   classDef bad fill:#FFEBEE,stroke:#C62828,stroke-width:2px,color:#B71C1C
 
   A["docs/ (Mermaid + Markdown)"] --> B["Product code (server/app, client, catalog)"]
-  B --> C["uv run docs:check (regenerate from source + diff)"]
+  B --> C["uv run docs-check (regenerate from source + diff)"]
   C --> D{"Docs match code?"}
   D -->|yes| E["commit"]:::ok
   D -->|no| F["regenerate diagrams / fix drift (fail the gate)"]:::bad

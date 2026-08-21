@@ -48,7 +48,7 @@ cd ../client
 godot --path . --editor              # or open the folder in Godot 4.7.2
 
 # 4. Docs drift gate (live from T1.6)
-uv run docs:check
+uv run docs-check
 ```
 
 ## Repository layout
@@ -57,7 +57,7 @@ uv run docs:check
 server/   Python 3.12 (uv): FastAPI + LangGraph + Qdrant — engine, agent, RAG
 client/   Godot 4.7.2 (GDScript): isometric renderer, NetworkManager, combat scenes
 catalog/  content catalog + game-design corpus (see catalog/corpus/manifest.json)
-docs/     living documentation (13 docs + Mermaid diagrams, docs:check drift gate)
+docs/     living documentation (13 docs + Mermaid diagrams, docs-check drift gate)
 specs/    spec-driven plan (spec.md → plan.md → tasks.md)
 ```
 
@@ -85,7 +85,7 @@ specs/    spec-driven plan (spec.md → plan.md → tasks.md)
 
 ## Contributing & docs style
 
-All docs follow [`docs/STYLE.md`](docs/STYLE.md) — color-coded statement conventions (🟠 critical · 🟢 success · 🔴 problem · 🔵 info) + cross-references, enforced by `scripts/lint_docs.py` and the `docs:check` gate. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the PR workflow and [`AGENTS.md`](AGENTS.md) for agent instructions.
+All docs follow [`docs/STYLE.md`](docs/STYLE.md) — color-coded statement conventions (🟠 critical · 🟢 success · 🔴 problem · 🔵 info) + cross-references, enforced by `scripts/lint_docs.py` and the `docs-check` gate. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the PR workflow and [`AGENTS.md`](AGENTS.md) for agent instructions.
 
 ## License
 
