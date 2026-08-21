@@ -123,3 +123,15 @@ Tables: `sessions`, `pregen_cache`, `generated_lore`, `action_ids` (dedup, last 
 ## 9. Godot MCP (tooling note)
 
 Control the client via `@coding-solo/godot-mcp` (configured in `opencode.json`): `create_scene`, `add_node`, `load_sprite`, `save_scene`, `run_project`, `get_debug_output`, `launch_editor`, `list_projects`. Author `.gd`/`.tscn` with edit tools, verify with `run_project` + `get_debug_output`. (Richer alternative if live editor manipulation is needed: `@elfensky/godot-mcp`, 61 tools, requires the `addons/godot_mcp` plugin symlinked into `client/`.)
+
+## Related documentation
+
+- [spec.md](spec.md) — WHAT (requirements, invariants)
+- [tasks.md](tasks.md) — execution order
+- [docs/02-architecture.md](../docs/02-architecture.md) — D1 system diagram
+- [docs/03-system-design.md](../docs/03-system-design.md) — authority model + single-write
+- [docs/05-protocol.md](../docs/05-protocol.md) — wire protocol
+- [docs/06-data-model.md](../docs/06-data-model.md) — Pydantic models
+- [docs/07-agent-design.md](../docs/07-agent-design.md) — director + verifiers
+- [docs/08-content-catalog.md](../docs/08-content-catalog.md) — catalog + RAG
+- [docs/13-security.md](../docs/13-security.md) — anti-tamper

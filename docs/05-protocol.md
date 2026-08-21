@@ -134,6 +134,8 @@ Every generation terminates with **exactly one** terminal frame — `narrative_e
 
 ## 13. Sequence diagrams
 
+> **Diagram legend** — `sequenceDiagram` does not support `classDef` coloring; error/terminal frames are named inline. See `docs/STYLE.md` §3.
+
 ### D5a — normal action + decision + streaming
 
 ```mermaid
@@ -170,3 +172,10 @@ sequenceDiagram
   S-->>C: narrative_replay {narrative_id, offset} (only if stream was cut)
   C->>S: action* (subsequent turns)
 ```
+
+## See also
+
+- [System design — engine-first routing](03-system-design.md)
+- [Game states — combat sim](04-game-states.md)
+- [Security — HMAC / anti-tamper](13-security.md)
+- [Protocol implementation](../server/app/protocol.py)

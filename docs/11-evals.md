@@ -4,4 +4,9 @@
 
 LangSmith eval suite: datasets, thresholds, how to run (uv run evals), latency budgets
 
+## See also
+
+- [Specification — NFR-8 thresholds](../specs/spec.md#5-non-functional-requirements)
+- [Runbook — how to run](10-runbook.md)
+
 <!-- content to follow -->

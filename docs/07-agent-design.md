@@ -56,4 +56,10 @@ flowchart LR
   F -->|no| H["Repair prompt (bounded) -> retry -> reject + fallback"]:::bad
 ```
 
+## See also
+
+- [WS protocol — decision frames](05-protocol.md)
+- [Content catalog — compose pipeline](08-content-catalog.md)
+- [System design — commit_encounter](03-system-design.md)
+
 <!-- content to follow -->

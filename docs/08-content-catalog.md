@@ -48,4 +48,10 @@ flowchart TD
   note right of T: budget per floor gen; 1 floor = 4 rooms; special room picked by layer state; difficulty band enforced by Progression Auditor
 ```
 
+## See also
+
+- [AI RAG corpus — sources & licensing](09-ai-rag-corpus.md)
+- [Agent design — verifier loop](07-agent-design.md)
+- [Specification — FR-3 / FR-6](../specs/spec.md#4-functional-requirements)
+
 <!-- content to follow -->

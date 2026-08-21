@@ -4,4 +4,9 @@
 
 Books/sources loaded into the vector DB (game theory, level design, balance, dialogue, retention, trends) with licenses + URLs
 
+## See also
+
+- [Content catalog — schema & retrieval](08-content-catalog.md)
+- [Corpus provenance manifest](../catalog/corpus/manifest.json)
+
 <!-- content to follow -->

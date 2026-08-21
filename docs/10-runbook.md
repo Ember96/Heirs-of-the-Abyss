@@ -4,4 +4,10 @@
 
 Env vars, provider switching (incl. Ollama), session ops, retention, moderation flags, cost expectations
 
+## See also
+
+- [Environment variables](../.env.example)
+- [Security — hardening](13-security.md)
+- [Evals — thresholds & runner](11-evals.md)
+
 <!-- content to follow -->

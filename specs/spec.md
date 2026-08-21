@@ -146,3 +146,18 @@ A single-player **soulslike roguelike** with unbounded procedural floors. A Lang
 
 > [!CAUTION]
 > Multiplayer, leaderboards, PvP, screen recording, offline mode, generated assets, 3D, real-time networked combat (Option B), per-account auth (dev token only), CI beyond lint+test, scaling beyond local + docker-compose Qdrant.
+
+## Related documentation
+
+| Concept | Where |
+|---------|-------|
+| Authority model + single-write path | [docs/03-system-design.md](../docs/03-system-design.md) |
+| Deterministic combat (D7) | [docs/04-game-states.md](../docs/04-game-states.md) |
+| WS protocol (HMAC / resume / frames) | [docs/05-protocol.md](../docs/05-protocol.md) |
+| Data model (ERD) | [docs/06-data-model.md](../docs/06-data-model.md) |
+| Director graph + verifiers (D4/D9) | [docs/07-agent-design.md](../docs/07-agent-design.md) |
+| Catalog + RAG + floor template (D8/D10) | [docs/08-content-catalog.md](../docs/08-content-catalog.md) |
+| Corpus + licensing | [docs/09-ai-rag-corpus.md](../docs/09-ai-rag-corpus.md) |
+| Anti-tamper / threat model | [docs/13-security.md](../docs/13-security.md) |
+| HOW (technical plan) | [plan.md](plan.md) |
+| Execution order | [tasks.md](tasks.md) |

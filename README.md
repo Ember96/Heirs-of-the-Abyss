@@ -61,6 +61,32 @@ docs/     living documentation (13 docs + Mermaid diagrams, docs:check drift gat
 specs/    spec-driven plan (spec.md → plan.md → tasks.md)
 ```
 
+## Documentation index
+
+| Doc | What |
+|-----|------|
+| [spec.md](specs/spec.md) | Requirements, invariants, acceptance criteria (WHAT) |
+| [plan.md](specs/plan.md) | Architecture, tech stack, module design (HOW) |
+| [tasks.md](specs/tasks.md) | Ordered execution roadmap |
+| [01-gdd.md](docs/01-gdd.md) | Game design document (D2) |
+| [02-architecture.md](docs/02-architecture.md) | System architecture (D1/D11) |
+| [03-system-design.md](docs/03-system-design.md) | Authority model, single-write path |
+| [04-game-states.md](docs/04-game-states.md) | State machines (D3/D7) |
+| [05-protocol.md](docs/05-protocol.md) | WS protocol |
+| [06-data-model.md](docs/06-data-model.md) | ERD |
+| [07-agent-design.md](docs/07-agent-design.md) | Director + verifiers (D4/D9) |
+| [08-content-catalog.md](docs/08-content-catalog.md) | Catalog + RAG + floors (D8/D10) |
+| [09-ai-rag-corpus.md](docs/09-ai-rag-corpus.md) | Game-design corpus |
+| [10-runbook.md](docs/10-runbook.md) | Ops |
+| [11-evals.md](docs/11-evals.md) | Evals |
+| [12-contributing.md](docs/12-contributing.md) | Contributing |
+| [13-security.md](docs/13-security.md) | Threat model |
+| [STYLE.md](docs/STYLE.md) | Doc style guide (enforced) |
+
+## Contributing & docs style
+
+All docs follow [`docs/STYLE.md`](docs/STYLE.md) — color-coded statement conventions (🟠 critical · 🟢 success · 🔴 problem · 🔵 info) + cross-references, enforced by `scripts/lint_docs.py` and the `docs:check` gate. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the PR workflow and [`AGENTS.md`](AGENTS.md) for agent instructions.
+
 ## License
 
 MIT — see [LICENSE](LICENSE). The bundled game-design corpus (`catalog/corpus/`) carries its own per-source licenses (CC-BY, arXiv, free per-chapter); see `catalog/corpus/manifest.json`.

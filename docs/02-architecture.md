@@ -55,4 +55,11 @@ flowchart LR
   F --> A
 ```
 
+## See also
+
+- [System design — authority model](03-system-design.md)
+- [WS v1 protocol](05-protocol.md)
+- [Agent design — director graph](07-agent-design.md)
+- [Security — threat model](13-security.md)
+
 <!-- content to follow -->

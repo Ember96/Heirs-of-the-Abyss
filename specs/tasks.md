@@ -124,3 +124,10 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 2. Any commit touching `server/app`, `client/`, or `catalog/` must include its doc updates — `docs:check` fails otherwise.
 3. Agent-executed QA (happy + failure) with evidence; self-report is never acceptance.
 4. Determinism contracts enforced from Wave 2 (no module-level `random`/`randf()`, no wall-clock in sim, fixed entity order, seeded PRNG).
+
+## Related documentation
+
+- [spec.md](spec.md) — WHAT (the FR/NFR/invariants each task satisfies)
+- [plan.md](plan.md) — HOW (the module design each task implements)
+- [docs/05-protocol.md](../docs/05-protocol.md) — protocol (T1.2)
+- [docs/STYLE.md](../docs/STYLE.md) — doc conventions (T1.6)

@@ -39,4 +39,11 @@ flowchart TD
   N --> B
 ```
 
+## See also
+
+- [Specification (goals + user stories)](../specs/spec.md#2-goals--non-goals)
+- [System architecture (D1)](02-architecture.md)
+- [Combat state machine (D7)](04-game-states.md)
+- [Floor template & pacing (D10)](08-content-catalog.md)
+
 <!-- content to follow -->
