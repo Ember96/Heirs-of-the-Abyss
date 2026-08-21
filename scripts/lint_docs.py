@@ -48,7 +48,11 @@ def default_paths() -> list[Path]:
 
 
 def lint_file(path: Path) -> list[str]:
-    rel = str(path.relative_to(Path(__file__).resolve().parent.parent))
+    root = Path(__file__).resolve().parent.parent
+    try:
+        rel = str(path.resolve().relative_to(root))
+    except ValueError:
+        rel = path.name  # outside repo — still lint, but cross-ref check is docs/specs-scoped
     if rel in SKIP:
         return []
     text = path.read_text(encoding="utf-8")
