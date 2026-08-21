@@ -188,3 +188,41 @@ def test_fight_submit_has_no_input_log():
     # B1 (round-5 blocker): fight_submit must NOT carry the full input log
     assert validate_payload("fight_submit", {"fight_id": "f", "claimed_result": {}, "state_hash": "h", "sim_version": "1"}) is None
     assert validate_payload("fight_submit", {"fight_id": "f", "claimed_result": {}, "state_hash": "h", "sim_version": "1", "input_log": []}) == "frame_invalid"
+
+
+# ── cross-language HMAC (Python ↔ GDScript) ─────────────────────────────────
+def test_hmac_crosslanguage():
+    import hashlib
+    import hmac as _hmac
+    import json
+    import shutil
+    import subprocess
+    import tempfile
+
+    from pathlib import Path
+
+    godot_bin = shutil.which("godot")
+    if not godot_bin:
+        pytest.skip("godot not on PATH")
+
+    key_hex = "0123456789abcdef0123456789abcdef"
+    type_, id_, seq, payload = "ping", "p1", 42, {}
+
+    canonical = json.dumps(payload, separators=(",", ":"), sort_keys=True, ensure_ascii=True)
+    msg = f"{type_}|{id_}|{seq}|{canonical}".encode()
+    py_hex = _hmac.new(bytes.fromhex(key_hex), msg, hashlib.sha256).hexdigest()
+
+    client_dir = Path(__file__).resolve().parent.parent.parent / "client"
+    inp = Path(tempfile.mktemp(suffix=".json"))
+    out = Path(tempfile.mktemp(suffix=".txt"))
+    inp.write_text(json.dumps({"key_hex": key_hex, "type": type_, "id": id_, "seq": seq, "payload": payload}))
+    subprocess.run(
+        [godot_bin, "--headless", "--path", str(client_dir),
+         "--script", "res://scripts/test_hmac.gd", "--", str(inp), str(out)],
+        capture_output=True, text=True, timeout=15,
+    )
+    gd_hex = out.read_text().strip()
+    inp.unlink(missing_ok=True)
+    out.unlink(missing_ok=True)
+
+    assert py_hex == gd_hex, f"Python HMAC={py_hex} != GDScript HMAC={gd_hex}"
