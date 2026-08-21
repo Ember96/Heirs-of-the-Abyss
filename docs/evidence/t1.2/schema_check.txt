@@ -1,0 +1,24 @@
+EndlessDungeon — T1.2 evidence: protocol conformance
+Generated: 2026-08-20
+
+Command: uv run pytest tests/test_protocol.py -q
+Result: 42 passed in 0.04s
+
+Coverage:
+  [PASS] example frames (22 message types) validate against envelope + payload schemas
+  [PASS] extra payload fields rejected (extra="forbid")
+  [PASS] wrong version -> unsupported_version ; unknown type / missing id / negative seq -> frame_invalid
+  [PASS] HMAC-SHA256 sign/verify round-trip
+  [PASS] HMAC tamper (payload / seq / key) rejected
+  [PASS] canonical_json deterministic (key-order independent)
+  [PASS] seq anti-replay (rejects <= last_seen, accepts increasing)
+  [PASS] 64KB frame cap (frame_too_large)
+  [PASS] out-of-context decision -> busy (generating) / rule_violation (not parked)
+  [PASS] id semantics pinned (action_id / narrative_id / fight_id / decision_id / session_id)
+  [PASS] fight_submit has NO input_log (B1 round-5 blocker)
+  [PASS] state_sync final-frame rule (apply when frame_index == frame_total)
+
+Files:
+  server/app/protocol.py   — envelope + payload schemas + HMAC + SeqTracker + validation
+  server/tests/test_protocol.py
+  docs/05-protocol.md      — exhaustive hardened v1 spec (13 sections + D5a/D5b)
