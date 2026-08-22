@@ -99,6 +99,9 @@
     ],
     "client/scripts/floor_renderer.gd": [
       "docs/02-architecture.md"
+    ],
+    "client/scripts/fight_controller.gd": [
+      "docs/04-game-states.md"
     ]
   }
 }

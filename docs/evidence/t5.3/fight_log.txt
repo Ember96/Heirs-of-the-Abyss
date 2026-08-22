@@ -1,0 +1,21 @@
+EndlessDungeon — T5.3 evidence: real-time combat controller
+Generated: 2026-08-21
+
+Command: uv run pytest tests/test_fight.py -q
+Result: 1 passed
+
+Acceptance:
+  [PASS] scripted fight deterministic (same inputs -> same state_hash)
+  [PASS] fight-log generated (fight_input stream per tick)
+  [PASS] state_hash = SHA-256 over canonical end-state (for fight_submit)
+
+Implementation:
+  client/scripts/fight_controller.gd  (FightController: input buffer (200ms FIFO),
+                                        sim-core integration, fight-log, state_hash,
+                                        submit_payload)
+  client/scripts/test_fight.gd        (headless determinism driver)
+  server/tests/test_fight.py
+
+Note: hitbox/hurtbox (Area2D) visual feedback + fight-frame streaming to the
+server are wired in T5.4/T5.5 when the combat scenes + NetworkManager integration
+land. The deterministic core (sim + log + hash) is proven here.
