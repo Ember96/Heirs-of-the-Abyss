@@ -57,6 +57,9 @@
     ],
     "server/app/game/floorgen.py": [
       "docs/08-content-catalog.md"
+    ],
+    "server/app/persistence.py": [
+      "docs/02-architecture.md"
     ]
   }
 }

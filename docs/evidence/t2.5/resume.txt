@@ -1,0 +1,28 @@
+EndlessDungeon — T2.5 evidence: persistence + session service + headless player
+Generated: 2026-08-21
+
+Command: uv run pytest tests/test_persistence.py -q
+Result: 6 passed
+
+Acceptance:
+  [PASS] save/load round-trip (create -> get -> identical GameSession)
+  [PASS] resume_token lookup (get_by_resume_token)
+  [PASS] save updates state (hp + terminal flag)
+  [PASS] dedup window (record_action twice -> True then False)
+  [PASS] pregen_cache key includes session_id (cross-session lookup -> None)
+  [PASS] retention cascades: prune removes rows from sessions + pregen_cache
+         + generated_lore + action_ids (all tables verified empty)
+
+Headless player (uv run python scripts/headless_player.py):
+  [PASS] brawler clears sector 1 -> reaches shrine (floor 1), defeats boss
+         The Violence (floor 5) -> unlocks 'dash'
+  [PASS] hunter clears sector 1
+  [NOTE] alchemist dies on sector 1 — its brew/essence/ally specials land in
+         T4.x; combat balance is tuned in T6.4 (known gap, not a T2.5 defect)
+
+Files:
+  server/app/persistence.py        (SessionStore: WAL, aiosqlite, single-writer lock,
+                                    sessions/pregen_cache/generated_lore/action_ids,
+                                    retention cascade, dedup window)
+  server/scripts/headless_player.py (engine driver: floorgen + sim + rules + catalog)
+  server/tests/test_persistence.py
