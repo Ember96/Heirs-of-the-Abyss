@@ -62,15 +62,15 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 
 ## 📚 Wave 4 — RAG (depends: Wave 3; T4.3 replaces T3.2 stub)
 
-- ⏳ **T4.1 Catalog seed data** — full MVP catalog (3 classes/10 enemies/3 bosses/boss skills/market stock).
+- ✅ **T4.1 Catalog seed data** — full MVP catalog (3 classes/10 enemies/3 bosses/boss skills/market stock).
   - Deps: T2.2 · Accept: referential integrity, counts ≥ targets — satisfies FR-6.1.
-- ⏳ **T4.2 Qdrant + hybrid retrieval** — docker-compose; indexer; retriever (dense+BM25+RRF+payload filters); golden set (20).
+- ✅ **T4.2 Qdrant + hybrid retrieval** — docker-compose; indexer; retriever (dense+BM25+RRF+payload filters); golden set (20).
   - Deps: T4.1 · Accept: recall@5 ≥70% — satisfies FR-6.2.
-- ⏳ **T4.3 Variant composition + clamp layer** — `compose_variant` (retrieval ≤1.5k → LLM → clamp); commit via `commit_encounter`.
+- ✅ **T4.3 Variant composition + clamp layer** — `compose_variant` (retrieval ≤1.5k → LLM → clamp); commit via `commit_encounter`.
   - Deps: T4.2, T3.2 · Accept: ≥95% schema-valid, 100% clamp-enforced, ≤2 calls — satisfies FR-6.3, FR-5.2.
-- ⏳ **T4.4 Game-design corpus ingestion** — FREE-LEGAL set with license+provenance; license gate (redistribution AND MIT-compat); corpus-as-untrusted-data.
+- ✅ **T4.4 Game-design corpus ingestion** — FREE-LEGAL set with license+provenance; license gate (redistribution AND MIT-compat); corpus-as-untrusted-data.
   - Deps: T4.2 · Accept: every record has license/source/domain; hostile-corpus injection blocked — satisfies FR-6.3, NFR-5.
-- ⏳ **T4.5 Safety: lore quarantine + moderation** — ring buffer 500/session; provenance honored on re-embed.
+- ✅ **T4.5 Safety: lore quarantine + moderation** — ring buffer 500/session; provenance honored on re-embed.
   - Deps: T3.2, T4.2 · Accept: store bound; no cross-session leakage.
 
 > [!TIP]
