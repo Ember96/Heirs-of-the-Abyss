@@ -75,6 +75,9 @@
     ],
     "server/app/agent/verifiers.py": [
       "docs/07-agent-design.md"
+    ],
+    "catalog/seed.json": [
+      "docs/08-content-catalog.md"
     ]
   }
 }

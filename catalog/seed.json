@@ -1,0 +1,2242 @@
+{
+  "version": 2,
+  "classes": [
+    {
+      "id": "brawler",
+      "name": "Brawler",
+      "class_tag": "brawler",
+      "description": "A harsh-constitution flesh mountain. Fists like bricks, empty pockets, anger to burn.",
+      "stats": {
+        "max_hp": 130,
+        "attack": 12,
+        "defense": 10
+      },
+      "starting_gear": [
+        "fists",
+        "ragged_vest"
+      ],
+      "natural_traits": {
+        "stamina_bonus": 25,
+        "carry_bonus": 0.3,
+        "damage_resistance": 0.15
+      },
+      "special": {
+        "id": "tackle_suplex",
+        "type": "shove",
+        "shove_impulse": 8,
+        "obstacle_impact_damage": 12,
+        "obstacle_stun_ticks": 150,
+        "counter_throw_damage": 18
+      }
+    },
+    {
+      "id": "hunter",
+      "name": "Hunter",
+      "class_tag": "hunter",
+      "description": "A woodsman far from home. The woods don't provide enough anymore.",
+      "stats": {
+        "max_hp": 100,
+        "attack": 10,
+        "defense": 6
+      },
+      "starting_gear": [
+        "hunting_bow",
+        "leather_armor"
+      ],
+      "natural_traits": {
+        "precise_shot_multiplier": 1.5,
+        "projectile_recovery": true
+      },
+      "special": {
+        "id": "impairing_trap",
+        "type": "trap",
+        "pin_ticks": 90
+      }
+    },
+    {
+      "id": "alchemist",
+      "name": "Alchemist",
+      "class_tag": "alchemist",
+      "description": "The hungry scholar. Knowledge is the only wealth worth having.",
+      "stats": {
+        "max_hp": 90,
+        "attack": 8,
+        "defense": 5
+      },
+      "starting_gear": [
+        "alchemy_flask",
+        "dagger"
+      ],
+      "natural_traits": {
+        "resource_extraction_bonus": 0.5
+      },
+      "special": {
+        "id": "frenzy_brew",
+        "type": "buff",
+        "attack_bonus": 0.3,
+        "speed_bonus": 0.2,
+        "duration_ticks": 300
+      }
+    }
+  ],
+  "enemies": [
+    {
+      "id": "hound",
+      "name": "Hound",
+      "stats": {
+        "max_hp": 40,
+        "attack": 8,
+        "defense": 2,
+        "posture": 80
+      },
+      "behavior_table": [
+        {
+          "action": "lunge",
+          "weight": 3,
+          "damage": 8
+        },
+        {
+          "action": "bite",
+          "weight": 2,
+          "damage": 6
+        }
+      ]
+    },
+    {
+      "id": "husk",
+      "name": "Husk",
+      "stats": {
+        "max_hp": 90,
+        "attack": 6,
+        "defense": 4,
+        "posture": 120
+      },
+      "behavior_table": [
+        {
+          "action": "slam",
+          "weight": 2,
+          "damage": 9
+        },
+        {
+          "action": "grab",
+          "weight": 1,
+          "damage": 5
+        }
+      ]
+    },
+    {
+      "id": "plague_doktor",
+      "name": "Plague Doktor",
+      "stats": {
+        "max_hp": 50,
+        "attack": 7,
+        "defense": 3,
+        "posture": 90
+      },
+      "behavior_table": [
+        {
+          "action": "poison_dart",
+          "weight": 3,
+          "damage": 7
+        },
+        {
+          "action": "retreat",
+          "weight": 1,
+          "damage": 0
+        }
+      ]
+    },
+    {
+      "id": "gargoyle",
+      "name": "Gargoyle",
+      "stats": {
+        "max_hp": 60,
+        "attack": 10,
+        "defense": 5,
+        "posture": 100
+      },
+      "behavior_table": [
+        {
+          "action": "swoop",
+          "weight": 2,
+          "damage": 10
+        },
+        {
+          "action": "claw",
+          "weight": 2,
+          "damage": 8
+        }
+      ]
+    },
+    {
+      "id": "mad_acolyte",
+      "name": "Mad Acolyte",
+      "stats": {
+        "max_hp": 45,
+        "attack": 9,
+        "defense": 2,
+        "posture": 80
+      },
+      "behavior_table": [
+        {
+          "action": "bolt",
+          "weight": 3,
+          "damage": 9
+        },
+        {
+          "action": "chant",
+          "weight": 1,
+          "damage": 0
+        }
+      ]
+    },
+    {
+      "id": "flesh_golem",
+      "name": "Flesh Golem",
+      "stats": {
+        "max_hp": 120,
+        "attack": 14,
+        "defense": 8,
+        "posture": 150
+      },
+      "behavior_table": [
+        {
+          "action": "smash",
+          "weight": 2,
+          "damage": 14
+        },
+        {
+          "action": "charge",
+          "weight": 2,
+          "damage": 12
+        }
+      ]
+    },
+    {
+      "id": "wretch",
+      "name": "Wretch",
+      "stats": {
+        "max_hp": 25,
+        "attack": 5,
+        "defense": 1,
+        "posture": 80
+      },
+      "behavior_table": [
+        {
+          "action": "scratch",
+          "weight": 3,
+          "damage": 5
+        },
+        {
+          "action": "frenzy",
+          "weight": 1,
+          "damage": 7
+        }
+      ]
+    },
+    {
+      "id": "bell_ringer",
+      "name": "Bell-Ringer",
+      "stats": {
+        "max_hp": 55,
+        "attack": 4,
+        "defense": 3,
+        "posture": 90
+      },
+      "behavior_table": [
+        {
+          "action": "toll",
+          "weight": 2,
+          "damage": 0
+        },
+        {
+          "action": "summon",
+          "weight": 1,
+          "damage": 0
+        }
+      ]
+    },
+    {
+      "id": "shade",
+      "name": "Shade",
+      "stats": {
+        "max_hp": 35,
+        "attack": 15,
+        "defense": 1,
+        "posture": 80
+      },
+      "behavior_table": [
+        {
+          "action": "phase_strike",
+          "weight": 2,
+          "damage": 15
+        },
+        {
+          "action": "vanish",
+          "weight": 1,
+          "damage": 0
+        }
+      ]
+    },
+    {
+      "id": "cadaver",
+      "name": "Cadaver",
+      "stats": {
+        "max_hp": 70,
+        "attack": 9,
+        "defense": 12,
+        "posture": 110
+      },
+      "behavior_table": [
+        {
+          "action": "shield_bash",
+          "weight": 2,
+          "damage": 8
+        },
+        {
+          "action": "stab",
+          "weight": 2,
+          "damage": 9
+        }
+      ]
+    }
+  ],
+  "bosses": [
+    {
+      "id": "the_violence",
+      "name": "The Violence",
+      "sin_of": "brawler",
+      "floor": 5,
+      "skill_unlock": "dash",
+      "stats": {
+        "max_hp": 200,
+        "attack": 16,
+        "defense": 10,
+        "posture": 150
+      },
+      "behavior_table": [
+        {
+          "action": "tackle",
+          "weight": 3,
+          "damage": 14
+        },
+        {
+          "action": "suplex",
+          "weight": 2,
+          "damage": 18
+        },
+        {
+          "action": "smash",
+          "weight": 2,
+          "damage": 16
+        }
+      ]
+    },
+    {
+      "id": "the_cunning",
+      "name": "The Cunning",
+      "sin_of": "hunter",
+      "floor": 10,
+      "skill_unlock": "burning_hits",
+      "stats": {
+        "max_hp": 150,
+        "attack": 12,
+        "defense": 6,
+        "posture": 120
+      },
+      "flags": {
+        "stationary": true,
+        "reflect_projectiles": true,
+        "spawns_traps": true
+      },
+      "behavior_table": [
+        {
+          "action": "trap",
+          "weight": 3,
+          "damage": 8
+        },
+        {
+          "action": "bolt",
+          "weight": 2,
+          "damage": 10
+        }
+      ]
+    },
+    {
+      "id": "the_unknown",
+      "name": "The Unknown",
+      "sin_of": "alchemist",
+      "floor": 15,
+      "skill_unlock": "max_hp",
+      "stats": {
+        "max_hp": 180,
+        "attack": 14,
+        "defense": 4,
+        "posture": 100
+      },
+      "flags": {
+        "heal_on_hit": true,
+        "decay_if_untouched": true
+      },
+      "behavior_table": [
+        {
+          "action": "stomp",
+          "weight": 2,
+          "damage": 16
+        },
+        {
+          "action": "barrage",
+          "weight": 2,
+          "damage": 10
+        }
+      ]
+    }
+  ],
+  "boss_skills": [
+    {
+      "id": "dash",
+      "name": "Dash Attack",
+      "levels": 5
+    },
+    {
+      "id": "max_hp",
+      "name": "Vitality",
+      "levels": 5
+    },
+    {
+      "id": "defense",
+      "name": "Iron Skin",
+      "levels": 5
+    },
+    {
+      "id": "burning_hits",
+      "name": "Burning Hits",
+      "levels": 5
+    },
+    {
+      "id": "loot_chance",
+      "name": "Fortune",
+      "levels": 5
+    }
+  ],
+  "parts": [
+    {
+      "id": "body_husk",
+      "name": "Husk",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 10
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_carapace",
+      "name": "Carapace",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 12
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_skeletal_frame",
+      "name": "Skeletal Frame",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 14
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_bloated_belly",
+      "name": "Bloated Belly",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 16
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_emaciated_torso",
+      "name": "Emaciated Torso",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 18
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_winged_frame",
+      "name": "Winged Frame",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 20
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_slime_mass",
+      "name": "Slime Mass",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 22
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_bone_plating",
+      "name": "Bone Plating",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 24
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_fused_flesh",
+      "name": "Fused Flesh",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 26
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_leper_flesh",
+      "name": "Leper Flesh",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 28
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_armored_shell",
+      "name": "Armored Shell",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 30
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_spindly_frame",
+      "name": "Spindly Frame",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 32
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_hulking_frame",
+      "name": "Hulking Frame",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 34
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_spectral_form",
+      "name": "Spectral Form",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 36
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "body_cadaver_form",
+      "name": "Cadaver Form",
+      "kind": "body",
+      "stat_profile": {
+        "max_hp": 38
+      },
+      "tags": [
+        "flesh",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_claw",
+      "name": "Claw",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 3
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_maw",
+      "name": "Maw",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 4
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_blade_arm",
+      "name": "Blade Arm",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 5
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_tendril",
+      "name": "Tendril",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 6
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_barbed_tail",
+      "name": "Barbed Tail",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 7
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_bone_spike",
+      "name": "Bone Spike",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 8
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_rusted_cleaver",
+      "name": "Rusted Cleaver",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 3
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_plague_talon",
+      "name": "Plague Talon",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 4
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_crushing_fist",
+      "name": "Crushing Fist",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 5
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_whip",
+      "name": "Whip",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 6
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_horn",
+      "name": "Horn",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 7
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_beak",
+      "name": "Beak",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 8
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_stinger",
+      "name": "Stinger",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 3
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_hook",
+      "name": "Hook",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 4
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_scythe_arm",
+      "name": "Scythe Arm",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 5
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_needle_teeth",
+      "name": "Needle Teeth",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 6
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_grasping_hand",
+      "name": "Grasping Hand",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 7
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_chain",
+      "name": "Chain",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 8
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_cleaver",
+      "name": "Cleaver",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 3
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_pincer",
+      "name": "Pincer",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 4
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_fang",
+      "name": "Fang",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 5
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_club",
+      "name": "Club",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 6
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_staff",
+      "name": "Staff",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 7
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_dagger_hand",
+      "name": "Dagger Hand",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 8
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "weapon_tentacle",
+      "name": "Tentacle",
+      "kind": "weapon",
+      "stat_profile": {
+        "attack": 3
+      },
+      "tags": [
+        "weapon",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_lunge",
+      "name": "Lunge",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 1
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_pounce",
+      "name": "Pounce",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 2
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_spit",
+      "name": "Spit",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 3
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_charge",
+      "name": "Charge",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 4
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_grapple",
+      "name": "Grapple",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 5
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_slam",
+      "name": "Slam",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 1
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_sweep",
+      "name": "Sweep",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 2
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_burrow",
+      "name": "Burrow",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 3
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_swoop",
+      "name": "Swoop",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 4
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_screech",
+      "name": "Screech",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 5
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_vomit",
+      "name": "Vomit",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 1
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_impale",
+      "name": "Impale",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 2
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_crush",
+      "name": "Crush",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 3
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_drag",
+      "name": "Drag",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 4
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_leap",
+      "name": "Leap",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 5
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_stalk",
+      "name": "Stalk",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 1
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_swarm",
+      "name": "Swarm",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 2
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_drain",
+      "name": "Drain",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 3
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_howl",
+      "name": "Howl",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 4
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    },
+    {
+      "id": "move_ambush",
+      "name": "Ambush",
+      "kind": "move",
+      "stat_profile": {
+        "speed": 5
+      },
+      "tags": [
+        "move",
+        "gothic"
+      ]
+    }
+  ],
+  "affixes": [
+    {
+      "id": "burning",
+      "name": "Burning",
+      "stat_mod": {
+        "attack": 2
+      },
+      "tags": [
+        "elemental"
+      ]
+    },
+    {
+      "id": "freezing",
+      "name": "Freezing",
+      "stat_mod": {
+        "attack": 2
+      },
+      "tags": [
+        "elemental"
+      ]
+    },
+    {
+      "id": "poisonous",
+      "name": "Poisonous",
+      "stat_mod": {
+        "attack": 2
+      },
+      "tags": [
+        "elemental"
+      ]
+    },
+    {
+      "id": "shocking",
+      "name": "Shocking",
+      "stat_mod": {
+        "attack": 2
+      },
+      "tags": [
+        "elemental"
+      ]
+    },
+    {
+      "id": "caustic",
+      "name": "Caustic",
+      "stat_mod": {
+        "attack": 2
+      },
+      "tags": [
+        "elemental"
+      ]
+    },
+    {
+      "id": "vampiric",
+      "name": "Vampiric",
+      "stat_mod": {
+        "attack": 2
+      },
+      "tags": [
+        "elemental"
+      ]
+    },
+    {
+      "id": "radiant",
+      "name": "Radiant",
+      "stat_mod": {
+        "attack": 2
+      },
+      "tags": [
+        "elemental"
+      ]
+    },
+    {
+      "id": "necrotic",
+      "name": "Necrotic",
+      "stat_mod": {
+        "attack": 2
+      },
+      "tags": [
+        "elemental"
+      ]
+    },
+    {
+      "id": "cursed",
+      "name": "Cursed",
+      "stat_mod": {
+        "attack": 2
+      },
+      "tags": [
+        "elemental"
+      ]
+    },
+    {
+      "id": "blessed",
+      "name": "Blessed",
+      "stat_mod": {
+        "attack": 2
+      },
+      "tags": [
+        "elemental"
+      ]
+    },
+    {
+      "id": "armored",
+      "name": "Armored",
+      "stat_mod": {
+        "defense": 2
+      },
+      "tags": [
+        "physical"
+      ]
+    },
+    {
+      "id": "hulking",
+      "name": "Hulking",
+      "stat_mod": {
+        "defense": 2
+      },
+      "tags": [
+        "physical"
+      ]
+    },
+    {
+      "id": "frenzied",
+      "name": "Frenzied",
+      "stat_mod": {
+        "defense": 2
+      },
+      "tags": [
+        "physical"
+      ]
+    },
+    {
+      "id": "spectral",
+      "name": "Spectral",
+      "stat_mod": {
+        "defense": 2
+      },
+      "tags": [
+        "physical"
+      ]
+    },
+    {
+      "id": "regenerating",
+      "name": "Regenerating",
+      "stat_mod": {
+        "defense": 2
+      },
+      "tags": [
+        "physical"
+      ]
+    },
+    {
+      "id": "leaping",
+      "name": "Leaping",
+      "stat_mod": {
+        "defense": 2
+      },
+      "tags": [
+        "physical"
+      ]
+    },
+    {
+      "id": "burrowing",
+      "name": "Burrowing",
+      "stat_mod": {
+        "defense": 2
+      },
+      "tags": [
+        "physical"
+      ]
+    },
+    {
+      "id": "camouflaged",
+      "name": "Camouflaged",
+      "stat_mod": {
+        "defense": 2
+      },
+      "tags": [
+        "physical"
+      ]
+    },
+    {
+      "id": "deafening",
+      "name": "Deafening",
+      "stat_mod": {
+        "defense": 2
+      },
+      "tags": [
+        "physical"
+      ]
+    },
+    {
+      "id": "blinding",
+      "name": "Blinding",
+      "stat_mod": {
+        "defense": 2
+      },
+      "tags": [
+        "physical"
+      ]
+    },
+    {
+      "id": "enfeebling",
+      "name": "Enfeebling",
+      "stat_mod": {
+        "max_hp": 10
+      },
+      "tags": [
+        "status"
+      ]
+    },
+    {
+      "id": "bleeding",
+      "name": "Bleeding",
+      "stat_mod": {
+        "max_hp": 10
+      },
+      "tags": [
+        "status"
+      ]
+    },
+    {
+      "id": "staggering",
+      "name": "Staggering",
+      "stat_mod": {
+        "max_hp": 10
+      },
+      "tags": [
+        "status"
+      ]
+    },
+    {
+      "id": "taunting",
+      "name": "Taunting",
+      "stat_mod": {
+        "max_hp": 10
+      },
+      "tags": [
+        "status"
+      ]
+    },
+    {
+      "id": "terrifying",
+      "name": "Terrifying",
+      "stat_mod": {
+        "max_hp": 10
+      },
+      "tags": [
+        "status"
+      ]
+    },
+    {
+      "id": "draining",
+      "name": "Draining",
+      "stat_mod": {
+        "max_hp": 10
+      },
+      "tags": [
+        "status"
+      ]
+    },
+    {
+      "id": "entangling",
+      "name": "Entangling",
+      "stat_mod": {
+        "max_hp": 10
+      },
+      "tags": [
+        "status"
+      ]
+    },
+    {
+      "id": "silencing",
+      "name": "Silencing",
+      "stat_mod": {
+        "max_hp": 10
+      },
+      "tags": [
+        "status"
+      ]
+    },
+    {
+      "id": "hexing",
+      "name": "Hexing",
+      "stat_mod": {
+        "max_hp": 10
+      },
+      "tags": [
+        "status"
+      ]
+    },
+    {
+      "id": "maddening",
+      "name": "Maddening",
+      "stat_mod": {
+        "max_hp": 10
+      },
+      "tags": [
+        "status"
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "iron_sword",
+      "name": "Iron Sword",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 4
+      },
+      "price": 20
+    },
+    {
+      "id": "steel_greatsword",
+      "name": "Steel Greatsword",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 5
+      },
+      "price": 35
+    },
+    {
+      "id": "hunting_bow",
+      "name": "Hunting Bow",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 6
+      },
+      "price": 50
+    },
+    {
+      "id": "crossbow",
+      "name": "Crossbow",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 7
+      },
+      "price": 65
+    },
+    {
+      "id": "dagger",
+      "name": "Dagger",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 8
+      },
+      "price": 80
+    },
+    {
+      "id": "warhammer",
+      "name": "Warhammer",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 9
+      },
+      "price": 95
+    },
+    {
+      "id": "halberd",
+      "name": "Halberd",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 10
+      },
+      "price": 110
+    },
+    {
+      "id": "rapier",
+      "name": "Rapier",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 11
+      },
+      "price": 125
+    },
+    {
+      "id": "flail",
+      "name": "Flail",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 12
+      },
+      "price": 140
+    },
+    {
+      "id": "mace",
+      "name": "Mace",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 13
+      },
+      "price": 155
+    },
+    {
+      "id": "scythe",
+      "name": "Scythe",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 14
+      },
+      "price": 170
+    },
+    {
+      "id": "cleaver",
+      "name": "Cleaver",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 15
+      },
+      "price": 185
+    },
+    {
+      "id": "spear",
+      "name": "Spear",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 16
+      },
+      "price": 200
+    },
+    {
+      "id": "staff",
+      "name": "Staff",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 17
+      },
+      "price": 215
+    },
+    {
+      "id": "fists",
+      "name": "Fists",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 18
+      },
+      "price": 230
+    },
+    {
+      "id": "ragged_vest",
+      "name": "Ragged Vest",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 2
+      },
+      "price": 15
+    },
+    {
+      "id": "leather_armor",
+      "name": "Leather Armor",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 3
+      },
+      "price": 27
+    },
+    {
+      "id": "studded_leather",
+      "name": "Studded Leather",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 4
+      },
+      "price": 39
+    },
+    {
+      "id": "chainmail",
+      "name": "Chainmail",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 5
+      },
+      "price": 51
+    },
+    {
+      "id": "iron_armor",
+      "name": "Iron Armor",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 6
+      },
+      "price": 63
+    },
+    {
+      "id": "plate_armor",
+      "name": "Plate Armor",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 7
+      },
+      "price": 75
+    },
+    {
+      "id": "plague_mask",
+      "name": "Plague Mask",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 8
+      },
+      "price": 87
+    },
+    {
+      "id": "hood",
+      "name": "Hood",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 9
+      },
+      "price": 99
+    },
+    {
+      "id": "cloak",
+      "name": "Cloak",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 10
+      },
+      "price": 111
+    },
+    {
+      "id": "gauntlets",
+      "name": "Gauntlets",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 11
+      },
+      "price": 123
+    },
+    {
+      "id": "greaves",
+      "name": "Greaves",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 12
+      },
+      "price": 135
+    },
+    {
+      "id": "shield",
+      "name": "Shield",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 13
+      },
+      "price": 147
+    },
+    {
+      "id": "health_potion",
+      "name": "Health Potion",
+      "tags": [
+        "consumable"
+      ],
+      "stat_profile": {
+        "heal": 30
+      },
+      "price": 25
+    },
+    {
+      "id": "frenzy_brew",
+      "name": "Frenzy Brew",
+      "tags": [
+        "consumable"
+      ],
+      "stat_profile": {
+        "heal": 0
+      },
+      "price": 25
+    },
+    {
+      "id": "antidote",
+      "name": "Antidote",
+      "tags": [
+        "consumable"
+      ],
+      "stat_profile": {
+        "heal": 0
+      },
+      "price": 25
+    },
+    {
+      "id": "fire_bomb",
+      "name": "Fire Bomb",
+      "tags": [
+        "consumable"
+      ],
+      "stat_profile": {
+        "heal": 0
+      },
+      "price": 25
+    },
+    {
+      "id": "throwing_knife",
+      "name": "Throwing Knife",
+      "tags": [
+        "consumable"
+      ],
+      "stat_profile": {
+        "heal": 0
+      },
+      "price": 25
+    },
+    {
+      "id": "essence_vial",
+      "name": "Essence Vial",
+      "tags": [
+        "consumable"
+      ],
+      "stat_profile": {
+        "heal": 0
+      },
+      "price": 25
+    },
+    {
+      "id": "oil_flask",
+      "name": "Oil Flask",
+      "tags": [
+        "consumable"
+      ],
+      "stat_profile": {
+        "heal": 0
+      },
+      "price": 25
+    },
+    {
+      "id": "bandage",
+      "name": "Bandage",
+      "tags": [
+        "consumable"
+      ],
+      "stat_profile": {
+        "heal": 0
+      },
+      "price": 25
+    },
+    {
+      "id": "alchemy_flask",
+      "name": "Alchemy Flask",
+      "tags": [
+        "tool"
+      ],
+      "stat_profile": {},
+      "price": 20
+    },
+    {
+      "id": "hunter_trap",
+      "name": "Hunter Trap",
+      "tags": [
+        "tool"
+      ],
+      "stat_profile": {},
+      "price": 20
+    },
+    {
+      "id": "lockpick",
+      "name": "Lockpick",
+      "tags": [
+        "tool"
+      ],
+      "stat_profile": {},
+      "price": 20
+    },
+    {
+      "id": "torch",
+      "name": "Torch",
+      "tags": [
+        "tool"
+      ],
+      "stat_profile": {},
+      "price": 20
+    },
+    {
+      "id": "rope",
+      "name": "Rope",
+      "tags": [
+        "tool"
+      ],
+      "stat_profile": {},
+      "price": 20
+    }
+  ],
+  "themes": [
+    {
+      "id": "catacombs",
+      "name": "Catacombs",
+      "tags": [
+        "gothic",
+        "floor-theme"
+      ]
+    },
+    {
+      "id": "crypt",
+      "name": "Crypt",
+      "tags": [
+        "gothic",
+        "floor-theme"
+      ]
+    },
+    {
+      "id": "sewers",
+      "name": "Sewers",
+      "tags": [
+        "gothic",
+        "floor-theme"
+      ]
+    },
+    {
+      "id": "chapel",
+      "name": "Chapel",
+      "tags": [
+        "gothic",
+        "floor-theme"
+      ]
+    },
+    {
+      "id": "library",
+      "name": "Library",
+      "tags": [
+        "gothic",
+        "floor-theme"
+      ]
+    },
+    {
+      "id": "blood_ward",
+      "name": "Blood Ward",
+      "tags": [
+        "gothic",
+        "floor-theme"
+      ]
+    },
+    {
+      "id": "ossuary",
+      "name": "Ossuary",
+      "tags": [
+        "gothic",
+        "floor-theme"
+      ]
+    },
+    {
+      "id": "bell_tower",
+      "name": "Bell Tower",
+      "tags": [
+        "gothic",
+        "floor-theme"
+      ]
+    },
+    {
+      "id": "gallows",
+      "name": "Gallows",
+      "tags": [
+        "gothic",
+        "floor-theme"
+      ]
+    },
+    {
+      "id": "the_abyss",
+      "name": "The Abyss",
+      "tags": [
+        "gothic",
+        "floor-theme"
+      ]
+    }
+  ],
+  "lore": [
+    {
+      "id": "lore-01",
+      "text": "The shrine-bonfire is the last light against the dark; feed it and it feeds you.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-02",
+      "text": "The Abyss does not want to kill you. It wants you to understand.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-03",
+      "text": "The Violence wears your own fists, and it has been practicing longer.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-04",
+      "text": "The Cunning never moves. It does not need to.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-05",
+      "text": "The Unknown does not hate you. It simply does not recognise combat.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-06",
+      "text": "Every boss is a mirror. Look closely and you will see the monster is wearing your face.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-07",
+      "text": "The merchants do not fear the deep. They have already sold their souls.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-08",
+      "text": "The Brawler's hands remember every establishment that threw him out.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-09",
+      "text": "The Hunter's woods are silent now. The city is not.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-10",
+      "text": "The Alchemist understands the dungeon is an infinite bazaar \u2014 and an infinite source of knowledge.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-11",
+      "text": "Light the bonfire. Rest. The descent is one-way, but home is never far from a flame.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-12",
+      "text": "Components are not treasure. They are the price of a checkpoint.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-13",
+      "text": "Bosses guard the way down. Defeat them, and their skill becomes yours.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-14",
+      "text": "Gold buys steel. Steel buys survival. Survival buys more gold.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-15",
+      "text": "The deeper you go, the more the walls remember.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-16",
+      "text": "Essence is the soul's residue. The Alchemist knows how to spend it.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-17",
+      "text": "A summoned ally is not loyal. It is simply not yet your enemy.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-18",
+      "text": "Traps are patience made physical. The Hunter has plenty of patience.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-19",
+      "text": "Frenzy is a debt. It is always collected.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-20",
+      "text": "The parish bells ring for no one. They ring to keep something in.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-21",
+      "text": "The ossuary keeps the bones in tidy rows. They were not always tidy.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-22",
+      "text": "The sewers carry more than water. They carry what the city flushed away.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-23",
+      "text": "The library burned once. The books remember being burned.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-24",
+      "text": "The gallows is the only place in the deep that is honest.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-25",
+      "text": "The chapel's windows are stained with more than paint.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-26",
+      "text": "Do not trust the fog. It has seen you.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-27",
+      "text": "Every enemy was once something else. The parts remember.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-28",
+      "text": "The dungeon does not generate itself. Something is writing it.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-29",
+      "text": "There is no way back, only deeper. The bonfire is the exception.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    },
+    {
+      "id": "lore-30",
+      "text": "Heirs of the Abyss: the dungeon's children, descending into their inheritance.",
+      "tags": [
+        "gothic",
+        "canon"
+      ],
+      "is_canonical": true
+    }
+  ],
+  "market_stock": [
+    "iron_sword",
+    "leather_armor",
+    "health_potion",
+    "dagger",
+    "hunting_bow",
+    "crossbow",
+    "antidote",
+    "frenzy_brew"
+  ]
+}

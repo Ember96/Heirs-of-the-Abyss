@@ -1,0 +1,25 @@
+EndlessDungeon — T4.1 evidence: full MVP catalog
+Generated: 2026-08-21
+
+Command: uv run pytest tests/test_catalog.py tests/test_catalog_full.py -q
+Result: 12 passed
+
+Counts (target -> actual):
+  parts   >=60 -> 60   (15 bodies + 25 weapons + 20 moves)
+  affixes >=30 -> 30   (10 elemental + 10 physical + 10 status)
+  items   >=40 -> 40   (15 weapons + 12 armor + 8 consumables + 5 tools)
+  themes  >=10 -> 10
+  lore    >=30 -> 30
+  classes =3, enemies =10, bosses =3, boss_skills =5 (unchanged)
+
+Referential integrity:
+  [PASS] starting_gear resolves to item ids
+  [PASS] boss skill_unlock resolves to boss_skill ids
+  [PASS] market_stock resolves to item ids
+  [PASS] enemy parts/affixes resolve to part/affix ids
+  [PASS] behavior tables have action + weight
+
+Files:
+  catalog/seed.json              (full MVP catalog, gothic-horror themed)
+  server/app/game/catalog.py     (loader + accessors)
+  server/tests/test_catalog_full.py
