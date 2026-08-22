@@ -1,0 +1,27 @@
+EndlessDungeon — T2.3 evidence: dual sim core conformance
+Generated: 2026-08-21
+
+Command: uv run python scripts/sim_conformance.py 2000
+Result: PASS — 2000 cases byte-identical (Python == GDScript)
+
+Sim-core spec (server/app/game/sim/core.py + client/scripts/sim_core.gd):
+  - pure integer/fixed-point; positions tile-units x1000; fixed 60 Hz tick
+  - dice-free: damage = max(1, atk-def) x mechanical multiplier (x1.5 stagger = (d*3+1)>>1)
+  - stamina (100; roll 18 / attack 22 / block 5 / regen 27/s idle, fixed-point accumulator)
+  - posture (player 100, enemy 80-150; decay 10/s; break -> stagger 2.5s)
+  - roll i-frames 13 ticks; 32-bit xorshift drives enemy attack timing (cross-language safe)
+
+Conformance corpus: catalog/sim_corpus/corpus.json (2000 seeded cases, regenerable via SeededRandom)
+
+Tests:
+  [PASS] test_sim_deterministic_python (same seed -> same state, 500 ticks)
+  [PASS] test_sim_conformance_python_gdscript (50 cases, byte-identical)
+  [PASS] full 2000-case run (byte-identical)
+
+Files:
+  server/app/game/sim/core.py          (Python sim)
+  client/scripts/sim_core.gd           (GDScript mirror)
+  client/scripts/test_sim.gd           (headless driver)
+  server/scripts/sim_conformance.py    (runner)
+  server/tests/test_sim_conformance.py
+  catalog/sim_corpus/corpus.json       (2000-case corpus)

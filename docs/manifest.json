@@ -1,21 +1,59 @@
 {
-  "$comment": "Code→doc manifest. Every source file under server/app/, client/, catalog/ must be listed here (mappings) or be derivable-doc-covered (derivable). The docs:check gate fails on unlisted files and on empty doc mappings.",
+  "$comment": "Code\u2192doc manifest. Every source file under server/app/, client/, catalog/ must be listed here (mappings) or be derivable-doc-covered (derivable). The docs:check gate fails on unlisted files and on empty doc mappings.",
   "derivable": {
-    "server/app/game/models.py": ["docs/06-data-model.md (ERD, regenerated in T2.1)"],
-    "server/app/game/rules.py": ["docs/04-game-states.md (state machines, regenerated in T2.1)"]
+    "server/app/game/models.py": [
+      "docs/06-data-model.md (ERD, regenerated in T2.1)"
+    ],
+    "server/app/game/rules.py": [
+      "docs/04-game-states.md (state machines, regenerated in T2.1)"
+    ]
   },
   "mappings": {
-    "server/app/protocol.py": ["docs/05-protocol.md"],
-    "server/app/config.py": ["docs/10-runbook.md"],
-    "server/app/ws.py": ["docs/05-protocol.md", "docs/13-security.md"],
-    "server/app/main.py": ["docs/02-architecture.md"],
-    "server/app/docs_check.py": ["docs/STYLE.md"],
-    "server/app/game/rng.py": ["docs/04-game-states.md"],
-    "server/app/game/catalog.py": ["docs/08-content-catalog.md"],
-    "client/scripts/NetworkManager.gd": ["docs/05-protocol.md"],
-    "client/scripts/hmac_utils.gd": ["docs/05-protocol.md"],
-    "client/scripts/main.gd": ["docs/02-architecture.md"],
-    "catalog/corpus/manifest.json": ["docs/09-ai-rag-corpus.md"],
-    "catalog/minimal/seed.json": ["docs/08-content-catalog.md"]
+    "server/app/protocol.py": [
+      "docs/05-protocol.md"
+    ],
+    "server/app/config.py": [
+      "docs/10-runbook.md"
+    ],
+    "server/app/ws.py": [
+      "docs/05-protocol.md",
+      "docs/13-security.md"
+    ],
+    "server/app/main.py": [
+      "docs/02-architecture.md"
+    ],
+    "server/app/docs_check.py": [
+      "docs/STYLE.md"
+    ],
+    "server/app/game/rng.py": [
+      "docs/04-game-states.md"
+    ],
+    "server/app/game/catalog.py": [
+      "docs/08-content-catalog.md"
+    ],
+    "client/scripts/NetworkManager.gd": [
+      "docs/05-protocol.md"
+    ],
+    "client/scripts/hmac_utils.gd": [
+      "docs/05-protocol.md"
+    ],
+    "client/scripts/main.gd": [
+      "docs/02-architecture.md"
+    ],
+    "catalog/corpus/manifest.json": [
+      "docs/09-ai-rag-corpus.md"
+    ],
+    "catalog/minimal/seed.json": [
+      "docs/08-content-catalog.md"
+    ],
+    "server/app/game/sim/core.py": [
+      "docs/04-game-states.md"
+    ],
+    "client/scripts/sim_core.gd": [
+      "docs/04-game-states.md"
+    ],
+    "catalog/sim_corpus/corpus.json": [
+      "docs/04-game-states.md"
+    ]
   }
 }
