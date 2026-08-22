@@ -19,6 +19,7 @@ dependencies = [
 
 [project.scripts]
 docs-check = "app.docs_check:main"
+evals = "app.evals.evaluators:main"
 
 [dependency-groups]
 dev = [

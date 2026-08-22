@@ -117,6 +117,9 @@
     ],
     "client/scripts/state_sync.gd": [
       "docs/05-protocol.md"
+    ],
+    "server/app/evals/evaluators.py": [
+      "docs/11-evals.md"
     ]
   }
 }

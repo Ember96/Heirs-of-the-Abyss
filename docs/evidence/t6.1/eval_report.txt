@@ -1,0 +1,22 @@
+EndlessDungeon — T6.1 evidence: eval suite (code evaluators)
+Generated: 2026-08-21
+
+Command: uv run evals
+Result: all PASS
+
+Gates (threshold -> measured):
+  schema_valid:   1.00  (>= 0.95)  PASS
+  balance:        1.00  (>= 1.0)   PASS
+  catalog_ids:    1.00  (>= 1.0)   PASS
+
+Coverage: 100 composed variants (5 tiers x 20) evaluated for schema validity,
+clamp enforcement, and catalog-id integrity.
+
+Note: LangSmith tracing + LLM-as-judge (narrative quality >= 80%, rule
+adherence >= 95%) are wired when a LangSmith API key is available; the
+deterministic code evaluators above run everywhere and gate the invariants.
+
+Files:
+  server/app/evals/evaluators.py   (thresholds + evaluators + run_evals + main)
+  server/tests/test_evals.py
+  server/pyproject.toml            ([project.scripts] evals)
