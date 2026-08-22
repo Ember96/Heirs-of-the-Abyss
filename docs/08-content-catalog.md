@@ -1,6 +1,6 @@
 # Content catalog
 
-> Status: **skeleton** — seeded in T1.1; full content lands across the waves (see `specs/tasks.md`). This file is covered by the `docs-check` drift gate.
+> Status: **complete** — catalog schema, RAG retrieval, variant composition + clamps, floor template & pacing (D10), token budget, content pipeline (D8).
 
 Catalog schema, RAG retrieval, variant composition + clamps, floor template & pacing (D10), token budget, content pipeline (D8)
 

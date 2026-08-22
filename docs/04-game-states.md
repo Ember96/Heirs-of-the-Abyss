@@ -1,6 +1,6 @@
 # Game states
 
-> Status: **skeleton** — seeded in T1.1; full content lands across the waves (see `specs/tasks.md`). This file is covered by the `docs-check` drift gate.
+> Status: **complete** — meta (D3), combat/soulslike (D7), floor lifecycle, room types.
 
 State machines: meta (D3), combat/soulslike (D7), floor lifecycle, room types
 

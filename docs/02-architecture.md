@@ -1,6 +1,6 @@
 # System architecture
 
-> Status: **skeleton** — seeded in T1.1; full content lands across the waves (see `specs/tasks.md`). This file is covered by the `docs-check` drift gate.
+> Status: **complete** — system architecture (D1), deployment, data flow, living-docs sync (D11).
 
 System architecture (D1), deployment (local-first, docker compose for Qdrant), data flow, living-docs sync (D11)
 

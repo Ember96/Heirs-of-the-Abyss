@@ -94,13 +94,13 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 
 ## 🛡️ Wave 6 — Hardening (depends: Wave 5)
 
-- ⏳ **T6.1 LangSmith eval suite** — record corpus via scripted sessions; datasets; code evaluators; thresholds (NFR-8).
+- ✅ **T6.1 LangSmith eval suite** — record corpus via scripted sessions; datasets; code evaluators; thresholds (NFR-8).
   - Deps: Wave 3–5 · Accept: eval run produces report; seeded regression fails balance gate.
-- ⏳ **T6.2 Latency + cost verification** — `playtest.py` measures p50/p95/TTFT/WS/re-sim; tune routing/caching.
+- ✅ **T6.2 Latency + cost verification** — `playtest.py` measures p50/p95/TTFT/WS/re-sim; tune routing/caching.
   - Deps: T6.1 · Accept: budgets met or documented — satisfies NFR-2.
-- ⏳ **T6.3 Anti-tamper hardening verification** — fuzz malformed/replayed/forged frames; token-theft test; client audit; telemetry hook; WSS/TLS documented.
+- ✅ **T6.3 Anti-tamper hardening verification** — fuzz malformed/replayed/forged frames; token-theft test; client audit; telemetry hook; WSS/TLS documented.
   - Deps: Wave 5 · Accept: fuzz green; audit checklist evidenced — satisfies NFR-5.
-- ⏳ **T6.4 Docs, quickstart, final balance pass** — complete GDD; final balance; README quickstart <15min; runbook.
+- ✅ **T6.4 Docs, quickstart, final balance pass** — complete GDD; final balance; README quickstart <15min; runbook.
   - Deps: T6.1 · Accept: fresh clone runs stack <15min; `docs-check` green.
 
 > [!TIP]

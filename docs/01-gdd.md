@@ -1,6 +1,6 @@
 # Game Design Document
 
-> Status: **in progress** — theme, classes, and bosses defined; enemies + balance land in T2.2/T4.1.
+> Status: **complete** — theme, classes, bosses, enemies, and balance defined.
 
 Vision: a soulslike roguelike in a **gothic-horror** dungeon (Bloodborne / Castlevania). Shrine-bonfires are the last light against the dark; the deeper you descend, the more the dungeon reflects your own sins back at you.
 
@@ -48,6 +48,16 @@ A mischievous creature that **never moves**, **rejects projectiles**, and litter
 ### 3. The Unknown — Alchemist's sin (floor 15)
 
 The opposite of hunger for knowledge: a floating ghost-mass that violates every combat rule. Get too close and it **stomps**; stay too far and it fires **fast projectiles**; hit it and it **heals**; do nothing and it **loses health until it dissolves**.
+
+## Enemies
+
+> [!NOTE]
+> 10 enemy archetypes in the catalog (`catalog/seed.json`), scaled per tier by the clamp layer — from `wretch` (fodder) to `flesh_golem` (brute). See the [content catalog](08-content-catalog.md) for the full table.
+
+## Balance
+
+> [!IMPORTANT]
+> Combat is **dice-free** and tier-bounded. Enemy power = `hp + attack×10 + defense×5`; the tier budget is `100 × (1 + 0.25 × (tier−1))` (tier 1 = 100 → tier 5 = 200). `clamp_variant` forces every composed enemy into `budget ±25%` before commit — the engine, not the LLM, owns the numbers.
 
 > **Diagram legend** — 🟠 critical/gate · 🟢 checkpoint/reward · 🔴 terminal/failure · 🔵 info
 
