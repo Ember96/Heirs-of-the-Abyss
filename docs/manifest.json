@@ -72,6 +72,9 @@
     ],
     "server/app/agent/generator.py": [
       "docs/07-agent-design.md"
+    ],
+    "server/app/agent/verifiers.py": [
+      "docs/07-agent-design.md"
     ]
   }
 }

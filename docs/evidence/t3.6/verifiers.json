@@ -1,0 +1,14 @@
+{
+  "todo": "t3.6",
+  "generated": "2026-08-21",
+  "command": "uv run pytest tests/test_verifiers.py -q",
+  "result": "6 passed",
+  "judges": {
+    "balance": "PASS — rejects unwinnable (power > budget+25%) and free-win (power < budget-25%)",
+    "rules": "PASS — rejects unknown enemy_id / affix ids",
+    "lore": "PASS — rejects facts referencing ungrounded entities",
+    "progression": "PASS — rejects outside difficulty band"
+  },
+  "gate": "all four must pass -> approved; else rejected",
+  "files": ["server/app/agent/verifiers.py", "server/tests/test_verifiers.py"]
+}
