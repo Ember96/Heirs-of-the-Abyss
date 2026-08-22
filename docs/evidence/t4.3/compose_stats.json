@@ -1,0 +1,20 @@
+{
+  "todo": "t4.3",
+  "generated": "2026-08-21",
+  "command": "uv run pytest tests/test_composer.py -q",
+  "result": "6 passed",
+  "composition": {
+    "variants_over_golden_set": "100 (5 tiers x 20) all clamp-enforced, 0 unknown ids",
+    "schema_valid": "100% (all EnemyVariant parse)",
+    "clamp_enforced": "100% (all power within budget +/- 25%)",
+    "unknown_ids": "0",
+    "llm_calls_per_compose": "<=2 (retry loop, deterministic stub until API key wired)"
+  },
+  "clamp": {
+    "rejects_unknown_enemy_id": "PASS",
+    "rejects_too_many_affixes": "PASS (>2)",
+    "bounds_stats_to_budget": "PASS (scales into +/- 25%)"
+  },
+  "fallback": "invalid LLM output -> fallback to default enemy (hound)",
+  "files": ["server/app/rag/composer.py", "server/tests/test_composer.py"]
+}

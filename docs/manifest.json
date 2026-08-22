@@ -87,6 +87,9 @@
     ],
     "server/app/rag/golden.py": [
       "docs/11-evals.md"
+    ],
+    "server/app/rag/composer.py": [
+      "docs/08-content-catalog.md"
     ]
   }
 }
