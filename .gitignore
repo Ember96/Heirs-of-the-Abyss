@@ -39,3 +39,6 @@ opencode_session
 
 # OhMyOpenCode planning state (canonical plan lives in specs/)
 .omo/
+
+# CodeGraph generated index (regenerable via `codegraph init`)
+.codegraph/
