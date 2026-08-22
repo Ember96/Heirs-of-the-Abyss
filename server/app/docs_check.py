@@ -73,12 +73,45 @@ def run_style_lint() -> list[str]:
     return [] if result.returncode == 0 else [result.stdout.strip()]
 
 
+def generate_erd() -> str:
+    import inspect
+
+    from pydantic import BaseModel
+
+    from app.game import models as m
+
+    lines = ["erDiagram"]
+    for name in sorted(dir(m)):
+        obj = getattr(m, name)
+        if not (inspect.isclass(obj) and issubclass(obj, BaseModel) and obj.__module__ == m.__name__):
+            continue
+        if name in ("GameModel", "RoomType"):
+            continue
+        lines.append(f"  {name} {{")
+        for field in obj.model_fields:
+            lines.append(f"    string {field}")
+        lines.append("  }")
+    return "\n".join(lines)
+
+
 def regenerate_derivable_docs(manifest: dict) -> list[str]:
-    missing = []
-    for code_path in manifest.get("derivable", {}):
-        if (ROOT / code_path).exists():
-            missing.append(f"derivable-doc regeneration not wired yet for: {code_path}")
-    return missing
+    violations: list[str] = []
+    if (ROOT / "server/app/game/models.py").exists():
+        generated = generate_erd()
+        doc = (DOC_DIR / "06-data-model.md").read_text(encoding="utf-8")
+        start = doc.find("<!-- ERD-GENERATED-START -->")
+        end = doc.find("<!-- ERD-GENERATED-END -->")
+        if start == -1 or end == -1:
+            violations.append("docs/06-data-model.md: missing ERD generation markers")
+        else:
+            expected = (
+                "<!-- ERD-GENERATED-START -->\n\n```mermaid\n"
+                f"{generated}\n```\n\n<!-- ERD-GENERATED-END -->"
+            )
+            current = doc[start:end + len("<!-- ERD-GENERATED-END -->")]
+            if current != expected:
+                violations.append("docs/06-data-model.md: ERD drifted from models.py — regenerate it")
+    return violations
 
 
 def main() -> int:

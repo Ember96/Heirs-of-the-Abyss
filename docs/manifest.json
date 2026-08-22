@@ -10,6 +10,7 @@
     "server/app/ws.py": ["docs/05-protocol.md", "docs/13-security.md"],
     "server/app/main.py": ["docs/02-architecture.md"],
     "server/app/docs_check.py": ["docs/STYLE.md"],
+    "server/app/game/rng.py": ["docs/04-game-states.md"],
     "client/scripts/NetworkManager.gd": ["docs/05-protocol.md"],
     "client/scripts/hmac_utils.gd": ["docs/05-protocol.md"],
     "client/scripts/main.gd": ["docs/02-architecture.md"],
