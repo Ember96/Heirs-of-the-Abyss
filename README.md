@@ -7,9 +7,9 @@ A single-player **soulslike roguelike** with unbounded AI-generated floors. A La
 ![LangGraph](https://img.shields.io/badge/LangGraph-1.2-1C3C3C?logo=langchain&logoColor=white)
 ![LangSmith](https://img.shields.io/badge/LangSmith-traced-000000?logo=langchain&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-2E7D32)
-![Status](https://img.shields.io/badge/status-Wave_4_%E2%80%94_RAG_complete-2E7D32)
+![Status](https://img.shields.io/badge/status-Wave_5_%E2%80%94_client_complete-2E7D32)
 
-> **Status** — 🟢 **Wave 4 complete** (RAG: catalog, hybrid retrieval, variant composition, corpus, lore quarantine). Wave 5 (Godot client) next. See [`specs/`](specs/) for the spec-driven plan (`spec.md` → `plan.md` → `tasks.md`) and [`docs/`](docs/) for the living documentation.
+> **Status** — 🟢 **Wave 5 complete** (Godot client: isometric render, combat, scenes, reconnection). Wave 6 (hardening: evals, latency, anti-tamper, balance) next. See [`specs/`](specs/) for the spec-driven plan (`spec.md` → `plan.md` → `tasks.md`) and [`docs/`](docs/) for the living documentation.
 
 > **Conventions used across these docs** — 🟠 critical rule/invariant · 🟢 success/goal/done · 🔴 problem/must-not/risk · 🔵 info
 

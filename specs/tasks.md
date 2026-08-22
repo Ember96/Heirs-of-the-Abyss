@@ -78,15 +78,15 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 
 ## 🗡️ Wave 5 — Client (depends: Wave 2 protocol + mock; Wave 3/4 content optional)
 
-- ⏳ **T5.1 Isometric rendering** — TileMapLayer `TILE_SHAPE_ISOMETRIC` + separate layers + Y-sort; screen↔iso; placeholder shapes.
+- ✅ **T5.1 Isometric rendering** — TileMapLayer `TILE_SHAPE_ISOMETRIC` + separate layers + Y-sort; screen↔iso; placeholder shapes.
   - Deps: T1.4 · Accept: same seed → identical rendered floor (xvfb screenshot diff).
-- ⏳ **T5.2 GDScript sim core mirror + conformance re-run** — wire `sim_core.gd`; re-run conformance in-engine.
+- ✅ **T5.2 GDScript sim core mirror + conformance re-run** — wire `sim_core.gd`; re-run conformance in-engine.
   - Deps: T2.3, T5.1 · Accept: corpus green with in-engine GDScript.
-- ⏳ **T5.3 Real-time combat** — hitbox/hurtbox feedback-only; sim-computed hits; input buffering; fight-log streaming; `verified:false` cap ≤2; reconnect/crash resume.
+- ✅ **T5.3 Real-time combat** — hitbox/hurtbox feedback-only; sim-computed hits; input buffering; fight-log streaming; `verified:false` cap ≤2; reconnect/crash resume.
   - Deps: T5.2 · Accept: scripted fight → `verified:true`; tampered log → `verified:false` — satisfies FR-2.
-- ⏳ **T5.4 Game scenes** — hometown/market/shrine/boss/loot/event; inventory+equipment; combat HUD; game-over; escaped narrative log.
+- ✅ **T5.4 Game scenes** — hometown/market/shrine/boss/loot/event; inventory+equipment; combat HUD; game-over; escaped narrative log.
   - Deps: T5.3 · Accept: full scene flow against mock server.
-- ⏳ **T5.5 Reconnection + error handling** — reconnect overlay; `state_sync` wholesale replace; error toasts; fight-mid-flight resume.
+- ✅ **T5.5 Reconnection + error handling** — reconnect overlay; `state_sync` wholesale replace; error toasts; fight-mid-flight resume.
   - Deps: T5.3, T1.5 · Accept: kill/restart server mid-fight → same fight state.
 
 > [!TIP]
