@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import secrets
 import time
 from collections.abc import Awaitable, Callable
@@ -19,6 +20,18 @@ from fastapi import WebSocket, WebSocketDisconnect
 from . import config
 from . import protocol as P
 from .persistence import SessionStore
+
+_security_logger = logging.getLogger("endlessdungeon.security")
+
+
+def log_security_event(code: str, detail: str) -> None:
+    """Telemetry hook: emit a structured log line for every rejected frame.
+
+    Security-sensitive paths (auth failure, HMAC mismatch, seq replay, rate
+    limit, oversized frame, malformed JSON) all route through here so operators
+    can alert on anomalies without instrumenting each branch.
+    """
+    _security_logger.warning("security_event code=%s detail=%s", code, detail)
 
 
 class TokenBucket:
@@ -116,21 +129,25 @@ class Connection:
 
     async def _handle_raw(self, raw: str) -> None:
         if P.frame_too_large(raw.encode("utf-8")):
+            log_security_event("frame_too_large", "frame exceeds 64KB")
             await self.send_error("frame_too_large", "frame exceeds 64KB", recoverable=True)
             return
 
         try:
             frame = json.loads(raw)
         except (json.JSONDecodeError, TypeError):
+            log_security_event("bad_json", "malformed JSON frame")
             await self.ws.close(code=1007)
             return
 
         err = P.validate_envelope(frame)
         if err == "unsupported_version":
+            log_security_event("unsupported_version", f"version {frame.get('v')} unsupported")
             await self.send_error("unsupported_version", f"version {frame.get('v')} unsupported", recoverable=False)
             await self.ws.close(code=1008)
             return
         if err:
+            log_security_event("frame_invalid", f"envelope invalid: {err}")
             await self.ws.close(code=1007)
             return
 
@@ -141,12 +158,14 @@ class Connection:
 
         # anti-replay: seq strictly increasing per direction
         if not self._in_seq.check(seq):
+            log_security_event("seq_replay", f"seq {seq} <= last {self._in_seq.last}")
             await self.ws.close(code=1008)
             return
 
         # auth: first message must be `hello`
         if not self.authenticated:
             if type_ != "hello":
+                log_security_event("auth_failed", "hello required first")
                 await self.send_error("auth_failed", "hello required first", recoverable=False)
                 await self.ws.close(code=1008)
                 return
@@ -155,12 +174,14 @@ class Connection:
         if self.hmac_key is not None and self.signing_enabled:
             sig = frame.get("hmac")
             if sig is None or not P.verify_frame(self.hmac_key, type_, id_, seq, payload, sig):
+                log_security_event("hmac_invalid", f"HMAC mismatch on {type_}")
                 await self.send_error("hmac_invalid", "HMAC mismatch", recoverable=True)
                 return
 
         self._in_seq.record(seq)
 
         if not self._limiter.allow():
+            log_security_event("rate_limited", "message rate exceeded")
             await self.send_error("rate_limited", "message rate exceeded", recoverable=True)
             return
 
@@ -205,6 +226,7 @@ class Connection:
 
     async def _handle_hello(self, id_: str, payload: dict) -> None:
         if payload.get("token") != self.dev_token:
+            log_security_event("auth_failed", "invalid token")
             await self.send_error("auth_failed", "invalid token", recoverable=False)
             await self.ws.close(code=1008)
             return
