@@ -63,6 +63,9 @@
     ],
     "server/app/agent/graph.py": [
       "docs/07-agent-design.md"
+    ],
+    "server/app/agent/tools.py": [
+      "docs/07-agent-design.md"
     ]
   }
 }
