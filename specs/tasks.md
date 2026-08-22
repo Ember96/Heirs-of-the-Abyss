@@ -14,13 +14,13 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
   - Deps: — · Accept: `uv run python -c "import fastapi, langgraph, qdrant_client, pydantic"` green; Godot opens project.
 - ✅ **T1.2 WS protocol spec v1** — `docs/05-protocol.md` exhaustive + `server/app/protocol.py` (envelope + 23 payload schemas + HMAC + SeqTracker); all message types, per-frame `id` semantics, resume order, idempotency, error codes.
   - Deps: T1.1 · Accept: `test_protocol.py` (42 tests) validates example frames (HMAC, seq, resume, 64KB cap) — satisfies FR-7.
-- ⏳ **T1.3 FastAPI server skeleton + generation tracker + auth** — `/health`, WS `/game` with registry, per-session `asyncio.timeout(GENERATION_TIMEOUT)` tracker, HMAC verify, rate limits, dev-token `hello`, `mock_server.py`, LangSmith init.
+- ✅ **T1.3 FastAPI server skeleton + generation tracker + auth** — `/health`, WS `/game` with registry, per-session `asyncio.timeout(GENERATION_TIMEOUT)` tracker, HMAC verify, rate limits, dev-token `hello`, `mock_server.py`, LangSmith init.
   - Deps: T1.2 · Accept: handshake + HMAC round-trip; bad token/hmac rejected with typed error.
-- ⏳ **T1.4 Godot skeleton + NetworkManager** — autoload WebSocketPeer (connect/poll/HMAC/seq/heartbeat/reconnect/resume); signals; bootstrap scene.
+- ✅ **T1.4 Godot skeleton + NetworkManager** — autoload WebSocketPeer (connect/poll/HMAC/seq/heartbeat/reconnect/resume); signals; bootstrap scene.
   - Deps: T1.2 · Accept: connects to `mock_server.py`, auth+HMAC, reconnect+resume (evidence via xvfb + ffmpeg).
-- ⏳ **T1.5 E2E socket conformance** — round-trip <100ms; double-action order; generation-lifecycle terminal frame; resume ordering; out-of-context decision.
+- ✅ **T1.5 E2E socket conformance** — round-trip <100ms; double-action order; generation-lifecycle terminal frame; resume ordering; out-of-context decision.
   - Deps: T1.3, T1.4 · Accept: all conformance cases headless.
-- ⏳ **T1.6 Living-docs scaffold + drift gate** — materialize `docs/`; `uv run docs-check` (regenerate derivable docs + diff, exit non-zero on drift); code→doc manifest with inverse check.
+- ✅ **T1.6 Living-docs scaffold + drift gate** — materialize `docs/`; `uv run docs-check` (regenerate derivable docs + diff, exit non-zero on drift); code→doc manifest with inverse check.
   - Deps: T1.1 · Accept: gate green on clean tree; deliberate drift fails naming the file — satisfies NFR-7.
 
 > [!TIP]
@@ -28,15 +28,15 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 
 ## ⚙️ Wave 2 — Deterministic core (depends: Wave 1)
 
-- ⏳ **T2.1 Game-state models + seeded RNG** — Pydantic models (`Player/Floor/Room/Enemy/FightState/GameSession/…`); `SeededRandom` (Xorshift128+); per-fight RNG isolation; `build_tags` recompute on equip.
+- ✅ **T2.1 Game-state models + seeded RNG** — Pydantic models (`Player/Floor/Room/Enemy/FightState/GameSession/…`); `SeededRandom` (Xorshift128+); per-fight RNG isolation; `build_tags` recompute on equip.
   - Deps: T1.1 · Accept: determinism across processes; zero module-level `random`.
-- ⏳ **T2.2 Combat sim spec + engine rules** — `rules.py` + `catalog/minimal/` seed; damage `max(1, atk−def)` × mechanical multipliers; pinned stamina/posture/i-frame/parry values; fight-length bound; sector/shrine/death/market/boss-skill rules.
+- ✅ **T2.2 Combat sim spec + engine rules** — `rules.py` + `catalog/minimal/` seed; damage `max(1, atk−def)` × mechanical multipliers; pinned stamina/posture/i-frame/parry values; fight-length bound; sector/shrine/death/market/boss-skill rules.
   - Deps: T2.1 · Accept: unit tests (frame-exact windows, behavior-table determinism, descent invariants) — satisfies FR-1, FR-3, FR-4.
-- ⏳ **T2.3 Shared sim core (dual impl + conformance)** — `sim/core.py` + `sim_core.gd`; `sim_conformance.py` ≥2000 seeded cases, byte-identical.
+- ✅ **T2.3 Shared sim core (dual impl + conformance)** — `sim/core.py` + `sim_core.gd`; `sim_conformance.py` ≥2000 seeded cases, byte-identical.
   - Deps: T2.2 · Accept: corpus green both languages — satisfies NFR-1, FR-2.
-- ⏳ **T2.4 Seeded floor generator** — 4-room template; shrine floor-1 guaranteed + excluded from 2–4 pool; ≥1 loot/event per sector; difficulty band ±25%; `place_enemy`; token caps.
+- ✅ **T2.4 Seeded floor generator** — 4-room template; shrine floor-1 guaranteed + excluded from 2–4 pool; ≥1 loot/event per sector; difficulty band ±25%; `place_enemy`; token caps.
   - Deps: T2.2 · Accept: 1000-seed invariants; reachability; `place_enemy` sole append path.
-- ⏳ **T2.5 Persistence + session service + retention** — SQLite WAL/aiosqlite/single-writer; tables; retention cascade; `headless_player.py`.
+- ✅ **T2.5 Persistence + session service + retention** — SQLite WAL/aiosqlite/single-writer; tables; retention cascade; `headless_player.py`.
   - Deps: T2.1, T2.4 · Accept: save/load round-trip; retention removes all rows across stores.
 
 > [!TIP]
