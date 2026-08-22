@@ -120,6 +120,9 @@
     ],
     "server/app/evals/evaluators.py": [
       "docs/11-evals.md"
+    ],
+    "server/app/evals/latency.py": [
+      "docs/11-evals.md"
     ]
   }
 }

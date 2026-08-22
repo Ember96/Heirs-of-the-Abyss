@@ -1,0 +1,10 @@
+{
+  "generated": "2026-08-21",
+  "metrics": {
+    "re_sim": {"measured_ms": 16.2, "budget_ms": 1000, "pass": true, "note": "worst-case full fight (36000 ticks)"},
+    "turn_p50": {"budget_ms": 3000, "deferred": "LLM not wired"},
+    "turn_p95": {"budget_ms": 8000, "deferred": "LLM not wired"},
+    "ttft": {"budget_ms": 1500, "deferred": "LLM not wired"},
+    "ws_roundtrip": {"budget_ms": 100, "note": "covered by protocol test T1.5 roundtrip_under_100ms"}
+  }
+}
