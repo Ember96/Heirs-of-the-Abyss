@@ -1,0 +1,15 @@
+EndlessDungeon — T5.2 evidence: in-engine sim core + discipline guard
+Generated: 2026-08-21
+
+Command: uv run pytest tests/test_sim_discipline.py tests/test_sim_conformance.py -q
+Result: 5 passed
+
+Acceptance:
+  [PASS] conformance corpus green (test_sim_conformance: 50-case Python==GDScript)
+  [PASS] sim core has no randf/randi/randomize/create_timer/randf_range
+  [PASS] sim core uses seeded xorshift32 (no module-level randomness)
+  [PASS] sim core has no float literals (1.5/0.5) — integer fixed-point only
+
+Files:
+  server/tests/test_sim_discipline.py
+  client/scripts/sim_core.gd  (unchanged from T2.3, conformance-verified)
