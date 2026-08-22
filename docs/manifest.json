@@ -66,6 +66,9 @@
     ],
     "server/app/agent/tools.py": [
       "docs/07-agent-design.md"
+    ],
+    "server/app/agent/input_pipeline.py": [
+      "docs/13-security.md"
     ]
   }
 }
