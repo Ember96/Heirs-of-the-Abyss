@@ -111,6 +111,12 @@
     ],
     "client/scripts/progression.gd": [
       "docs/01-gdd.md"
+    ],
+    "client/scripts/error_messages.gd": [
+      "docs/05-protocol.md"
+    ],
+    "client/scripts/state_sync.gd": [
+      "docs/05-protocol.md"
     ]
   }
 }

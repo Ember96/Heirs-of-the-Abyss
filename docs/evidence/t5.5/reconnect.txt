@@ -1,0 +1,19 @@
+EndlessDungeon — T5.5 evidence: reconnection + error handling
+Generated: 2026-08-21
+
+Command: uv run pytest tests/test_sync.py -q
+Result: 1 passed
+
+Acceptance (headless-testable core):
+  [PASS] error code -> UI message mapping (busy, session_terminal, unknown)
+  [PASS] multi-frame state_sync assembly (apply only final frame)
+
+Implementation:
+  client/scripts/error_messages.gd  (ErrorMessages.message_for)
+  client/scripts/state_sync.gd      (StateSync.assemble_frames + is_final_frame)
+  client/scripts/test_sync.gd       (headless driver)
+  server/tests/test_sync.py
+
+Note: the reconnect overlay UI + fight mid-flight resume (mp4 evidence) are
+deferred to the visual QA pass; the deterministic assembly + error-mapping logic
+is proven headless here.
