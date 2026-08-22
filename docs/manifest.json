@@ -90,6 +90,9 @@
     ],
     "server/app/rag/composer.py": [
       "docs/08-content-catalog.md"
+    ],
+    "server/app/rag/corpus.py": [
+      "docs/09-ai-rag-corpus.md"
     ]
   }
 }

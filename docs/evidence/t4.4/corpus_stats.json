@@ -1,0 +1,16 @@
+{
+  "todo": "t4.4",
+  "generated": "2026-08-21",
+  "command": "uv run pytest tests/test_corpus.py -q",
+  "result": "6 passed",
+  "license_gate": {
+    "requires_license_source_domain": "PASS",
+    "rejects_non_compatible_licenses": "PASS (NC/SA -> MIT-compatible gate)",
+    "validate_corpus_clean": "PASS (14 ingested records all pass)"
+  },
+  "search": {
+    "soulslike_difficulty_tuning": "PASS (soulslike-struggle / soulslike-ordeal)",
+    "player_retention": "PASS (player-psychology domain)"
+  },
+  "files": ["server/app/rag/corpus.py", "server/tests/test_corpus.py"]
+}
