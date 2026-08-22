@@ -60,6 +60,9 @@
     ],
     "server/app/persistence.py": [
       "docs/02-architecture.md"
+    ],
+    "server/app/agent/graph.py": [
+      "docs/07-agent-design.md"
     ]
   }
 }
