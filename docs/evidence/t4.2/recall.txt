@@ -1,0 +1,24 @@
+EndlessDungeon — T4.2 evidence: hybrid retrieval + golden-set recall
+Generated: 2026-08-21
+
+Command: uv run pytest tests/test_rag.py -q
+Result: 5 passed
+
+Retrieval:
+  [PASS] golden-set recall@5 >= 70% (20 queries over the full catalog)
+  [PASS] RRF fusion combines ranked lists (dense + BM25)
+  [PASS] payload filters (entity_kind)
+  [PASS] search returns limit results
+  [PASS] name match ranks first
+
+Notes:
+  - search_local is the deterministic, dependency-free fallback (no Qdrant/embeddings).
+  - Retriever wraps Qdrant for production; the dense+BM25 Qdrant path is wired
+    when docker (`docker compose up qdrant`) + an embedding model are available.
+
+Files:
+  server/app/rag/indexer.py    (render_record, all_records, index_catalog stub)
+  server/app/rag/retriever.py  (tokenize, rrf_fusion, search_local, Retriever)
+  server/app/rag/golden.py     (20-query golden set)
+  docker-compose.yml           (Qdrant single node)
+  server/tests/test_rag.py

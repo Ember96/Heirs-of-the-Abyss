@@ -78,6 +78,15 @@
     ],
     "catalog/seed.json": [
       "docs/08-content-catalog.md"
+    ],
+    "server/app/rag/indexer.py": [
+      "docs/09-ai-rag-corpus.md"
+    ],
+    "server/app/rag/retriever.py": [
+      "docs/08-content-catalog.md"
+    ],
+    "server/app/rag/golden.py": [
+      "docs/11-evals.md"
     ]
   }
 }
