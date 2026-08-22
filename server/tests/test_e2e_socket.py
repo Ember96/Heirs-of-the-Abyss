@@ -120,7 +120,8 @@ def test_busy_during_generation(monkeypatch):
             assert e["payload"]["code"] == "busy"
 
 
-def test_100_pingpong_monotonic():
+def test_100_pingpong_monotonic(monkeypatch):
+    monkeypatch.setattr(config, "MESSAGE_BURST", 500)
     with TestClient(app) as c:
         with c.websocket_connect("/game") as ws:
             hk = _hello(ws)["payload"]["hmac_key"]

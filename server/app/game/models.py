@@ -92,6 +92,7 @@ class Floor(GameModel):
     seed: int
     floor_index: int
     rooms: list[Room] = Field(default_factory=list)
+    adjacency: list[list[int]] = Field(default_factory=list)
 
 
 class BossSkill(GameModel):

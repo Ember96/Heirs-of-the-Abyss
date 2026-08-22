@@ -1,0 +1,19 @@
+{
+  "todo": "t2.4",
+  "generated": "2026-08-21",
+  "command": "uv run pytest tests/test_floorgen.py -q",
+  "result": "7 passed",
+  "invariants": {
+    "same_seed_byte_identical": "PASS",
+    "template_invariants_1000_seeds": "PASS (4 rooms, 3 enemy)",
+    "boss_floor_and_shrine_floor": "PASS (boss floor 5, shrine floor 1)",
+    "every_sector_loot_or_event": "PASS (floors 2-4)",
+    "reachability_bfs": "PASS",
+    "pacing_band_1000_seeds": "PASS (budget +/- 25%)",
+    "place_enemy_sole_append_path": "PASS (grep: single .enemies.append in floorgen.py)"
+  },
+  "files": [
+    "server/app/game/floorgen.py",
+    "server/tests/test_floorgen.py"
+  ]
+}

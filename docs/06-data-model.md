@@ -59,6 +59,7 @@ erDiagram
     string seed
     string floor_index
     string rooms
+    string adjacency
   }
   GameSession {
     string session_id

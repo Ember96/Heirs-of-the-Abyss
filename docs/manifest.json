@@ -54,6 +54,9 @@
     ],
     "catalog/sim_corpus/corpus.json": [
       "docs/04-game-states.md"
+    ],
+    "server/app/game/floorgen.py": [
+      "docs/08-content-catalog.md"
     ]
   }
 }
