@@ -11,9 +11,11 @@
     "server/app/main.py": ["docs/02-architecture.md"],
     "server/app/docs_check.py": ["docs/STYLE.md"],
     "server/app/game/rng.py": ["docs/04-game-states.md"],
+    "server/app/game/catalog.py": ["docs/08-content-catalog.md"],
     "client/scripts/NetworkManager.gd": ["docs/05-protocol.md"],
     "client/scripts/hmac_utils.gd": ["docs/05-protocol.md"],
     "client/scripts/main.gd": ["docs/02-architecture.md"],
-    "catalog/corpus/manifest.json": ["docs/09-ai-rag-corpus.md"]
+    "catalog/corpus/manifest.json": ["docs/09-ai-rag-corpus.md"],
+    "catalog/minimal/seed.json": ["docs/08-content-catalog.md"]
   }
 }

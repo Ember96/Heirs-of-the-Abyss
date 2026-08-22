@@ -1,0 +1,529 @@
+{
+  "version": 1,
+  "classes": [
+    {
+      "id": "brawler",
+      "name": "Brawler",
+      "class_tag": "brawler",
+      "description": "A harsh-constitution flesh mountain. Fists like bricks, empty pockets, anger to burn.",
+      "stats": {
+        "max_hp": 130,
+        "attack": 12,
+        "defense": 10
+      },
+      "starting_gear": [
+        "fists",
+        "ragged_vest"
+      ],
+      "natural_traits": {
+        "stamina_bonus": 25,
+        "carry_bonus": 0.3,
+        "damage_resistance": 0.15
+      },
+      "special": {
+        "id": "tackle_suplex",
+        "type": "shove",
+        "shove_impulse": 8,
+        "obstacle_impact_damage": 12,
+        "obstacle_stun_ticks": 150,
+        "counter_throw_damage": 18
+      }
+    },
+    {
+      "id": "hunter",
+      "name": "Hunter",
+      "class_tag": "hunter",
+      "description": "A woodsman far from home. The woods don't provide enough anymore.",
+      "stats": {
+        "max_hp": 100,
+        "attack": 10,
+        "defense": 6
+      },
+      "starting_gear": [
+        "hunting_bow",
+        "leather_armor"
+      ],
+      "natural_traits": {
+        "precise_shot_multiplier": 1.5,
+        "projectile_recovery": true
+      },
+      "special": {
+        "id": "impairing_trap",
+        "type": "trap",
+        "pin_ticks": 90
+      }
+    },
+    {
+      "id": "alchemist",
+      "name": "Alchemist",
+      "class_tag": "alchemist",
+      "description": "The hungry scholar. Knowledge is the only wealth worth having.",
+      "stats": {
+        "max_hp": 90,
+        "attack": 8,
+        "defense": 5
+      },
+      "starting_gear": [
+        "alchemy_flask",
+        "dagger"
+      ],
+      "natural_traits": {
+        "resource_extraction_bonus": 0.5
+      },
+      "special": {
+        "id": "frenzy_brew",
+        "type": "buff",
+        "attack_bonus": 0.3,
+        "speed_bonus": 0.2,
+        "duration_ticks": 300
+      }
+    }
+  ],
+  "enemies": [
+    {
+      "id": "hound",
+      "name": "Hound",
+      "stats": {
+        "max_hp": 40,
+        "attack": 8,
+        "defense": 2,
+        "posture": 80
+      },
+      "behavior_table": [
+        {
+          "action": "lunge",
+          "weight": 3,
+          "damage": 8
+        },
+        {
+          "action": "bite",
+          "weight": 2,
+          "damage": 6
+        }
+      ]
+    },
+    {
+      "id": "husk",
+      "name": "Husk",
+      "stats": {
+        "max_hp": 90,
+        "attack": 6,
+        "defense": 4,
+        "posture": 120
+      },
+      "behavior_table": [
+        {
+          "action": "slam",
+          "weight": 2,
+          "damage": 9
+        },
+        {
+          "action": "grab",
+          "weight": 1,
+          "damage": 5
+        }
+      ]
+    },
+    {
+      "id": "plague_doktor",
+      "name": "Plague Doktor",
+      "stats": {
+        "max_hp": 50,
+        "attack": 7,
+        "defense": 3,
+        "posture": 90
+      },
+      "behavior_table": [
+        {
+          "action": "poison_dart",
+          "weight": 3,
+          "damage": 7
+        },
+        {
+          "action": "retreat",
+          "weight": 1,
+          "damage": 0
+        }
+      ]
+    },
+    {
+      "id": "gargoyle",
+      "name": "Gargoyle",
+      "stats": {
+        "max_hp": 60,
+        "attack": 10,
+        "defense": 5,
+        "posture": 100
+      },
+      "behavior_table": [
+        {
+          "action": "swoop",
+          "weight": 2,
+          "damage": 10
+        },
+        {
+          "action": "claw",
+          "weight": 2,
+          "damage": 8
+        }
+      ]
+    },
+    {
+      "id": "mad_acolyte",
+      "name": "Mad Acolyte",
+      "stats": {
+        "max_hp": 45,
+        "attack": 9,
+        "defense": 2,
+        "posture": 80
+      },
+      "behavior_table": [
+        {
+          "action": "bolt",
+          "weight": 3,
+          "damage": 9
+        },
+        {
+          "action": "chant",
+          "weight": 1,
+          "damage": 0
+        }
+      ]
+    },
+    {
+      "id": "flesh_golem",
+      "name": "Flesh Golem",
+      "stats": {
+        "max_hp": 120,
+        "attack": 14,
+        "defense": 8,
+        "posture": 150
+      },
+      "behavior_table": [
+        {
+          "action": "smash",
+          "weight": 2,
+          "damage": 14
+        },
+        {
+          "action": "charge",
+          "weight": 2,
+          "damage": 12
+        }
+      ]
+    },
+    {
+      "id": "wretch",
+      "name": "Wretch",
+      "stats": {
+        "max_hp": 25,
+        "attack": 5,
+        "defense": 1,
+        "posture": 80
+      },
+      "behavior_table": [
+        {
+          "action": "scratch",
+          "weight": 3,
+          "damage": 5
+        },
+        {
+          "action": "frenzy",
+          "weight": 1,
+          "damage": 7
+        }
+      ]
+    },
+    {
+      "id": "bell_ringer",
+      "name": "Bell-Ringer",
+      "stats": {
+        "max_hp": 55,
+        "attack": 4,
+        "defense": 3,
+        "posture": 90
+      },
+      "behavior_table": [
+        {
+          "action": "toll",
+          "weight": 2,
+          "damage": 0
+        },
+        {
+          "action": "summon",
+          "weight": 1,
+          "damage": 0
+        }
+      ]
+    },
+    {
+      "id": "shade",
+      "name": "Shade",
+      "stats": {
+        "max_hp": 35,
+        "attack": 15,
+        "defense": 1,
+        "posture": 80
+      },
+      "behavior_table": [
+        {
+          "action": "phase_strike",
+          "weight": 2,
+          "damage": 15
+        },
+        {
+          "action": "vanish",
+          "weight": 1,
+          "damage": 0
+        }
+      ]
+    },
+    {
+      "id": "cadaver",
+      "name": "Cadaver",
+      "stats": {
+        "max_hp": 70,
+        "attack": 9,
+        "defense": 12,
+        "posture": 110
+      },
+      "behavior_table": [
+        {
+          "action": "shield_bash",
+          "weight": 2,
+          "damage": 8
+        },
+        {
+          "action": "stab",
+          "weight": 2,
+          "damage": 9
+        }
+      ]
+    }
+  ],
+  "bosses": [
+    {
+      "id": "the_violence",
+      "name": "The Violence",
+      "sin_of": "brawler",
+      "floor": 5,
+      "skill_unlock": "dash",
+      "stats": {
+        "max_hp": 200,
+        "attack": 16,
+        "defense": 10,
+        "posture": 150
+      },
+      "behavior_table": [
+        {
+          "action": "tackle",
+          "weight": 3,
+          "damage": 14
+        },
+        {
+          "action": "suplex",
+          "weight": 2,
+          "damage": 18
+        },
+        {
+          "action": "smash",
+          "weight": 2,
+          "damage": 16
+        }
+      ]
+    },
+    {
+      "id": "the_cunning",
+      "name": "The Cunning",
+      "sin_of": "hunter",
+      "floor": 10,
+      "skill_unlock": "burning_hits",
+      "stats": {
+        "max_hp": 150,
+        "attack": 12,
+        "defense": 6,
+        "posture": 120
+      },
+      "flags": {
+        "stationary": true,
+        "reflect_projectiles": true,
+        "spawns_traps": true
+      },
+      "behavior_table": [
+        {
+          "action": "trap",
+          "weight": 3,
+          "damage": 8
+        },
+        {
+          "action": "bolt",
+          "weight": 2,
+          "damage": 10
+        }
+      ]
+    },
+    {
+      "id": "the_unknown",
+      "name": "The Unknown",
+      "sin_of": "alchemist",
+      "floor": 15,
+      "skill_unlock": "max_hp",
+      "stats": {
+        "max_hp": 180,
+        "attack": 14,
+        "defense": 4,
+        "posture": 100
+      },
+      "flags": {
+        "heal_on_hit": true,
+        "decay_if_untouched": true
+      },
+      "behavior_table": [
+        {
+          "action": "stomp",
+          "weight": 2,
+          "damage": 16
+        },
+        {
+          "action": "barrage",
+          "weight": 2,
+          "damage": 10
+        }
+      ]
+    }
+  ],
+  "boss_skills": [
+    {
+      "id": "dash",
+      "name": "Dash Attack",
+      "levels": 5
+    },
+    {
+      "id": "max_hp",
+      "name": "Vitality",
+      "levels": 5
+    },
+    {
+      "id": "defense",
+      "name": "Iron Skin",
+      "levels": 5
+    },
+    {
+      "id": "burning_hits",
+      "name": "Burning Hits",
+      "levels": 5
+    },
+    {
+      "id": "loot_chance",
+      "name": "Fortune",
+      "levels": 5
+    }
+  ],
+  "items": [
+    {
+      "id": "fists",
+      "name": "Fists",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 4
+      },
+      "price": 0
+    },
+    {
+      "id": "dagger",
+      "name": "Dagger",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 6
+      },
+      "price": 30
+    },
+    {
+      "id": "iron_sword",
+      "name": "Iron Sword",
+      "tags": [
+        "weapon"
+      ],
+      "stat_profile": {
+        "attack": 8
+      },
+      "price": 60
+    },
+    {
+      "id": "hunting_bow",
+      "name": "Hunting Bow",
+      "tags": [
+        "weapon",
+        "ranged"
+      ],
+      "stat_profile": {
+        "attack": 7
+      },
+      "price": 70
+    },
+    {
+      "id": "ragged_vest",
+      "name": "Ragged Vest",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 2
+      },
+      "price": 10
+    },
+    {
+      "id": "leather_armor",
+      "name": "Leather Armor",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 5
+      },
+      "price": 40
+    },
+    {
+      "id": "iron_armor",
+      "name": "Iron Armor",
+      "tags": [
+        "armor"
+      ],
+      "stat_profile": {
+        "defense": 9
+      },
+      "price": 90
+    },
+    {
+      "id": "health_potion",
+      "name": "Health Potion",
+      "tags": [
+        "consumable"
+      ],
+      "stat_profile": {
+        "heal": 30
+      },
+      "price": 25
+    },
+    {
+      "id": "alchemy_flask",
+      "name": "Alchemy Flask",
+      "tags": [
+        "tool"
+      ],
+      "stat_profile": {},
+      "price": 20
+    }
+  ],
+  "market_stock": [
+    "iron_sword",
+    "leather_armor",
+    "health_potion",
+    "dagger",
+    "hunting_bow"
+  ]
+}
