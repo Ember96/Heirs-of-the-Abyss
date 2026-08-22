@@ -93,6 +93,9 @@
     ],
     "server/app/rag/corpus.py": [
       "docs/09-ai-rag-corpus.md"
+    ],
+    "server/app/rag/lore.py": [
+      "docs/13-security.md"
     ]
   }
 }

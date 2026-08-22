@@ -1,0 +1,15 @@
+EndlessDungeon — T4.5 evidence: lore quarantine + moderation
+Generated: 2026-08-21
+
+Command: uv run pytest tests/test_lore.py -q
+Result: 4 passed
+
+Acceptance:
+  [PASS] store-size bound (1000 adds -> size <= 500, oldest pruned)
+  [PASS] generated lore never retrievable across sessions (session isolation)
+  [PASS] provenance forced (every entry is_generated=True)
+  [PASS] lore wrapped as untrusted data on retrieval
+
+Files:
+  server/app/rag/lore.py     (LoreRingBuffer, wrap_as_data, moderate stub)
+  server/tests/test_lore.py
