@@ -7,9 +7,9 @@ A single-player **soulslike roguelike** with unbounded AI-generated floors. A La
 ![LangGraph](https://img.shields.io/badge/LangGraph-1.2-1C3C3C?logo=langchain&logoColor=white)
 ![LangSmith](https://img.shields.io/badge/LangSmith-traced-000000?logo=langchain&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-2E7D32)
-![Status](https://img.shields.io/badge/status-Wave_2_%E2%80%94_deterministic_core-2E7D32)
+![Status](https://img.shields.io/badge/status-Wave_3_%E2%80%94_director_complete-2E7D32)
 
-> **Status** — 🟢 **Wave 2 complete** (deterministic core: models, rules, dual sim core, floorgen, persistence). Wave 3 (LangGraph director) next. See [`specs/`](specs/) for the spec-driven plan (`spec.md` → `plan.md` → `tasks.md`) and [`docs/`](docs/) for the living documentation.
+> **Status** — 🟢 **Wave 3 complete** (LangGraph director: graph, tools, sanitization, generator, resume, verifiers). Wave 4 (RAG catalog + corpus) next. See [`specs/`](specs/) for the spec-driven plan (`spec.md` → `plan.md` → `tasks.md`) and [`docs/`](docs/) for the living documentation.
 
 > **Conventions used across these docs** — 🟠 critical rule/invariant · 🟢 success/goal/done · 🔴 problem/must-not/risk · 🔵 info
 

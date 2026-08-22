@@ -44,17 +44,17 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 
 ## 🧠 Wave 3 — Director (depends: Wave 2)
 
-- ⏳ **T3.1 Agent graph + checkpointer + concurrency** — StateGraph, `interrupt()`, checkpointer; engine-first routing; graph mutex; `RemoveMessage` trim; narrate grounded in typed facts.
+- ✅ **T3.1 Agent graph + checkpointer + concurrency** — StateGraph, `interrupt()`, checkpointer; engine-first routing; graph mutex; `RemoveMessage` trim; narrate grounded in typed facts.
   - Deps: T2.5 · Accept: interrupt/resume no re-bill; `talk` during narration → busy — satisfies FR-5.1, FR-5.4.
-- ⏳ **T3.2 Tool layer (engine gateway)** — `commit_encounter` (single write path, synchronous critical section, verdict-required); other tools (provenance forcing, call cap); no `roll_dice`.
+- ✅ **T3.2 Tool layer (engine gateway)** — `commit_encounter` (single write path, synchronous critical section, verdict-required); other tools (provenance forcing, call cap); no `roll_dice`.
   - Deps: T2.4 · Accept: mutation + race tests prove sole-mutator — satisfies NFR-3, NFR-4.
-- ⏳ **T3.3 Input pipeline + sanitization** — length/type limits, instruction/data separation, audit log, moderation hook, rate limits.
+- ✅ **T3.3 Input pipeline + sanitization** — length/type limits, instruction/data separation, audit log, moderation hook, rate limits.
   - Deps: T3.1 · Accept: injection string can't alter system prompt; over-long → `input_too_long`.
-- ⏳ **T3.4 Content generation pipeline** — pre-gen off critical path; cache key + LRU + TTL; cold-cache fallback; token-budget; terminal frame.
+- ✅ **T3.4 Content generation pipeline** — pre-gen off critical path; cache key + LRU + TTL; cold-cache fallback; token-budget; terminal frame.
   - Deps: T3.1 · Accept: cache-hit descent; hung gen → `generation_failed` + fallback — satisfies FR-5.4.
-- ⏳ **T3.5 Session resume + retention + queue ownership** — resume → `state_sync` first → queued actions → `narrative_replay`; checkpoint prune.
+- ✅ **T3.5 Session resume + retention + queue ownership** — resume → `state_sync` first → queued actions → `narrative_replay`; checkpoint prune.
   - Deps: T3.1, T2.5 · Accept: crash-resume exact state; no double-apply — satisfies FR-2.4, NFR-6.
-- ⏳ **T3.6 Verification-agent loop** — 4 judges gate committed content only; bounded repair ≤2 → fallback; verdicts traced.
+- ✅ **T3.6 Verification-agent loop** — 4 judges gate committed content only; bounded repair ≤2 → fallback; verdicts traced.
   - Deps: T3.2 · Accept: unbalanced variant rejected before commit — satisfies FR-5.3, NFR-4.
 
 > [!TIP]
