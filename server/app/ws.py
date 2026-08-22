@@ -18,6 +18,7 @@ from fastapi import WebSocket, WebSocketDisconnect
 
 from . import config
 from . import protocol as P
+from .persistence import SessionStore
 
 
 class TokenBucket:
@@ -83,6 +84,7 @@ class Connection:
         generation_timeout: float | None = None,
         message_rate: float | None = None,
         message_burst: int | None = None,
+        store: SessionStore | None = None,
     ) -> None:
         self.ws = websocket
         self.dev_token = config.DEV_TOKEN if dev_token is None else dev_token
@@ -99,6 +101,7 @@ class Connection:
         self._in_seq = P.SeqTracker()
         self._out_seq = 0
         self._generations = GenerationTracker(self.generation_timeout, self._on_generation_timeout)
+        self.store = store
 
     # ── lifecycle ──────────────────────────────────────────────────────────
     async def run(self) -> None:
@@ -175,7 +178,7 @@ class Connection:
             err = P.decision_error(is_generating=bool(self._generations.in_flight), is_parked=False)
             await self.send_error(err, "no pending decision", recoverable=True)
         elif type_ == "resume":
-            await self.send_error("session_not_found", "session resume lands in T2.5", recoverable=True)
+            await self._handle_resume(payload)
         elif type_ in ("fight_input", "fight_submit"):
             await self.send_error("generation_not_ready", "combat lands in Wave 2", recoverable=True)
         else:
@@ -209,6 +212,8 @@ class Connection:
         self.session_id = f"s-{secrets.token_urlsafe(8)}"
         self.resume_token = secrets.token_urlsafe(P.RESUME_TOKEN_BYTES)
         self.hmac_key = secrets.token_bytes(32)
+        if self.store is not None:
+            await self.store.create(self._new_session())
         await self._send(
             "welcome",
             self.session_id,
@@ -219,6 +224,42 @@ class Connection:
             },
             signed=False,
         )
+
+    def _new_session(self):
+        from .game.catalog import get_class
+        from .game.models import GameSession, Player
+
+        cls = get_class("brawler")
+        stats = cls["stats"]
+        player = Player(
+            hp=stats["max_hp"], max_hp=stats["max_hp"],
+            attack=stats["attack"], defense=stats["defense"],
+            class_tag=cls["class_tag"],
+        )
+        player.recompute_build_tags()
+        return GameSession(
+            session_id=self.session_id or "",
+            resume_token=self.resume_token or "",
+            seed=secrets.randbelow(2**32),
+            player=player,
+        )
+
+    async def _handle_resume(self, payload: dict) -> None:
+        if self.store is None:
+            await self.send_error("session_not_found", "no session store", recoverable=True)
+            return
+        session = await self.store.get_by_resume_token(payload.get("resume_token", ""))
+        if session is None:
+            await self.send_error("session_not_found", "session not found", recoverable=True)
+            return
+        self.session_id = session.session_id
+        self.resume_token = session.resume_token
+        await self._send("state_sync", self.session_id, {
+            "seq": self._out_seq,
+            "frame_index": 1,
+            "frame_total": 1,
+            "state": session.model_dump(),
+        })
 
     # ── send helpers ───────────────────────────────────────────────────────
     async def _send(self, type_: str, id_: str, payload: dict, signed: bool | None = None) -> None:

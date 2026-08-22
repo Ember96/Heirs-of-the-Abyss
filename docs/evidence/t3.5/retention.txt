@@ -1,0 +1,17 @@
+EndlessDungeon — T3.5 evidence: session resume + queue ownership
+Generated: 2026-08-21
+
+Command: uv run pytest tests/test_resume.py tests/test_persistence.py -q
+Result: 3 resume + 6 persistence = 9 passed
+
+Acceptance:
+  [PASS] crash-resume restores exact state (hello persists session -> resume
+         sends state_sync with the stored GameSession)
+  [PASS] resume with unknown token -> session_not_found
+  [PASS] replay never double-applies (record_action dedup, T2.5)
+  [NOTE] checkpoint byte-size bound: LangGraph checkpointer pruning lands with
+         the production SQLite checkpointer (T3.1 uses MemorySaver for dev)
+
+Files:
+  server/app/ws.py  (store param, _new_session, _handle_resume, hello persists)
+  server/tests/test_resume.py
