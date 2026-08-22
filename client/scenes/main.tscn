@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/floor_renderer.gd" id="2"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1")
@@ -16,3 +17,12 @@ text = "Ready"
 
 [node name="StartButton" type="Button" parent="UI"]
 text = "Start"
+
+[node name="FloorRenderer" type="Node2D" parent="."]
+script = ExtResource("2")
+
+[node name="FloorLayer" type="TileMapLayer" parent="FloorRenderer"]
+
+[node name="WallsLayer" type="TileMapLayer" parent="FloorRenderer"]
+
+[node name="PropsLayer" type="TileMapLayer" parent="FloorRenderer"]

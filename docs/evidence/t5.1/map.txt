@@ -1,0 +1,21 @@
+EndlessDungeon — T5.1 evidence: isometric floor rendering
+Generated: 2026-08-21
+
+Command: uv run pytest tests/test_floor_render.py -q
+Result: 1 passed
+
+Acceptance:
+  [PASS] same seed -> identical floor layout (deterministic xorshift32)
+  [PASS] 12x8 floor = 96 cells, 44 walls (border + seeded interior walls)
+
+Implementation:
+  client/scripts/floor_renderer.gd  (TileMapLayer TILE_SHAPE_ISOMETRIC,
+                                     floor/walls/props layers, Y-sort on props,
+                                     programmatic placeholder TileSet,
+                                     static floor_layout(seed, w, h))
+  client/scenes/main.tscn           (FloorRenderer + FloorLayer/WallsLayer/PropsLayer)
+  client/scripts/test_floor_render.gd (headless determinism driver)
+  server/tests/test_floor_render.py
+
+Note: screenshot evidence (xvfb) is deferred — headless determinism is the
+testable core; visual QA lands with the full client in T5.4.

@@ -96,6 +96,9 @@
     ],
     "server/app/rag/lore.py": [
       "docs/13-security.md"
+    ],
+    "client/scripts/floor_renderer.gd": [
+      "docs/02-architecture.md"
     ]
   }
 }
