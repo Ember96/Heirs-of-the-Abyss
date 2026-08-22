@@ -42,3 +42,6 @@ opencode_session
 
 # CodeGraph generated index (regenerable via `codegraph init`)
 .codegraph/
+
+# OpenCode MCP config (machine-specific, contains absolute path)
+opencode.json
