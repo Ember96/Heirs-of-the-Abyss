@@ -1,0 +1,21 @@
+EndlessDungeon — T5.4 evidence: game scenes (headless logic)
+Generated: 2026-08-21
+
+Command: uv run pytest tests/test_scenes.py -q
+Result: 1 passed
+
+Acceptance (headless-testable core):
+  [PASS] narrative log escapes BBCode (server-originated strings sanitized)
+  [PASS] combat HUD bar ratios (hp/stamina/posture/enemy_hp)
+  [PASS] boss-skill unlock then level (unlock_or_level)
+
+Implementation:
+  client/scripts/narrative_log.gd  (escape_bbcode + sanitize)
+  client/scripts/hud.gd            (CombatHud.bar_ratios)
+  client/scripts/progression.gd    (BossProgression.unlock_or_level)
+  client/scripts/test_scenes.gd    (headless driver)
+  server/tests/test_scenes.py
+
+Note: the full visual scenes (hometown/market/shrine/boss/inventory/game-over)
+and the scripted UI-flow mp4 are deferred to the xvfb-based visual QA pass —
+the deterministic, security-critical logic is proven headless here.

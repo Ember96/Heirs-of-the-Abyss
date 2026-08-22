@@ -102,6 +102,15 @@
     ],
     "client/scripts/fight_controller.gd": [
       "docs/04-game-states.md"
+    ],
+    "client/scripts/narrative_log.gd": [
+      "docs/13-security.md"
+    ],
+    "client/scripts/hud.gd": [
+      "docs/02-architecture.md"
+    ],
+    "client/scripts/progression.gd": [
+      "docs/01-gdd.md"
     ]
   }
 }
