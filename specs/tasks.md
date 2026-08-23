@@ -156,3 +156,19 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 
 > [!TIP]
 > **Wave 7 done-claim** — every FR acceptance re-runnable green; docs match code (no documented-but-absent behavior).
+
+## 🖼️ Wave 8 — Client art & feel (depends: Wave 7; assets_pool/pixel-art curated)
+
+- ⏳ **T8.1 Art foundation** — vendor chosen CC0 tiles (Kenney roguelike/caves) into `client/assets/art/`; FloorRenderer renders real tilesets with per-sector theme variation.
+  - Deps: Wave 5 · Accept: same-seed floor screenshot shows themed tiles, not placeholder diamonds.
+- ⏳ **T8.2 Hero sheet + combat anims** — vendor rvros *Animated Pixel Adventurer* (CC0) or aamatniekss *Hero Knight*; AnimatedSprite2D idle/run/attack/roll/parry/hurt/death driven by sim state/events.
+  - Deps: assets_pool · Accept: scripted fight shows anim transitions matching server events.
+- ⏳ **T8.3 Enemy dressing** — Gothicvania skeleton/necromancer replaces enemy rectangles; necromancer summon set reserved for boss floors.
+  - Deps: T8.1 · Accept: enemy rooms render themed foes.
+- ⏳ **T8.4 Client parity (closes T7.8)** — dynamic `fight_id` from `fight_begin` (incl. `behavior_table` into client sim); parry input + riposte follow-up window (`prip==1`).
+  - Deps: T8.2 · Accept: scripted parry→riposte against the real server → `verified:true`.
+- ⏳ **T8.5 HUD & menus skin** — Kenney UI RPG on HP/stamina/posture bars, market/shop panels, decision_request prompts.
+  - Deps: T8.1 · Accept: visual pass across all scenes.
+
+> [!TIP]
+> **Wave 8 done-claim** — the F3 manual-QA matrix is fully playable *and* readable as a soulslike: descend → parry/riposte fight (feel!) → shrine light → market → boss → skill unlock → return home → resume after restart.
