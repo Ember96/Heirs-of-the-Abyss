@@ -62,4 +62,3 @@ flowchart LR
 - [Content catalog — compose pipeline](08-content-catalog.md)
 - [System design — commit_encounter](03-system-design.md)
 
-<!-- content to follow -->

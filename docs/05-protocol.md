@@ -1,6 +1,6 @@
 # WS v1 Protocol
 
-> Status: **spec** — authoritative wire contract. Implemented in `server/app/protocol.py`; the Godot mirror lands in T1.4. Conformance-tested in `server/tests/test_protocol.py`.
+> Status: **complete** — authoritative wire contract. Implemented in `server/app/protocol.py` (envelope + schemas) and `server/app/ws.py` (fight re-sim validation + progression dispatch); mirrored client-side in `client/scripts/hmac_utils.gd` + `sim_core.gd`. Conformance-tested in `server/tests/test_protocol.py` and end-to-end in `server/tests/test_fight_validation.py`.
 
 ## 1. Overview & design goals
 

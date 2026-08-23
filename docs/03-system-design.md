@@ -24,4 +24,3 @@ The combat sim is a pure function `(state, inputs, seed) → (state, events)` im
 - [Agent design — commit_encounter](07-agent-design.md)
 - [Specification §6 — invariants](../specs/spec.md#6-invariants-must-hold-verified-by-tests)
 
-<!-- content to follow -->

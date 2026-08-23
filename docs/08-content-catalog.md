@@ -54,4 +54,3 @@ flowchart TD
 - [Agent design — verifier loop](07-agent-design.md)
 - [Specification — FR-3 / FR-6](../specs/spec.md#4-functional-requirements)
 
-<!-- content to follow -->

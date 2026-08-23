@@ -69,4 +69,3 @@ stateDiagram-v2
 - [WS protocol — fight frames](05-protocol.md)
 - [Data model — FightState](06-data-model.md)
 
-<!-- content to follow -->

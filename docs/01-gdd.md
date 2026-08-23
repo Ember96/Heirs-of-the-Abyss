@@ -101,4 +101,3 @@ flowchart TD
 - [Combat state machine (D7)](04-game-states.md)
 - [Floor template & pacing (D10)](08-content-catalog.md)
 
-<!-- content to follow -->

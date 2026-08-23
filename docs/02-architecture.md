@@ -62,4 +62,3 @@ flowchart LR
 - [Agent design — director graph](07-agent-design.md)
 - [Security — threat model](13-security.md)
 
-<!-- content to follow -->

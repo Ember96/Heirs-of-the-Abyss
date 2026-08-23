@@ -122,4 +122,3 @@ erDiagram
 - [System design — single-write path](03-system-design.md)
 - [Game states — FightState](04-game-states.md)
 
-<!-- content to follow -->
