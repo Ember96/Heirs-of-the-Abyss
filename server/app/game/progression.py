@@ -116,6 +116,10 @@ def shop(session: GameSession, item_id: str) -> dict:
     return {"gold": session.player.gold, "purchased": item_id}
 
 
+def fight_seed(session_seed: int, floor_index: int, room_index: int) -> int:
+    return session_seed ^ (floor_index * 1000003) ^ (room_index * 100003)
+
+
 def start_fight(session: GameSession, room_index: int) -> tuple[FightSession, dict]:
     floor = _floor_for(session)
     if room_index < 0 or room_index >= len(floor.rooms):
@@ -130,7 +134,7 @@ def start_fight(session: GameSession, room_index: int) -> tuple[FightSession, di
         opp = boss["stats"]
     else:
         raise ProgressionError("rule_violation", "room has no combat")
-    seed = session.seed ^ (session.current_floor * 1000003) ^ (room_index * 100003)
+    seed = fight_seed(session.seed, session.current_floor, room_index)
     fight_id = f"f-{secrets.token_urlsafe(6)}"
     fight = FightSession(
         fight_id=fight_id,

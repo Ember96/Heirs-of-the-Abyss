@@ -84,7 +84,8 @@ def test_resume_stub_returns_session_not_found():
             assert isinstance(e["payload"]["recoverable"], bool)
 
 
-def test_generation_lifecycle_narrative_frames():
+def test_generation_lifecycle_narrative_frames(monkeypatch):
+    monkeypatch.setattr("app.agent.director.narrate", lambda *a, **k: "The door creaks.")
     with TestClient(app) as c:
         with c.websocket_connect("/game") as ws:
             hk = _hello(ws)["payload"]["hmac_key"]

@@ -18,11 +18,13 @@ import time
 from collections.abc import Awaitable, Callable
 
 from fastapi import WebSocket, WebSocketDisconnect
+from langgraph.types import Command
 
 from . import config
 from . import protocol as P
 from .game import progression
-from .game.fight import REJECT_LIMIT, FightSession
+from .game import rules as R
+from .game.fight import REJECT_LIMIT, SIM_VERSION, FightSession
 from .persistence import SessionStore
 
 _security_logger = logging.getLogger("endlessdungeon.security")
@@ -36,6 +38,33 @@ def _mark_narration(session_id: str, complete: bool) -> None:
 
 
 FIGHT_PERSIST_EVERY_TICKS = 25
+
+_graph = None
+
+
+def _get_graph():
+    global _graph
+    if _graph is None:
+        from .agent.graph import build_graph
+
+        _graph = build_graph()
+    return _graph
+
+
+async def _drop_thread(config: dict) -> None:
+    checkpointer = getattr(_get_graph(), "checkpointer", None)
+    thread_id = config.get("configurable", {}).get("thread_id")
+    for name in ("adelete_thread", "delete_thread"):
+        delete = getattr(checkpointer, name, None)
+        if delete is None:
+            continue
+        try:
+            outcome = delete(thread_id)
+            if asyncio.iscoroutine(outcome):
+                await outcome
+        except Exception:
+            pass
+        return
 
 
 def log_security_event(code: str, detail: str) -> None:
@@ -127,6 +156,7 @@ class Connection:
         self.hmac_key: bytes | None = None
         self._session = None
         self._fights: dict[str, FightSession] = {}
+        self._parked: dict | None = None
         self._in_seq = P.SeqTracker()
         self._out_seq = 0
         self._generations = GenerationTracker(self.generation_timeout, self._on_generation_timeout)
@@ -212,8 +242,11 @@ class Connection:
         elif type_ == "action":
             await self._handle_action(id_, payload)
         elif type_ == "decision":
-            err = P.decision_error(is_generating=bool(self._generations.in_flight), is_parked=False)
-            await self.send_error(err, "no pending decision", recoverable=True)
+            if self._parked is not None and payload.get("decision_id") == self._parked["thread_id"]:
+                await self._resume_parked(payload)
+                return
+            err = P.decision_error(is_generating=bool(self._generations.in_flight), is_parked=self._parked is not None)
+            await self.send_error(err, "no matching decision", recoverable=True)
         elif type_ == "resume":
             await self._handle_resume(payload)
         elif type_ == "fight_input":
@@ -256,10 +289,7 @@ class Connection:
             elif action == "enter_room":
                 result = progression.enter_room(self._session, params.get("room_index", 0))
             elif action == "attack":
-                fight, spec = progression.start_fight(self._session, params.get("room_index", 0))
-                self._fights[fight.fight_id] = fight
-                await self._persist_fight(fight, force=True)
-                await self._send("fight_begin", fight.fight_id, spec)
+                await self._begin_encounter(params.get("room_index", 0))
                 return
             else:
                 await self._send("turn_result", id_, {"action_id_echo": id_, "result": {}})
@@ -361,20 +391,123 @@ class Connection:
         if self.store is not None and self._session is not None:
             await self.store.save(self._session)
 
+    async def _begin_encounter(self, room_index: int) -> None:
+        session = self._session
+        floor_index = session.current_floor
+        thread_id = f"enc-{self.session_id}-{floor_index}-{room_index}-{secrets.token_urlsafe(4)}"
+        config = {"configurable": {"thread_id": thread_id}}
+        init = {
+            "intent": "encounter_gen",
+            "session_id": session.session_id,
+            "seed": session.seed,
+            "floor_index": floor_index,
+            "room_index": room_index,
+            "tier": R.sector_of(floor_index),
+            "build_tags": list(session.player.build_tags),
+        }
+        try:
+            result = await _get_graph().ainvoke(init, config)
+        except Exception as exc:
+            await _drop_thread(config)
+            log_security_event("compose_failed", str(exc)[:120])
+            await self.send_error("generation_failed", "encounter rite failed", recoverable=True)
+            return
+        pending = result.get("pending_decision")
+        if pending:
+            self._parked = {"thread_id": thread_id, "room_index": room_index}
+            await self._send("decision_request", thread_id, {
+                "decision_id": thread_id,
+                "prompt": pending.get("prompt", ""),
+                "options": pending.get("options", []),
+            })
+            return
+        await self._spawn_fight_from_state(result, room_index, config)
+
+    async def _resume_parked(self, payload: dict) -> None:
+        parked = self._parked or {}
+        option = payload.get("option_id", "")
+        config = {"configurable": {"thread_id": parked["thread_id"]}}
+        room_index = parked.get("room_index", 0)
+        try:
+            result = await _get_graph().ainvoke(Command(resume=option), config)
+        except Exception as exc:
+            self._parked = None
+            await _drop_thread(config)
+            log_security_event("decision_failed", str(exc)[:120])
+            await self.send_error("generation_failed", "rite collapsed", recoverable=True)
+            return
+        self._parked = None
+        await self._spawn_fight_from_state(result, room_index, config)
+
+    async def _spawn_fight_from_state(self, result: dict, room_index: int, config: dict) -> None:
+        await _drop_thread(config)
+        if result.get("flee"):
+            await self._send("turn_result", secrets.token_urlsafe(6), {
+                "action_id_echo": "", "result": {"fled": True},
+            })
+            return
+
+        variant = result.get("variant") if result.get("committed") else None
+        floor_index = self._session.current_floor
+        if variant is not None:
+            stats = variant.get("stats", {})
+            opp = {
+                "max_hp": int(stats.get("max_hp", 40)),
+                "attack": int(stats.get("attack", 8)),
+                "defense": int(stats.get("defense", 2)),
+                "posture": int(stats.get("posture", 80)),
+            }
+            seed = progression.fight_seed(self._session.seed, floor_index, room_index)
+            fight = FightSession(
+                fight_id=f"f-{secrets.token_urlsafe(6)}",
+                seed=seed,
+                player_atk=self._session.player.attack,
+                player_def=self._session.player.defense,
+                enemy_hp=opp["max_hp"],
+                enemy_atk=opp["attack"],
+                enemy_def=opp["defense"],
+                enemy_posture=opp["posture"],
+                behavior_table=variant.get("behavior_table") or None,
+            )
+            spec = {
+                "fight_id": fight.fight_id,
+                "seed": seed,
+                "sim_version": SIM_VERSION,
+                "opponent_spec": {"stats": opp, "is_boss": False, "composed": True},
+                "room_id": str(room_index),
+            }
+        else:
+            fight, spec = progression.start_fight(self._session, room_index)
+
+        self._fights[fight.fight_id] = fight
+        await self._persist_fight(fight, force=True)
+        await self._send("fight_begin", fight.fight_id, spec)
+
     async def _simulated_narrative(self, narrative_id: str) -> None:
         await asyncio.sleep(0.05)
         await self._send("narrative_delta", narrative_id, {"narrative_id": narrative_id, "text": "The door creaks."})
         await self._send("narrative_end", narrative_id, {"narrative_id": narrative_id})
 
     async def _narrate(self, narrative_id: str, player_text: str) -> None:
-        from .agent import director
-
-        build_tags = self._session.player.build_tags if self._session else []
+        build_tags = list(self._session.player.build_tags) if self._session else []
         floor_index = self._session.current_floor if self._session else 1
+        config = {"configurable": {"thread_id": f"nar-{self.session_id}-{narrative_id}"}}
         try:
-            text = await asyncio.to_thread(director.narrate, floor_index, player_text, build_tags)
+            result = await _get_graph().ainvoke(
+                {
+                    "intent": "narrate",
+                    "session_id": self.session_id or "",
+                    "current_floor": floor_index,
+                    "player_text": player_text,
+                    "build_tags": build_tags,
+                },
+                config,
+            )
+            text = result.get("narrative", "")
         except Exception:
             text = "The dungeon is silent."
+        finally:
+            await _drop_thread(config)
         await self._send("narrative_delta", narrative_id, {"narrative_id": narrative_id, "text": text})
         await self._send("narrative_end", narrative_id, {"narrative_id": narrative_id})
         _mark_narration(self.session_id, complete=True)
