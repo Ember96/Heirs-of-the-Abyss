@@ -36,7 +36,8 @@ cd ../server && uv run docs-check
 | `MODEL_CHAT` | `gpt-4o-mini` | composition / narrative |
 | `MODEL_FAST` | `gpt-4o-mini` | routing / classification |
 | `MODEL_EMBED` | `text-embedding-3-small` | RAG embeddings |
-| `QDRANT_URL` | `http://localhost:6333` | vector DB |
+| `COHERE_API_KEY` | *(empty)* | embeddings for hybrid retrieval; empty = pure-BM25 fallback |
+| `COHERE_EMBED_MODEL` | `embed-english-v3.0` | embedding model (1024 dims) |
 | `DATABASE_URL` | `sqlite:///data/endless-dungeon.db` | game DB |
 | `DEV_TOKEN` | `dev-secret-change-me` | must override (see caution) |
 | `ENABLE_SIGNING` | `true` | per-session HMAC |

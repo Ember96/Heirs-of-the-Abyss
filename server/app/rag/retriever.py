@@ -117,11 +117,11 @@ def hybrid_search(query: str, records: list[dict], limit: int = 5, filters: dict
 
 
 class Retriever:
-    def __init__(self, client=None, collection: str = "catalog") -> None:
-        self.client = client
-        self.collection = collection
+    """Local hybrid retrieval over an in-memory record set.
+
+    Qdrant/docker is a documented scale-out path (vector persistence across
+    restarts, multi-process sharing), not shipped code — see docs/08.
+    """
 
     def retrieve(self, query: str, records: list[dict], limit: int = 5, filters: dict | None = None) -> list[dict]:
-        if self.client is not None:
-            raise NotImplementedError("Qdrant path requires docker; use the local hybrid instead")
         return hybrid_search(query, records, limit, filters)

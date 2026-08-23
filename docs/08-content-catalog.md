@@ -18,7 +18,7 @@ flowchart LR
   classDef info fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D47A1
 
   A["Sector entry / floor progress"] --> B["Pre-gen background task (asyncio, async LLM, token-capped)"]
-  B --> C["RAG retrieval (Qdrant hybrid + payload filters on build weakness)"]
+  B --> C["RAG retrieval (hybrid: dense + BM25, payload filters on build weakness)"]
   C --> D["compose_variant (Pydantic schema, ToolStrategy retry <=2)"]
   D --> E["Deterministic clamp layer (budget ±25%, ids verified, derived stats recomputed)"]:::info
   E --> F["Verification agents (balance/rules/lore/progression)"]:::ok
@@ -47,6 +47,14 @@ flowchart TD
   P -->|player dominant| E["raise: harder encounter (anti-spoil)"]:::info
   note right of T: budget per floor gen; 1 floor = 4 rooms; special room picked by layer state; difficulty band enforced by Progression Auditor
 ```
+
+## Retrieval scale-out path
+
+> [!NOTE]
+> Retrieval runs **local single-process**: Cohere dense embeddings + BM25, fused with RRF, filtered by payload. Document vectors are cached in memory per catalog version.
+
+> [!TIP]
+> Flip to Qdrant (docker compose) when any of these hold: the corpus outgrows comfortable memory (~10k+ records), vectors must persist across restarts, or multiple server processes need shared search. The seam is `Retriever.retrieve()` — swap its body for a Qdrant query; BM25 stays as the fallback half.
 
 ## See also
 

@@ -2,7 +2,7 @@
 
 > Status: **complete** — system architecture (D1), deployment, data flow, living-docs sync (D11).
 
-System architecture (D1), deployment (local-first, docker compose for Qdrant), data flow, living-docs sync (D11)
+System architecture (D1), deployment (local-first single process), data flow, living-docs sync (D11)
 
 > **Diagram legend** — 🟠 critical/gate · 🟢 success/verified · 🔴 drift/failure · 🔵 info
 
@@ -31,7 +31,7 @@ flowchart LR
   E --> DB[("SQLite — WAL, aiosqlite, single-writer lock")]
   H --> G["LangGraph dungeon-director (engine-first routing)"]
   G --> T["Engine-gateway tools: commit_encounter = SINGLE write path, get_player_build, get_fight_facts, save_lore_fact"]:::crit
-  G --> R["RAG composer (Qdrant hybrid: dense + BM25 + payload filters)"]
+  G --> R["RAG composer (hybrid: Cohere dense + BM25 + payload filters)"]
   R --> CAT[("Content catalog: parts, affixes, items, themes, lore")]
   G --> LLM["Hosted LLM — OpenAI / Anthropic / Ollama (config-driven)"]
   G -.-> LS["LangSmith: tracing, evals, feedback"]

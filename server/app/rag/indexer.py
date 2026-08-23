@@ -1,8 +1,8 @@
-"""Index catalog + corpus records into Qdrant (one document per record).
+"""Catalog record flattening + text rendering for retrieval.
 
-Each record is stored as rendered text + a typed payload (entity_kind, tags,
-tier, provenance/license for corpus docs). `all_records` flattens the catalog
-into a searchable list; `render_record` produces the searchable text.
+`all_records` flattens the catalog into a searchable list (one record per
+entity, tagged with `entity_kind`); `render_record` produces the searchable
+text used by both the BM25 and dense halves of hybrid retrieval.
 """
 
 from __future__ import annotations
@@ -31,7 +31,3 @@ def all_records() -> list[dict]:
             record["entity_kind"] = kind
             records.append(record)
     return records
-
-
-def index_catalog(client, collection: str, records: list[dict]) -> None:
-    raise NotImplementedError("Qdrant indexing is wired when docker + embeddings are available")

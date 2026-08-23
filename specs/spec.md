@@ -99,7 +99,7 @@ A single-player **soulslike roguelike** with unbounded procedural floors. A Lang
 ### FR-6 RAG content
 
 - **FR-6.1** Typed catalog (≥60 parts, ≥30 affixes, ≥40 items, ≥10 themes, ≥30 lore; 3 classes, 10 enemies, 3 bosses).
-- **FR-6.2** Qdrant hybrid retrieval (dense + BM25 + payload filters); recall@5 ≥70% on a golden set.
+- **FR-6.2** Hybrid retrieval (dense embeddings + BM25 + payload filters), local single-process; recall@5 ≥70% on a golden set. Qdrant/docker is the named scale-out path once the corpus outgrows memory or needs cross-restart vector persistence.
 - **FR-6.3** Retrieval context capped at **≤1.5k tokens per call** (compose AND narrate); corpus + generated lore are wrapped as **untrusted data**.
 
 > ✅ **Acceptance**: ≥95% schema-valid variants, 100% clamp-enforced, 0 unknown ids, ≤2 LLM calls per compose.

@@ -16,7 +16,7 @@ A single-player **soulslike roguelike** with unbounded AI-generated floors. A La
 ## Architecture (one line)
 
 ```
-Godot 4.7 client (GDScript)  ⇄  FastAPI/WebSocket  ⇄  deterministic engine + LangGraph director + RAG (Qdrant)
+Godot 4.7 client (GDScript)  ⇄  FastAPI/WebSocket  ⇄  deterministic engine + LangGraph director + hybrid RAG (Cohere dense + BM25)
 ```
 
 > [!IMPORTANT]
@@ -29,7 +29,7 @@ Combat is real-time, **dice-free**, and deterministic: the client simulates, the
 - **Python 3.12** + [uv](https://docs.astral.sh/uv/)
 - **Godot 4.7.2** (on PATH as `godot`)
 - **Node.js 20+** (for the optional Godot MCP)
-- **Docker** (for Qdrant in Wave 4)
+- **Cohere API key** *(optional — embeddings for hybrid retrieval; without it retrieval falls back to pure BM25)*
 
 ## Quickstart
 
@@ -54,7 +54,7 @@ uv run docs-check
 ## Repository layout
 
 ```
-server/   Python 3.12 (uv): FastAPI + LangGraph + Qdrant — engine, agent, RAG
+server/   Python 3.12 (uv): FastAPI + LangGraph + hybrid RAG — engine, agent, RAG
 client/   Godot 4.7.2 (GDScript): isometric renderer, NetworkManager, combat scenes
 catalog/  content catalog + game-design corpus (see catalog/corpus/manifest.json)
 docs/     living documentation (13 docs + Mermaid diagrams, docs-check drift gate)
