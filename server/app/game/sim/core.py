@@ -4,7 +4,7 @@ Pure integer/fixed-point combat: (state, move, action) -> (state, events).
 Positions are tile-units x1000; fixed 60 Hz tick; a 32-bit xorshift drives the
 enemy behavior (32-bit values stay non-negative in both languages, so the
 arithmetic is identical). Combat is dice-free: damage is `max(1, atk-def)` times
-a deterministic mechanical multiplier.
+a deterministic mechanical multiplier — stagger x1.5, riposte x2, backstab x1.5.
 """
 
 from __future__ import annotations
@@ -16,11 +16,13 @@ ROLLING = 1
 GUARDING = 2
 ATTACKING = 3
 STAGGERED = 4
+PARRYING = 5
 
 STAMINA_MAX = 100
 STAMINA_ROLL = 18
 STAMINA_ATTACK = 22
 STAMINA_BLOCK = 5
+STAMINA_PARRY = 15
 STAMINA_REGEN_PER_SEC = 27
 POSTURE_MAX = 100
 POSTURE_DECAY_PER_SEC = 10
@@ -29,7 +31,9 @@ POSTURE_BREAK_TICKS = 150  # 2.5 s at 60 Hz
 ROLL_TICKS = 13
 ATTACK_TICKS = 10
 ATTACK_RANGE = 1000
-STAGGER_MULT = 1.5
+PARRY_STARTUP_TICKS = 10
+PARRY_ACTIVE_TICKS = 12
+PARRY_TOTAL_TICKS = PARRY_STARTUP_TICKS + PARRY_ACTIVE_TICKS
 ENEMY_ATTACK_BASE = 60
 
 MASK32 = 0xFFFFFFFF
@@ -51,6 +55,7 @@ def new_fight(seed: int = 0, player_atk: int = 10, player_def: int = 5,
         "pstate": IDLE, "pticks": 0, "piframe": 0, "preg": 0, "ppreg": 0,
         "ex": enemy_x, "ey": 0, "ehp": enemy_hp, "epost": enemy_posture,
         "epost_base": enemy_posture, "estate": IDLE, "eticks": 0, "ecooldown": ENEMY_ATTACK_BASE,
+        "prip": 0, "eaware": 0,
         "patk": player_atk, "pdef": player_def, "eatk": enemy_atk, "edef": enemy_def,
         "rng": seed & MASK32,
     }
@@ -71,6 +76,7 @@ def step(state: dict, move: tuple[int, int], action: str) -> tuple[dict, list[st
         s["eticks"] -= 1
         if s["eticks"] == 0:
             s["estate"] = IDLE
+            s["prip"] = 0
 
     dx, dy = move
     s["px"] += dx
@@ -88,16 +94,29 @@ def step(state: dict, move: tuple[int, int], action: str) -> tuple[dict, list[st
         s["pticks"] = ATTACK_TICKS
         if abs(s["px"] - s["ex"]) <= ATTACK_RANGE:
             dmg = max(1, s["patk"] - s["edef"])
-            if s["estate"] == STAGGERED:
-                dmg = (dmg * 3 + 1) // 2  # x1.5 round-half-up, pure integer
+            if s["prip"] == 1:
+                dmg = dmg * 2  # riposte x2, pure integer
+                s["prip"] = 0
+                events.append("riposte")
+            else:
+                if s["estate"] == STAGGERED:
+                    dmg = (dmg * 3 + 1) // 2  # stagger x1.5, pure integer
+                elif s["eaware"] == 0:
+                    dmg = (dmg * 3 + 1) // 2  # backstab x1.5, pure integer
+                events.append("hit")
             s["ehp"] -= dmg
             s["epost"] -= dmg
-            events.append("hit")
+            s["eaware"] = 1
             if s["epost"] <= 0:
                 s["estate"] = STAGGERED
                 s["eticks"] = POSTURE_BREAK_TICKS
                 s["epost"] = s["epost_base"]
                 events.append("stagger")
+    elif action == "parry" and s["pstate"] == IDLE and s["pstam"] >= STAMINA_PARRY:
+        s["pstam"] -= STAMINA_PARRY
+        s["pstate"] = PARRYING
+        s["pticks"] = PARRY_TOTAL_TICKS
+        events.append("parry")
     elif action == "block":
         s["pstate"] = GUARDING
 
@@ -105,9 +124,16 @@ def step(state: dict, move: tuple[int, int], action: str) -> tuple[dict, list[st
     if s["ecooldown"] <= 0 and s["estate"] == IDLE:
         s["rng"] = xorshift32(s["rng"])
         s["ecooldown"] = ENEMY_ATTACK_BASE + (s["rng"] % 60)
+        s["eaware"] = 1
         dmg = max(1, s["eatk"] - s["pdef"])
         if s["piframe"] > 0:
             events.append("enemy_miss")
+        elif s["pstate"] == PARRYING and s["pticks"] <= PARRY_ACTIVE_TICKS:
+            s["estate"] = STAGGERED
+            s["eticks"] = POSTURE_BREAK_TICKS
+            s["epost"] = s["epost_base"]
+            s["prip"] = 1
+            events.append("parry_success")
         elif s["pstate"] == GUARDING:
             reduced = max(1, dmg // 2)
             s["php"] -= reduced
