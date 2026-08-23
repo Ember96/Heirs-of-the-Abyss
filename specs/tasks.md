@@ -160,7 +160,7 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 ## 🖼️ Wave 8 — Client art & feel (depends: Wave 7; assets_pool/pixel-art curated)
 
 > [!NOTE]
-> Render-style decision (post art-pool review): **side-view pivot** — Gothicvania is side-view native and the combat sim is effectively 1-D on x, matching a cinematic soulslike layout. The isometric diamond floor is retired; `floor_renderer.gd` now builds the gothic arena behind the same node/API.
+> ~~Render-style: side-view pivot.~~ **SUPERSEDED (user reference image): the target is 2.5-D top-down (≈30° view, Hyper-Light-Drifter-like)** — circle-strafe enemies, dash *through* them, punish the rear arc. Side-view arena code remains as fallback; Wave 8 render tasks now target the top-down arena. The sim gains a true second axis: euclidean ranges, enemy approach movement, facing-tracked **backstab arc** (dash-through → rear punish), all integer-deterministic in both cores.
 
 - ✅ **T8.1 Art foundation** — vendor chosen CC0 tiles (Kenney roguelike/caves) into `client/assets/art/`; FloorRenderer renders real tilesets with per-sector theme variation.
   - Deps: Wave 5 · Accept: same-seed floor screenshot shows themed tiles, not placeholder diamonds.
@@ -172,6 +172,9 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
   - Deps: T8.2 · Accept: scripted parry→riposte against the real server → `verified:true`.
 - ⏳ **T8.5 HUD & menus skin** — Kenney UI RPG on HP/stamina/posture bars, market/shop panels, decision_request prompts. *(deferred — functional ColorRect bars ship now; Kenney skin is polish backlog)*
   - Deps: T8.1 · Accept: visual pass across all scenes.
+
+- ⏳ **T8.6 2.5-D sim + arena (per user reference)** — sim: euclidean attack/strike ranges, enemy approach movement (`ENEMY_SPEED`, axis-split integer steps), enemy facing (`efx/efy`) set on strike/approach, backstab ×1.5 when attacking from the rear arc (`facing · attacker_rel < 0`); byte-identical both cores. Client: `py` maps to screen-y inside the floor band (y-sorted), Kenney roguelike tiles replace ColorRect ground, dash-through/backstab feel pass.
+  - Deps: T8.2 · Accept: conformance regen green (2-D trajectories); circle-strafe + dash-through → backstab ×1.5 lands `verified:true`; screenshot matches reference framing.
 
 > [!TIP]
 > **Wave 8 done-claim** — the F3 manual-QA matrix is fully playable *and* readable as a soulslike: descend → parry/riposte fight (feel!) → shrine light → market → boss → skill unlock → return home → resume after restart.
