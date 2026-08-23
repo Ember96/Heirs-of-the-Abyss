@@ -300,7 +300,7 @@ class Connection:
         await self._send("turn_result", id_, {"action_id_echo": id_, "result": result})
 
     async def _handle_fight_input(self, id_: str, payload: dict) -> None:
-        fight = self._fights.get(payload["fight_id"])
+        fight = self._fights.get(payload.get("fight_id", ""))
         if fight is None:
             await self.send_error("session_not_found", "unknown fight_id", recoverable=True)
             return
@@ -310,11 +310,26 @@ class Connection:
         if fight.expired:
             await self._resolve_flee(fight, "tick_limit")
             return
-        move = payload.get("params", {}).get("move", [0, 0])
-        last_tick = fight.record_input(payload["tick"], payload["action"], move)
+
+        entries: list[tuple[int, str, tuple[int, int]]] = []
+        try:
+            if payload.get("batch"):
+                for item in payload["batch"]:
+                    move = item.get("params", {}).get("move", [0, 0])
+                    entries.append((int(item["tick"]), str(item["action"]), (int(move[0]), int(move[1]))))
+            else:
+                move = payload.get("params", {}).get("move", [0, 0])
+                entries.append((int(payload["tick"]), str(payload["action"]), (int(move[0]), int(move[1]))))
+        except (KeyError, TypeError, ValueError, IndexError):
+            await self.send_error("frame_invalid", "malformed fight_input", recoverable=True)
+            return
+
+        last_tick = 0
+        for tick, action, move in entries:
+            last_tick = fight.record_input(tick, action, move)
         if last_tick % FIGHT_PERSIST_EVERY_TICKS == 0:
             await self._persist_fight(fight)
-        await self._send("fight_input_ack", payload["fight_id"], {"fight_id": payload["fight_id"], "last_tick": last_tick})
+        await self._send("fight_input_ack", fight.fight_id, {"fight_id": fight.fight_id, "last_tick": last_tick})
 
     async def _handle_fight_submit(self, id_: str, payload: dict) -> None:
         fight = self._fights.get(payload["fight_id"])

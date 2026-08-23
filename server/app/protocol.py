@@ -119,11 +119,18 @@ class DecisionPayload(_Payload):
     option_id: str
 
 
-class FightInputPayload(_Payload):
-    fight_id: str
+class FightInputItem(_Payload):
     tick: int
     action: str
     params: dict[str, Any] = Field(default_factory=dict)
+
+
+class FightInputPayload(_Payload):
+    fight_id: str
+    tick: int = 0
+    action: str = ""
+    params: dict[str, Any] = Field(default_factory=dict)
+    batch: list[FightInputItem] = Field(default_factory=list)
 
 
 class FightSubmitPayload(_Payload):

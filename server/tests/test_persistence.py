@@ -83,3 +83,32 @@ async def test_retention_cascades_all_tables(store):
             row = await cursor.fetchone()
             assert row[0] == 0, f"{table} not cleared"
     await conn.close()
+
+
+@pytest.mark.asyncio
+async def test_prune_oversized_evicts_oldest_first(tmp_path):
+    import sqlite3
+    import time as _time
+
+    from app.game.models import GameSession, Player
+
+    db = tmp_path / "big.db"
+    store = SessionStore(db)
+
+    def _mk(sid, token):
+        p = Player(hp=1, max_hp=1, attack=1, defense=1, class_tag="brawler")
+        return GameSession(session_id=sid, resume_token=token, seed=1, player=p)
+
+    await store.create(_mk("old", "t-old"))
+    _time.sleep(0.01)
+    await store.create(_mk("new", "t-new"))
+
+    conn = sqlite3.connect(db)
+    new_sz = conn.execute("SELECT LENGTH(state_json) FROM sessions WHERE session_id='new'").fetchone()[0]
+    conn.close()
+
+    freed = await store.prune_oversized_sessions(max_bytes=new_sz + 16)
+
+    assert freed == 1
+    assert await store.get("old") is None
+    assert await store.get("new") is not None

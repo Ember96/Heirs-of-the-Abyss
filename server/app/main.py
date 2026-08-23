@@ -8,6 +8,7 @@ reconnects and restarts.
 
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, WebSocket
@@ -30,7 +31,18 @@ def _db_path() -> str:
 
 store = SessionStore(_db_path())
 
-app = FastAPI(title="EndlessDungeon", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    try:
+        await store.prune_old_sessions()
+        await store.prune_oversized_sessions()
+    except Exception:
+        pass
+    yield
+
+
+app = FastAPI(title="EndlessDungeon", version="0.1.0", lifespan=lifespan)
 
 
 @app.get("/health")
