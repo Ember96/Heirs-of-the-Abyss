@@ -57,8 +57,7 @@ def _fight(fid="f-x", **over) -> FightSession:
 
 def _client_sim(fight: FightSession, entries) -> dict:
     """Mirror the client: same core, same seed/setup, feed inputs, return final state."""
-    sim_kwargs = {k: v for k, v in fight.setup.items() if k != "behavior_table"}
-    state = core.new_fight(seed=fight.seed, **sim_kwargs)
+    state = core.new_fight(seed=fight.seed, **fight.setup)
     for move, action in entries:
         state, _ = core.step(state, move, action)
         fight.record_input(state["tick"], action, list(move))
@@ -119,8 +118,7 @@ async def test_death_sets_terminal_and_emits_game_over(tmp_path):
         enemy_atk=50, enemy_def=0, enemy_posture=999,
     )
     die = conn._fights["f-die"]
-    sim_kwargs = {k: v for k, v in die.setup.items() if k != "behavior_table"}
-    state = core.new_fight(seed=die.seed, **sim_kwargs)
+    state = core.new_fight(seed=die.seed, **die.setup)
     tick = 0
     while state["php"] > 0 and tick < R.FIGHT_TICK_LIMIT:
         state, _ = core.step(state, (0, 0), "none")

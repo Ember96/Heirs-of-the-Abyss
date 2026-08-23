@@ -14,7 +14,7 @@ func _initialize():
 	f.close()
 	var results = []
 	for c in cases:
-		var state = Sim.new_fight(c["seed"], c["patk"], c["pdef"], c["ehp"], c["eatk"], c["edef"], c["epost"], c["ex"])
+		var state = Sim.new_fight(c["seed"], c["patk"], c["pdef"], c["ehp"], c["eatk"], c["edef"], c["epost"], c["ex"], c.get("bt", []))
 		for m in c["moves"]:
 			state = Sim.step(state, m[0], m[1], m[2])
 		results.append(state)

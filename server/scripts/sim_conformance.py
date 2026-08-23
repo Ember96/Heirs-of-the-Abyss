@@ -38,6 +38,14 @@ def generate_cases(n: int, seed: int = 12345) -> list[dict]:
                 for _ in range(rnd.randint(30, 120))
             ],
         }
+        case["bt"] = []
+        if rnd.randint(0, 1) == 0:
+            for _ in range(rnd.randint(1, 3)):
+                case["bt"].append({
+                    "action": f"m{rnd.randint(0, 9)}",
+                    "weight": rnd.randint(1, 4),
+                    "damage": rnd.randint(3, 20),
+                })
         cases.append(case)
     return cases
 
@@ -45,7 +53,7 @@ def generate_cases(n: int, seed: int = 12345) -> list[dict]:
 def run_python(cases: list[dict]) -> list[dict]:
     results = []
     for c in cases:
-        state = core.new_fight(c["seed"], c["patk"], c["pdef"], c["ehp"], c["eatk"], c["edef"], c["epost"], c["ex"])
+        state = core.new_fight(c["seed"], c["patk"], c["pdef"], c["ehp"], c["eatk"], c["edef"], c["epost"], c["ex"], c.get("bt", []))
         for m in c["moves"]:
             state, _ = core.step(state, (m[0], m[1]), m[2])
         results.append(state)

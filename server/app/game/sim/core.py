@@ -48,7 +48,8 @@ def xorshift32(state: int) -> int:
 
 def new_fight(seed: int = 0, player_atk: int = 10, player_def: int = 5,
               enemy_hp: int = 40, enemy_atk: int = 8, enemy_def: int = 2,
-              enemy_posture: int = 80, enemy_x: int = 3000) -> dict:
+              enemy_posture: int = 80, enemy_x: int = 3000,
+              behavior_table: list[dict] | None = None) -> dict:
     return {
         "tick": 0,
         "px": 0, "py": 0, "php": 100, "pstam": STAMINA_MAX, "ppost": POSTURE_MAX,
@@ -57,6 +58,7 @@ def new_fight(seed: int = 0, player_atk: int = 10, player_def: int = 5,
         "epost_base": enemy_posture, "estate": IDLE, "eticks": 0, "ecooldown": ENEMY_ATTACK_BASE,
         "prip": 0, "eaware": 0,
         "patk": player_atk, "pdef": player_def, "eatk": enemy_atk, "edef": enemy_def,
+        "bt": list(behavior_table) if behavior_table else [],
         "rng": seed & MASK32,
     }
 
@@ -125,7 +127,19 @@ def step(state: dict, move: tuple[int, int], action: str) -> tuple[dict, list[st
         s["rng"] = xorshift32(s["rng"])
         s["ecooldown"] = ENEMY_ATTACK_BASE + (s["rng"] % 60)
         s["eaware"] = 1
-        dmg = max(1, s["eatk"] - s["pdef"])
+        edmg = s["eatk"]
+        bt = s.get("bt") or []
+        if bt:
+            s["rng"] = xorshift32(s["rng"])
+            total = sum(b["weight"] for b in bt)
+            pick = s["rng"] % total
+            acc = 0
+            for entry in bt:
+                acc += entry["weight"]
+                if pick < acc:
+                    edmg = entry["damage"]
+                    break
+        dmg = max(1, edmg - s["pdef"])
         if s["piframe"] > 0:
             events.append("enemy_miss")
         elif s["pstate"] == PARRYING and s["pticks"] <= PARRY_ACTIVE_TICKS:

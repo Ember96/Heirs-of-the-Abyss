@@ -33,7 +33,7 @@ static func xorshift32(state: int) -> int:
 
 static func new_fight(seed: int, player_atk: int, player_def: int,
 		enemy_hp: int, enemy_atk: int, enemy_def: int,
-		enemy_posture: int, enemy_x: int) -> Dictionary:
+		enemy_posture: int, enemy_x: int, behavior_table: Array = []) -> Dictionary:
 	return {
 		"tick": 0,
 		"px": 0, "py": 0, "php": 100, "pstam": STAMINA_MAX, "ppost": POSTURE_MAX,
@@ -42,6 +42,7 @@ static func new_fight(seed: int, player_atk: int, player_def: int,
 		"epost_base": enemy_posture, "estate": IDLE, "eticks": 0, "ecooldown": ENEMY_ATTACK_BASE,
 		"prip": 0, "eaware": 0,
 		"patk": player_atk, "pdef": player_def, "eatk": enemy_atk, "edef": enemy_def,
+		"bt": behavior_table.duplicate(),
 		"rng": seed & MASK32,
 	}
 
@@ -101,7 +102,21 @@ static func step(state: Dictionary, move_x: int, move_y: int, action: String) ->
 		s["rng"] = xorshift32(s["rng"])
 		s["ecooldown"] = ENEMY_ATTACK_BASE + (s["rng"] % 60)
 		s["eaware"] = 1
-		var dmg := maxi(1, s["eatk"] - s["pdef"])
+		var edmg := int(s["eatk"])
+		var bt: Array = s.get("bt", [])
+		if bt.size() > 0:
+			s["rng"] = xorshift32(s["rng"])
+			var total := 0
+			for b in bt:
+				total += int(b["weight"])
+			var pick := int(s["rng"] % total)
+			var acc := 0
+			for b in bt:
+				acc += int(b["weight"])
+				if pick < acc:
+					edmg = int(b["damage"])
+					break
+		var dmg := maxi(1, edmg - s["pdef"])
 		if s["piframe"] > 0:
 			pass
 		elif s["pstate"] == PARRYING and s["pticks"] <= PARRY_ACTIVE_TICKS:

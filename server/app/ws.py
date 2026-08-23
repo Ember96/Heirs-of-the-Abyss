@@ -473,7 +473,8 @@ class Connection:
                 "fight_id": fight.fight_id,
                 "seed": seed,
                 "sim_version": SIM_VERSION,
-                "opponent_spec": {"stats": opp, "is_boss": False, "composed": True},
+                "opponent_spec": {"stats": opp, "is_boss": False, "composed": True,
+                                   "behavior_table": variant.get("behavior_table") or []},
                 "room_id": str(room_index),
             }
         else:

@@ -29,11 +29,11 @@ def _signed(ws, hk: str, type_: str, id_: str, seq: int, payload: dict) -> None:
     ws.send_json({"v": 1, "type": type_, "id": id_, "seq": seq, "payload": payload, "hmac": sig})
 
 
-def _simulate(seed: int, opp: dict) -> tuple[list[tuple[int, str, tuple[int, int]]], dict]:
+def _simulate(seed: int, opp: dict, behavior_table=None) -> tuple[list[tuple[int, str, tuple[int, int]]], dict]:
     state = core.new_fight(
         seed=seed, player_atk=_ATK, player_def=_DEF,
         enemy_hp=opp["max_hp"], enemy_atk=opp["attack"], enemy_def=opp["defense"],
-        enemy_posture=opp["posture"],
+        enemy_posture=opp["posture"], behavior_table=behavior_table or None,
     )
     log: list[tuple[int, str, tuple[int, int]]] = []
     for _ in range(3600):
@@ -51,7 +51,19 @@ def _simulate(seed: int, opp: dict) -> tuple[list[tuple[int, str, tuple[int, int
     return log, state
 
 
-def test_tampered_claim_counted_honest_win_stale_rejected():
+def test_tampered_claim_counted_honest_win_stale_rejected(monkeypatch):
+    from app.agent.tools import EnemyVariant
+    from app.agent.verifiers import JudgeVerdict, VerifierVerdict
+    from app.game.catalog import load
+
+    enemy = load()["enemies"][0]
+    variant = EnemyVariant(
+        enemy_id=enemy["id"], name=enemy["name"],
+        stats=dict(enemy["stats"]), behavior_table=enemy.get("behavior_table", []),
+    )
+    verdict = VerifierVerdict(approved=True, judges=[JudgeVerdict(judge="balance", passed=True)])
+    monkeypatch.setattr("app.agent.director.compose_and_verify", lambda tags, tier: (variant, verdict))
+
     with TestClient(app) as client:
         with client.websocket_connect("/game") as ws:
             hk = _hello(ws)["payload"]["hmac_key"]
@@ -61,9 +73,9 @@ def test_tampered_claim_counted_honest_win_stale_rejected():
             assert fb["type"] == "fight_begin"
             fight_id = fb["id"]
             seed = fb["payload"]["seed"]
-            opp = fb["payload"]["opponent_spec"]["stats"]
+            spec = fb["payload"]["opponent_spec"]
 
-            log, state = _simulate(seed, opp)
+            log, state = _simulate(seed, spec["stats"], spec.get("behavior_table") or [])
             assert state["ehp"] <= 0, "scripted fight should win"
 
             for tick, action, move in log:

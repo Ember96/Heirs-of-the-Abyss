@@ -84,8 +84,7 @@ class FightSession:
         return self._last_tick
 
     def _new_state(self) -> dict:
-        sim_kwargs = {k: v for k, v in self.setup.items() if k != "behavior_table"}
-        return core.new_fight(seed=self.seed, **sim_kwargs)
+        return core.new_fight(seed=self.seed, **self.setup)
 
     def re_sim(self) -> dict:
         state = self._new_state()

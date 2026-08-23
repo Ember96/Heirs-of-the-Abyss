@@ -152,7 +152,8 @@ def start_fight(session: GameSession, room_index: int) -> tuple[FightSession, di
         "fight_id": fight_id,
         "seed": seed,
         "sim_version": SIM_VERSION,
-        "opponent_spec": {"stats": opp, "is_boss": is_boss},
+        "opponent_spec": {"stats": opp, "is_boss": is_boss,
+                           "behavior_table": (boss or {}).get("behavior_table", [])},
         "room_id": str(room_index),
     }
     return fight, spec
