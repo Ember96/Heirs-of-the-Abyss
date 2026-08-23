@@ -84,7 +84,7 @@ Both directions keep an independent `SeqTracker`. A frame with `seq <= last_seen
 | `narrative_replay` | `{narrative_id, offset}` | only when `narrative_end` was NOT delivered to this client |
 | `narrative_end` | `{narrative_id}` | terminal frame for a narrative stream |
 | `turn_result` | `{action_id_echo, result}` | |
-| `fight_begin` | `{fight_id, seed, sim_version, opponent_spec, room_id}` | |
+| `fight_begin` | `{fight_id, seed, sim_version, opponent_spec, player_spec, room_id}` | |
 | `fight_input_ack` | `{fight_id, last_tick}` | acks a batched input group |
 | `fight_snapshot` | `{fight_id, tick, state}` | tick-stamped state; the B-ready render-follow frame (rate-capped, ≤64 KB) |
 | `fight_result` | `{fight_id, verified, outcome, rewards}` | `verified:false` → server re-syncs |

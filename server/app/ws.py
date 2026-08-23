@@ -490,6 +490,8 @@ class Connection:
                 "sim_version": SIM_VERSION,
                 "opponent_spec": {"stats": opp, "is_boss": False, "composed": True,
                                    "behavior_table": variant.get("behavior_table") or []},
+                "player_spec": {"attack": self._session.player.attack,
+                                 "defense": self._session.player.defense},
                 "room_id": str(room_index),
             }
         else:

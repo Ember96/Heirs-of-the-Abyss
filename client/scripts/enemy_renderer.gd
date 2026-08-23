@@ -18,6 +18,8 @@ func _ready() -> void:
 
 func flash() -> void:
 	modulate = Color(1.0, 0.4, 0.4)
+	if not is_inside_tree():
+		return
 	var tween := create_tween()
 	tween.tween_property(self, "modulate", Color.WHITE, 0.25)
 

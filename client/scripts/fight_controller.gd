@@ -24,8 +24,8 @@ static func state_hash(state: Dictionary) -> String:
 
 func start_fight(seed: int, player_atk: int = 10, player_def: int = 5,
 		enemy_hp: int = 40, enemy_atk: int = 8, enemy_def: int = 2,
-		enemy_posture: int = 80, enemy_x: int = 3000) -> void:
-	sim_state = Sim.new_fight(seed, player_atk, player_def, enemy_hp, enemy_atk, enemy_def, enemy_posture, enemy_x)
+		enemy_posture: int = 80, enemy_x: int = 3000, behavior_table: Array = []) -> void:
+	sim_state = Sim.new_fight(seed, player_atk, player_def, enemy_hp, enemy_atk, enemy_def, enemy_posture, enemy_x, behavior_table)
 	fight_log = []
 	_buffer = []
 

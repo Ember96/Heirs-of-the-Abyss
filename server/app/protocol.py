@@ -198,6 +198,7 @@ class FightBeginPayload(_Payload):
     sim_version: str
     opponent_spec: dict[str, Any]
     room_id: str
+    player_spec: dict[str, Any] = Field(default_factory=dict)
 
 
 class FightInputAckPayload(_Payload):

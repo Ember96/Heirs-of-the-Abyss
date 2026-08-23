@@ -6,9 +6,10 @@ const DEMO_SEED := 42
 
 @onready var status_label: Label = $UI/StatusLabel
 @onready var start_button: Button = $UI/StartButton
-@onready var floor_renderer = $FloorRenderer
+@onready var floor_node: FloorRenderer = $FloorRenderer
 
 var _seed := DEMO_SEED
+var fight_view: FightView
 
 func _ready() -> void:
 	NetworkManager.session_ready.connect(_on_session_ready)
@@ -16,11 +17,11 @@ func _ready() -> void:
 	NetworkManager.disconnected.connect(_on_disconnected)
 	start_button.pressed.connect(_on_start_pressed)
 	status_label.text = "Ready"
-	floor_renderer.render_floor(_seed, 12, 8)
+	floor_node.render_floor(_seed, 12, 8)
 
 func _on_start_pressed() -> void:
 	_seed = (_seed * 1103515245 + 12345) & 0x7FFFFFFF
-	floor_renderer.render_floor(_seed, 12, 8)
+	floor_node.render_floor(_seed, 12, 8)
 	status_label.text = "Connecting..."
 	start_button.disabled = true
 	NetworkManager.connect_to(SERVER_URL, DEV_TOKEN)
@@ -30,7 +31,32 @@ func _on_session_ready(session_id: String) -> void:
 	start_button.text = "Resume"
 
 func _on_message(msg: Dictionary) -> void:
-	status_label.text = "Received: %s" % msg.get("type", "?")
+	var type := str(msg.get("type", ""))
+	match type:
+		"fight_begin":
+			_start_fight(msg)
+		"decision_request":
+			var payload: Dictionary = msg.get("payload", {})
+			NetworkManager.send_decision(str(payload.get("decision_id", "")), "fallback")
+			status_label.text = "The rite falters — a lesser foe answers."
+		"game_over":
+			status_label.text = "YOU DIED"
+		_:
+			status_label.text = "Received: %s" % type
+
+func _start_fight(msg: Dictionary) -> void:
+	if fight_view != null:
+		fight_view.queue_free()
+	fight_view = FightView.new()
+	fight_view.submit_ready.connect(_on_submit_ready)
+	add_child(fight_view)
+	fight_view.begin(msg.get("payload", {}), floor_node)
+	start_button.visible = false
+	status_label.text = "Fight!"
+
+func _on_submit_ready(fid: String, payload: Dictionary) -> void:
+	NetworkManager.send_json("fight_submit", fid, payload)
+	status_label.text = "Verifying..."
 
 func _on_disconnected() -> void:
 	status_label.text = "Disconnected — reconnecting..."

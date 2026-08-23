@@ -144,6 +144,9 @@
     ],
     "client/scripts/enemy_renderer.gd": [
       "docs/04-game-states.md"
+    ],
+    "client/scripts/fight_view.gd": [
+      "docs/04-game-states.md"
     ]
   }
 }

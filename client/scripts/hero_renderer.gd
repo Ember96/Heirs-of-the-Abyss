@@ -9,6 +9,8 @@ const FRAMES_DIR := "res://assets/art/hero/adventurer-frames"
 const SPRITE_SCALE := 2.0
 
 var _attack_index := 0
+var _last_pstate := -1
+var _dead := false
 
 
 func _ready() -> void:
@@ -18,9 +20,21 @@ func _ready() -> void:
 		var ts := sprite_frames.get_frame_texture("adventurer-idle", 0).get_size()
 		offset = Vector2(0, -ts.y / 2.0)
 		play("adventurer-idle")
+	animation_finished.connect(_on_anim_finished)
+
+
+func _on_anim_finished() -> void:
+	if _dead:
+		return
+	_last_pstate = -1
+	modulate = Color.WHITE
+	_play_loop("adventurer-idle")
 
 
 func set_pstate(pstate: int) -> void:
+	if sprite_frames == null or pstate == _last_pstate and is_playing():
+		return
+	_last_pstate = pstate
 	match pstate:
 		Sim.IDLE:
 			_play_loop("adventurer-idle")
@@ -39,6 +53,9 @@ func set_pstate(pstate: int) -> void:
 
 
 func set_dead() -> void:
+	if sprite_frames == null:
+		return
+	_dead = true
 	modulate = Color.WHITE
 	if sprite_frames.has_animation("adventurer-die"):
 		play("adventurer-die")
