@@ -151,7 +151,7 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
   - Deps: T7.5 · Accept: conformance green incl. table-driven cases — satisfies FR-1.4.
 - ✅ **T7.7 Batched fight_input** — optional `batch[]` accepted alongside single-tick fields; one ack per frame; persistence debounced to batch boundaries.
   - Deps: T7.1 · Accept: 60-tick batch → one ack, rate limiter quiet — satisfies FR-2.1.
-- ⏳ **T7.8 Client parity** *(folded into the upcoming client-development wave)* — dynamic `fight_id` from `fight_begin`; parry input + riposte follow-up in HUD; conformance re-run in-engine.
+- ✅ **T7.8 Client parity** *(closed by T8.4 — dynamic fight_id, behavior_table mirror, parry/riposte inputs)* — dynamic `fight_id` from `fight_begin`; parry input + riposte follow-up in HUD; conformance re-run in-engine.
   - Deps: T7.5–T7.7 · Accept: scripted parry→riposte vs real server `verified:true`.
 
 > [!TIP]
@@ -159,15 +159,18 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 
 ## 🖼️ Wave 8 — Client art & feel (depends: Wave 7; assets_pool/pixel-art curated)
 
-- ⏳ **T8.1 Art foundation** — vendor chosen CC0 tiles (Kenney roguelike/caves) into `client/assets/art/`; FloorRenderer renders real tilesets with per-sector theme variation.
+> [!NOTE]
+> Render-style decision (post art-pool review): **side-view pivot** — Gothicvania is side-view native and the combat sim is effectively 1-D on x, matching a cinematic soulslike layout. The isometric diamond floor is retired; `floor_renderer.gd` now builds the gothic arena behind the same node/API.
+
+- ✅ **T8.1 Art foundation** — vendor chosen CC0 tiles (Kenney roguelike/caves) into `client/assets/art/`; FloorRenderer renders real tilesets with per-sector theme variation.
   - Deps: Wave 5 · Accept: same-seed floor screenshot shows themed tiles, not placeholder diamonds.
-- ⏳ **T8.2 Hero sheet + combat anims** — vendor rvros *Animated Pixel Adventurer* (CC0) or aamatniekss *Hero Knight*; AnimatedSprite2D idle/run/attack/roll/parry/hurt/death driven by sim state/events.
+- ✅ **T8.2 Hero sheet + combat anims** — vendor rvros *Animated Pixel Adventurer* (CC0) or aamatniekss *Hero Knight*; AnimatedSprite2D idle/run/attack/roll/parry/hurt/death driven by sim state/events.
   - Deps: assets_pool · Accept: scripted fight shows anim transitions matching server events.
-- ⏳ **T8.3 Enemy dressing** — Gothicvania skeleton/necromancer replaces enemy rectangles; necromancer summon set reserved for boss floors.
+- ✅ **T8.3 Enemy dressing** — Gothicvania skeleton/necromancer replaces enemy rectangles; necromancer summon set reserved for boss floors.
   - Deps: T8.1 · Accept: enemy rooms render themed foes.
-- ⏳ **T8.4 Client parity (closes T7.8)** — dynamic `fight_id` from `fight_begin` (incl. `behavior_table` into client sim); parry input + riposte follow-up window (`prip==1`).
+- ✅ **T8.4 Client parity (closes T7.8)** — dynamic `fight_id` from `fight_begin` (incl. `behavior_table` into client sim); parry input + riposte follow-up window (`prip==1`).
   - Deps: T8.2 · Accept: scripted parry→riposte against the real server → `verified:true`.
-- ⏳ **T8.5 HUD & menus skin** — Kenney UI RPG on HP/stamina/posture bars, market/shop panels, decision_request prompts.
+- ⏳ **T8.5 HUD & menus skin** — Kenney UI RPG on HP/stamina/posture bars, market/shop panels, decision_request prompts. *(deferred — functional ColorRect bars ship now; Kenney skin is polish backlog)*
   - Deps: T8.1 · Accept: visual pass across all scenes.
 
 > [!TIP]
