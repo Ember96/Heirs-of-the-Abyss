@@ -1,8 +1,9 @@
 """Engine progression handlers (FR-3/FR-4) — the gameplay loop outside combat.
 
 Deterministic state transitions on ``GameSession``: descend (one-way floor
-advance), rest (shrine heal), return_home (bank + anchor), shop (buy), and the
-fight setup that feeds ``FightSession``. Floors are regenerated statelessly from
+advance), enter_room (D3 room navigation), rest (shrine heal), return_home (bank
++ anchor), shop (buy), boss fight + skill unlock (FR-4.3), and the fight setup
+that feeds ``FightSession``. Floors are regenerated statelessly from
 ``(session.seed, floor_index)`` — never persisted, never client-trusted.
 """
 
@@ -13,7 +14,7 @@ import secrets
 from . import floorgen, rules as R
 from .catalog import load
 from .fight import FightSession, SIM_VERSION
-from .models import GameSession, Item, RoomType
+from .models import BossSkill, GameSession, Item, RoomType
 
 
 class ProgressionError(Exception):
@@ -39,6 +40,14 @@ def _opponent(difficulty: int) -> dict:
     }
 
 
+def _boss_for(floor_index: int) -> dict:
+    data = load()
+    boss = next((b for b in data["bosses"] if b["floor"] == floor_index), None)
+    if boss is None:
+        raise ProgressionError("rule_violation", f"no boss on floor {floor_index}")
+    return boss
+
+
 def floor_summary(session: GameSession) -> dict:
     floor = _floor_for(session)
     return {
@@ -57,6 +66,14 @@ def descend(session: GameSession) -> dict:
     session.current_floor += 1
     session.sector = R.sector_of(session.current_floor)
     return floor_summary(session)
+
+
+def enter_room(session: GameSession, room_index: int) -> dict:
+    floor = _floor_for(session)
+    if room_index < 0 or room_index >= len(floor.rooms):
+        raise ProgressionError("rule_violation", f"room {room_index} out of range")
+    room = floor.rooms[room_index]
+    return {"room_index": room_index, "type": room.type.value, "data": room.data}
 
 
 def rest(session: GameSession) -> dict:
@@ -100,10 +117,13 @@ def start_fight(session: GameSession, room_index: int) -> tuple[FightSession, di
     if room_index < 0 or room_index >= len(floor.rooms):
         raise ProgressionError("rule_violation", f"room {room_index} out of range")
     room = floor.rooms[room_index]
-    if room.type != RoomType.ENEMY:
-        raise ProgressionError("rule_violation", "room is not an enemy room")
-    difficulty = room.data.get("difficulty", 100)
-    opp = _opponent(difficulty)
+    is_boss = room.type == RoomType.BOSS
+    if room.type == RoomType.ENEMY:
+        opp = _opponent(room.data.get("difficulty", 100))
+    elif is_boss:
+        opp = _boss_for(session.current_floor)["stats"]
+    else:
+        raise ProgressionError("rule_violation", "room has no combat")
     seed = session.seed ^ (session.current_floor * 1000003) ^ (room_index * 100003)
     fight_id = f"f-{secrets.token_urlsafe(6)}"
     fight = FightSession(
@@ -115,22 +135,35 @@ def start_fight(session: GameSession, room_index: int) -> tuple[FightSession, di
         enemy_atk=opp["attack"],
         enemy_def=opp["defense"],
         enemy_posture=opp["posture"],
+        is_boss=is_boss,
     )
     spec = {
         "fight_id": fight_id,
         "seed": seed,
         "sim_version": SIM_VERSION,
-        "opponent_spec": {"stats": opp},
+        "opponent_spec": {"stats": opp, "is_boss": is_boss},
         "room_id": str(room_index),
     }
     return fight, spec
 
 
-def apply_fight_result(session: GameSession, outcome: dict) -> dict:
-    """Grant rewards for a verified win (ehp <= 0). No rewards on loss or tamper."""
+def unlock_or_level(skills: list[BossSkill], skill_id: str) -> list[BossSkill]:
+    for skill in skills:
+        if skill.id == skill_id:
+            skill.level += 1
+            return skills
+    skills.append(BossSkill(id=skill_id, level=1))
+    return skills
+
+
+def apply_fight_result(session: GameSession, outcome: dict, is_boss: bool = False) -> dict:
     if outcome.get("ehp", 1) > 0:
         return {}
     rewards = {"gold": 20, "xp": 10}
+    if is_boss:
+        skill_id = _boss_for(session.current_floor)["skill_unlock"]
+        session.learnt_boss_skills = unlock_or_level(session.learnt_boss_skills, skill_id)
+        rewards["skill_unlocked"] = skill_id
     session.player.gold += rewards["gold"]
     session.player.xp += rewards["xp"]
     return rewards

@@ -129,6 +129,12 @@
     ],
     "server/app/game/progression.py": [
       "docs/04-game-states.md"
+    ],
+    "server/app/llm.py": [
+      "docs/07-agent-design.md"
+    ],
+    "server/app/agent/director.py": [
+      "docs/07-agent-design.md"
     ]
   }
 }

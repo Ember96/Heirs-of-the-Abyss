@@ -98,3 +98,25 @@ def test_apply_fight_result_rewards_win_only():
     # a loss grants nothing
     assert progression.apply_fight_result(s, {"ehp": 1, "php": 0}) == {}
     assert s.player.gold == 20
+
+
+def test_boss_fight_unlocks_skill():
+    s = _session()
+    s.current_floor = 5
+    s.sector = 1
+    fight, spec = progression.start_fight(s, 3)  # room 3 on floor 5 is BOSS
+    assert fight.is_boss is True
+    assert spec["opponent_spec"]["is_boss"] is True
+    rewards = progression.apply_fight_result(s, {"ehp": 0, "php": 100}, is_boss=True)
+    assert rewards["skill_unlocked"] == "dash"
+    assert any(sk.id == "dash" and sk.level == 1 for sk in s.learnt_boss_skills)
+    # second unlock levels it up
+    progression.apply_fight_result(s, {"ehp": 0, "php": 100}, is_boss=True)
+    assert any(sk.id == "dash" and sk.level == 2 for sk in s.learnt_boss_skills)
+
+
+def test_enter_room_returns_type():
+    s = _session()
+    s.current_floor = 2
+    assert progression.enter_room(s, 0)["type"] == "enemy"
+    assert progression.enter_room(s, 3)["type"] in ("loot", "event")

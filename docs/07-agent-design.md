@@ -1,6 +1,9 @@
 # Agent design
 
-> Status: **complete** — LangGraph director graph (D4), tool layer, verification-agent loop (D9).
+> Status: **complete** — LangGraph director graph (D4), tool layer, verification-agent loop (D9), LLM wired via OpenRouter.
+
+> [!NOTE]
+> The director's LLM calls route through `app/llm.py` (OpenRouter, OpenAI-compatible): `MODEL_FAST` (8B) for routing/judges, `MODEL_CHAT` (70B) for composition and narrative. The LLM only emits content — `enemy_id` + affixes — and the engine supplies stats from the catalog; every variant passes clamp + the four judges before `commit_encounter`.
 
 LangGraph director graph (D4), tool layer, verification-agent loop (D9)
 

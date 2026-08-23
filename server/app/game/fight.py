@@ -34,9 +34,11 @@ class FightSession:
         enemy_def: int,
         enemy_posture: int,
         enemy_x: int = 3000,
+        is_boss: bool = False,
     ) -> None:
         self.fight_id = fight_id
         self.seed = seed
+        self.is_boss = is_boss
         self._setup = {
             "player_atk": player_atk,
             "player_def": player_def,

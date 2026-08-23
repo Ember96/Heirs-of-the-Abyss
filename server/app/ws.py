@@ -27,6 +27,13 @@ from .persistence import SessionStore
 
 _security_logger = logging.getLogger("endlessdungeon.security")
 
+_narrative_state: dict[str, dict] = {}
+
+
+def _mark_narration(session_id: str, complete: bool) -> None:
+    if session_id:
+        _narrative_state[session_id] = {"complete": complete}
+
 
 def log_security_event(code: str, detail: str) -> None:
     """Telemetry hook: emit a structured log line for every rejected frame.
@@ -217,8 +224,12 @@ class Connection:
         action = payload.get("action", "")
         params = payload.get("params", {})
         if action == "talk":
+            if self._generations.in_flight:
+                await self.send_error("busy", "a narration is already in flight", recoverable=True)
+                return
             narrative_id = f"n-{secrets.token_urlsafe(6)}"
-            self._generations.start(narrative_id, self._simulated_narrative(narrative_id))
+            _mark_narration(self.session_id, complete=False)
+            self._generations.start(narrative_id, self._narrate(narrative_id, params.get("text", "")))
             return
         if action == "_test_hang":
             narrative_id = f"n-{secrets.token_urlsafe(6)}"
@@ -236,6 +247,8 @@ class Connection:
                 result = progression.return_home(self._session)
             elif action == "shop":
                 result = progression.shop(self._session, params.get("item_id", ""))
+            elif action == "enter_room":
+                result = progression.enter_room(self._session, params.get("room_index", 0))
             elif action == "attack":
                 fight, spec = progression.start_fight(self._session, params.get("room_index", 0))
                 self._fights[fight.fight_id] = fight
@@ -266,7 +279,7 @@ class Connection:
         verified, outcome = fight.verify(payload["state_hash"], payload["sim_version"])
         rewards = {}
         if verified and self._session is not None:
-            rewards = progression.apply_fight_result(self._session, outcome)
+            rewards = progression.apply_fight_result(self._session, outcome, fight.is_boss)
         await self._send("fight_result", payload["fight_id"], {
             "fight_id": payload["fight_id"],
             "verified": verified,
@@ -278,6 +291,19 @@ class Connection:
         await asyncio.sleep(0.05)
         await self._send("narrative_delta", narrative_id, {"narrative_id": narrative_id, "text": "The door creaks."})
         await self._send("narrative_end", narrative_id, {"narrative_id": narrative_id})
+
+    async def _narrate(self, narrative_id: str, player_text: str) -> None:
+        from .agent import director
+
+        build_tags = self._session.player.build_tags if self._session else []
+        floor_index = self._session.current_floor if self._session else 1
+        try:
+            text = await asyncio.to_thread(director.narrate, floor_index, player_text, build_tags)
+        except Exception:
+            text = "The dungeon is silent."
+        await self._send("narrative_delta", narrative_id, {"narrative_id": narrative_id, "text": text})
+        await self._send("narrative_end", narrative_id, {"narrative_id": narrative_id})
+        _mark_narration(self.session_id, complete=True)
 
     async def _hang(self) -> None:
         await asyncio.Event().wait()
@@ -343,6 +369,13 @@ class Connection:
             "frame_total": 1,
             "state": session.model_dump(),
         })
+        state = _narrative_state.pop(self.session_id, None)
+        if state is not None and not state.get("complete", True):
+            await self._send(
+                "narrative_replay",
+                f"nr-{secrets.token_urlsafe(6)}",
+                {"narrative_id": "", "offset": 0},
+            )
 
     # ── send helpers ───────────────────────────────────────────────────────
     async def _send(self, type_: str, id_: str, payload: dict, signed: bool | None = None) -> None:
