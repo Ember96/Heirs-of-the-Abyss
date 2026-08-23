@@ -10,6 +10,8 @@ const BASE_BACKOFF := 1.0
 
 var _peer := WebSocketPeer.new()
 var _url: String
+var _token := ""
+var _hello_sent := false
 var _hmac_key := PackedByteArray()
 var _session_id := ""
 var _resume_token := ""
@@ -20,20 +22,29 @@ var _heartbeat_timer := 0.0
 var _reconnect_attempts := 0
 var _connected_ever := false
 
-func connect_to(url: String) -> void:
+func connect_to(url: String, token: String = "") -> void:
 	_url = url
+	_token = token
 	_reconnect_attempts = 0
 	_connected_ever = false
+	_authenticated = false
+	_hello_sent = false
 	_do_connect()
 
 func _do_connect() -> void:
 	_peer = WebSocketPeer.new()
 	_peer.connect_to_url(_url)
 	_peer.set_no_delay(true)
+	_hello_sent = false
 
 func _process(delta: float) -> void:
+	if _url == "":
+		return
+	_peer.poll()
 	if _peer.get_ready_state() == WebSocketPeer.STATE_OPEN:
-		_peer.poll()
+		if not _authenticated and not _hello_sent:
+			_hello_sent = true
+			send_hello(_token)
 		while _peer.get_available_packet_count() > 0:
 			var raw = _peer.get_packet()
 			if _peer.was_string_packet():
@@ -51,8 +62,6 @@ func _process(delta: float) -> void:
 		if _reconnect_attempts <= MAX_RECONNECT_ATTEMPTS:
 			var delay = BASE_BACKOFF * pow(2, _reconnect_attempts - 1)
 			get_tree().create_timer(delay).timeout.connect(_do_connect)
-	elif _peer.get_ready_state() == WebSocketPeer.STATE_CONNECTING:
-		pass
 
 func _handle_frame(raw: String) -> void:
 	_connected_ever = true

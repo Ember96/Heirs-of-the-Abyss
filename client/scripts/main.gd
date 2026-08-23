@@ -23,7 +23,7 @@ func _on_start_pressed() -> void:
 	floor_renderer.render_floor(_seed, 12, 8)
 	status_label.text = "Connecting..."
 	start_button.disabled = true
-	NetworkManager.connect_to(SERVER_URL)
+	NetworkManager.connect_to(SERVER_URL, DEV_TOKEN)
 
 func _on_session_ready(session_id: String) -> void:
 	status_label.text = "Session: %s" % session_id
