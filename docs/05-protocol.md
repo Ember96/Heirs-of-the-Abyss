@@ -67,7 +67,7 @@ Both directions keep an independent `SeqTracker`. A frame with `seq <= last_seen
 | `hello` | `{token}` | first message only |
 | `action` | `{action, params}` | `action ∈ {move, attack, use_item, rest, return_home, descend, talk, run, shop, equip, drop}` |
 | `decision` | `{decision_id, option_id}` | valid only while parked (§6) |
-| `fight_input` | `{fight_id, tick, action, params}` | streamed per tick; `tick` monotonic; **records the effective inputs the sim consumed** (input buffering lives in the sim) |
+| `fight_input` | `{fight_id, tick?, action?, params?, batch?}` | single-tick frame **or** `batch:[{tick,action,params}]`; server acks once per frame with monotonic `last_tick`; `tick` monotonic; **records the effective inputs the sim consumed** (input buffering lives in the sim) |
 | `fight_submit` | `{fight_id, claimed_result, state_hash, sim_version}` | **no full input log** — the server re-sims the log it already holds |
 | `resume` | `{resume_token}` | |
 | `ping` | `{}` | heartbeat (§4) |

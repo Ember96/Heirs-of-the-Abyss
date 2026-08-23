@@ -56,7 +56,7 @@ cd ../server && uv run docs-check
 ## Session ops
 
 > [!NOTE]
-> Sessions persist in SQLite (`DATABASE_URL`). A client reconnects with its `resume_token` and the server re-simulates the input log — the sim never re-rolls. Retention pruning runs via the persistence layer (T5.3).
+> Sessions persist in SQLite (`DATABASE_URL`). A client reconnects with its `resume_token` and the server re-simulates the input log — the sim never re-rolls. Retention is enforced at every server start (sessions older than 30 days, oldest-first eviction until the 100 MB budget fits) and cascades across all per-session stores including fights.
 
 ## Latency + cost
 

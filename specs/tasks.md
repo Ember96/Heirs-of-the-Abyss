@@ -137,21 +137,21 @@ Dependencies are strictly ordered within a wave; each wave's **done-claim** gate
 > [!CAUTION]
 > Final-verification audit found these documented behaviors absent from code. Each task cites the FR it satisfies.
 
-- ⏳ **T7.1 Durable fights** — `fights` table (setup/log/fail_count/status); acked batches persisted (debounced); resume reloads open fights; crash/restart resumes the same fight.
+- ✅ **T7.1 Durable fights** — `fights` table (setup/log/fail_count/status); acked batches persisted (debounced); resume reloads open fights; crash/restart resumes the same fight.
   - Deps: Wave 5 · Accept: kill/restart between input and submit → same fight, same log — satisfies FR-2.4, US6.
-- ⏳ **T7.2 Death = permadeath** — verified loss (`php<=0`) sets `session.terminal`, persists, emits `game_over`; further actions rejected `session_terminal`.
+- ✅ **T7.2 Death = permadeath** — verified loss (`php<=0`) sets `session.terminal`, persists, emits `game_over`; further actions rejected `session_terminal`.
   - Deps: T7.1 · Accept: scripted loss → `game_over` + terminal — satisfies FR-4.1.
-- ⏳ **T7.3 Flee resolution + reject cap** — tick limit (`FIGHT_TICK_LIMIT`) forces flee (no rewards); `verified:false` increments persisted fail_count; ≥2 → flee; rejects hit telemetry hook.
+- ✅ **T7.3 Flee resolution + reject cap** — tick limit (`FIGHT_TICK_LIMIT`) forces flee (no rewards); `verified:false` increments persisted fail_count; ≥2 → flee; rejects hit telemetry hook.
   - Deps: T7.1 · Accept: forged claims ×3 → flee on 3rd; 36k-tick fight flees — satisfies FR-1.5, FR-2.3.
-- ⏳ **T7.4 Boss gate** — `descend` off a boss floor requires that boss in `session.bosses_defeated`.
+- ✅ **T7.4 Boss gate** — `descend` off a boss floor requires that boss in `session.bosses_defeated`.
   - Deps: Wave 4 · Accept: descend before boss kill → `rule_violation` — satisfies FR-3.1.
-- ⏳ **T7.5 Live director via LangGraph** — `talk` routed through compiled graph (narrate node streams real prose); attack runs `encounter_gen`: compose_and_verify → `commit_encounter` writes the room → fight uses committed stats; `decision_request`/resume wired for parked interrupts.
+- ✅ **T7.5 Live director via LangGraph** — `talk` routed through compiled graph (narrate node streams real prose); attack runs `encounter_gen`: compose_and_verify → `commit_encounter` writes the room → fight uses committed stats; `decision_request`/resume wired for parked interrupts.
   - Deps: T6-key LLM · Accept: two builds → different composed variants pre-clamp; tampered variant never reaches a room — satisfies FR-5.1/5.2, US5, D4.
-- ⏳ **T7.6 Behavior tables in sim** — weighted enemy actions from catalog `behavior_table`, drawn from the shared xorshift; byte-identical Python≡GDScript; fights feed committed enemy tables.
+- ✅ **T7.6 Behavior tables in sim** — weighted enemy actions from catalog `behavior_table`, drawn from the shared xorshift; byte-identical Python≡GDScript; fights feed committed enemy tables.
   - Deps: T7.5 · Accept: conformance green incl. table-driven cases — satisfies FR-1.4.
-- ⏳ **T7.7 Batched fight_input** — optional `batch[]` accepted alongside single-tick fields; one ack per frame; persistence debounced to batch boundaries.
+- ✅ **T7.7 Batched fight_input** — optional `batch[]` accepted alongside single-tick fields; one ack per frame; persistence debounced to batch boundaries.
   - Deps: T7.1 · Accept: 60-tick batch → one ack, rate limiter quiet — satisfies FR-2.1.
-- ⏳ **T7.8 Client parity** — dynamic `fight_id` from `fight_begin`; parry input + riposte follow-up in HUD; conformance re-run in-engine.
+- ⏳ **T7.8 Client parity** *(folded into the upcoming client-development wave)* — dynamic `fight_id` from `fight_begin`; parry input + riposte follow-up in HUD; conformance re-run in-engine.
   - Deps: T7.5–T7.7 · Accept: scripted parry→riposte vs real server `verified:true`.
 
 > [!TIP]
