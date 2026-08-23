@@ -45,3 +45,5 @@ opencode_session
 
 # OpenCode MCP config (machine-specific, contains absolute path)
 opencode.json
+assets_pool/
+.playwright-mcp/
