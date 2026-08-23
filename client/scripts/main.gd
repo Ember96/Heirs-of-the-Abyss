@@ -20,6 +20,11 @@ func _ready() -> void:
 	floor_node.render_floor(_seed, 12, 8)
 
 func _on_start_pressed() -> void:
+	if NetworkManager.is_authenticated():
+		start_button.disabled = true
+		status_label.text = "Summoning…"
+		NetworkManager.send_action("attack", {"room_index": 0})
+		return
 	_seed = (_seed * 1103515245 + 12345) & 0x7FFFFFFF
 	floor_node.render_floor(_seed, 12, 8)
 	status_label.text = "Connecting..."
@@ -28,7 +33,8 @@ func _on_start_pressed() -> void:
 
 func _on_session_ready(session_id: String) -> void:
 	status_label.text = "Session: %s" % session_id
-	start_button.text = "Resume"
+	start_button.text = "Fight"
+	start_button.disabled = false
 
 func _on_message(msg: Dictionary) -> void:
 	var type := str(msg.get("type", ""))
@@ -49,10 +55,19 @@ func _start_fight(msg: Dictionary) -> void:
 		fight_view.queue_free()
 	fight_view = FightView.new()
 	fight_view.submit_ready.connect(_on_submit_ready)
+	fight_view.finished.connect(_on_fight_finished)
 	add_child(fight_view)
 	fight_view.begin(msg.get("payload", {}), floor_node)
 	start_button.visible = false
 	status_label.text = "Fight!"
+
+func _on_fight_finished() -> void:
+	if not NetworkManager.is_authenticated():
+		return
+	status_label.text = "Victory — press Fight for the next room."
+	start_button.text = "Fight"
+	start_button.disabled = false
+	start_button.visible = true
 
 func _on_submit_ready(fid: String, payload: Dictionary) -> void:
 	NetworkManager.send_json("fight_submit", fid, payload)
