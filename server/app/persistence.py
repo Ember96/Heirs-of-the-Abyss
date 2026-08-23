@@ -48,6 +48,19 @@ CREATE TABLE IF NOT EXISTS action_ids (
     id TEXT NOT NULL,
     applied_at REAL NOT NULL
 );
+CREATE TABLE IF NOT EXISTS fights (
+    fight_id TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    seed INTEGER NOT NULL,
+    setup_json TEXT NOT NULL,
+    log_json TEXT NOT NULL,
+    last_tick INTEGER NOT NULL,
+    is_boss INTEGER NOT NULL DEFAULT 0,
+    fail_count INTEGER NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'open',
+    updated_at REAL NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_fights_session ON fights (session_id, status);
 """
 
 
@@ -105,7 +118,7 @@ class SessionStore:
     async def delete(self, session_id: str) -> None:
         async with self._write_lock:
             conn = await self._connect()
-            for table in ("pregen_cache", "generated_lore", "action_ids"):
+            for table in ("pregen_cache", "generated_lore", "action_ids", "fights"):
                 await conn.execute(f"DELETE FROM {table} WHERE session_id=?", (session_id,))
             await conn.execute("DELETE FROM sessions WHERE session_id=?", (session_id,))
             await conn.commit()
@@ -159,6 +172,58 @@ class SessionStore:
         await conn.close()
         return row["payload"] if row else None
 
+    async def save_fight(self, row: dict) -> None:
+        async with self._write_lock:
+            conn = await self._connect()
+            await conn.execute(
+                "INSERT OR REPLACE INTO fights (fight_id, session_id, seed, setup_json, log_json, last_tick, is_boss, fail_count, status, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                (row["fight_id"], row["session_id"], row["seed"], row["setup_json"], row["log_json"],
+                 row["last_tick"], row["is_boss"], row["fail_count"], row["status"], time.time()),
+            )
+            await conn.commit()
+            await conn.close()
+
+    async def load_fight(self, fight_id: str):
+        conn = await self._connect()
+        async with conn.execute("SELECT * FROM fights WHERE fight_id=?", (fight_id,)) as cursor:
+            row = await cursor.fetchone()
+        await conn.close()
+        return row
+
+    async def open_fights(self, session_id: str) -> list:
+        conn = await self._connect()
+        async with conn.execute(
+            "SELECT * FROM fights WHERE session_id=? AND status IN ('open','fled') ORDER BY updated_at",
+            (session_id,),
+        ) as cursor:
+            rows = await cursor.fetchall()
+        await conn.close()
+        return list(rows)
+
+    async def prune_oversized_sessions(self, max_bytes: int = RETENTION_BYTES) -> int:
+        """Evict least-recently-updated sessions (cascade) until total bytes fit NFR-6."""
+        async with self._write_lock:
+            conn = await self._connect()
+            async with conn.execute("SELECT SUM(LENGTH(state_json)) FROM sessions") as cursor:
+                total = (await cursor.fetchone())[0] or 0
+            freed = 0
+            while total > max_bytes:
+                async with conn.execute(
+                    "SELECT session_id, LENGTH(state_json) AS sz FROM sessions ORDER BY updated_at LIMIT 1"
+                ) as cursor:
+                    row = await cursor.fetchone()
+                if row is None:
+                    break
+                sid = row["session_id"]
+                for table in ("pregen_cache", "generated_lore", "action_ids", "fights"):
+                    await conn.execute(f"DELETE FROM {table} WHERE session_id=?", (sid,))
+                await conn.execute("DELETE FROM sessions WHERE session_id=?", (sid,))
+                total -= row["sz"] or 0
+                freed += 1
+            await conn.commit()
+            await conn.close()
+            return freed
+
     async def prune_old_sessions(self, max_age_days: int = RETENTION_DAYS) -> int:
         cutoff = time.time() - max_age_days * 86400
         async with self._write_lock:
@@ -166,7 +231,7 @@ class SessionStore:
             async with conn.execute("SELECT session_id FROM sessions WHERE updated_at < ?", (cutoff,)) as cursor:
                 old = [row["session_id"] async for row in cursor]
             for sid in old:
-                for table in ("pregen_cache", "generated_lore", "action_ids"):
+                for table in ("pregen_cache", "generated_lore", "action_ids", "fights"):
                     await conn.execute(f"DELETE FROM {table} WHERE session_id=?", (sid,))
                 await conn.execute("DELETE FROM sessions WHERE session_id=?", (sid,))
             await conn.commit()

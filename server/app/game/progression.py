@@ -63,6 +63,10 @@ def floor_summary(session: GameSession) -> dict:
 def descend(session: GameSession) -> dict:
     if session.terminal:
         raise ProgressionError("session_terminal", "session is terminal")
+    if R.is_boss_floor(session.current_floor):
+        boss = _boss_for(session.current_floor)
+        if boss["id"] not in session.bosses_defeated:
+            raise ProgressionError("rule_violation", "the boss must fall before you descend")
     session.current_floor += 1
     session.sector = R.sector_of(session.current_floor)
     return floor_summary(session)
@@ -118,10 +122,12 @@ def start_fight(session: GameSession, room_index: int) -> tuple[FightSession, di
         raise ProgressionError("rule_violation", f"room {room_index} out of range")
     room = floor.rooms[room_index]
     is_boss = room.type == RoomType.BOSS
+    boss = None
     if room.type == RoomType.ENEMY:
         opp = _opponent(room.data.get("difficulty", 100))
     elif is_boss:
-        opp = _boss_for(session.current_floor)["stats"]
+        boss = _boss_for(session.current_floor)
+        opp = boss["stats"]
     else:
         raise ProgressionError("rule_violation", "room has no combat")
     seed = session.seed ^ (session.current_floor * 1000003) ^ (room_index * 100003)
@@ -136,6 +142,7 @@ def start_fight(session: GameSession, room_index: int) -> tuple[FightSession, di
         enemy_def=opp["defense"],
         enemy_posture=opp["posture"],
         is_boss=is_boss,
+        behavior_table=(boss or {}).get("behavior_table"),
     )
     spec = {
         "fight_id": fight_id,
@@ -161,7 +168,10 @@ def apply_fight_result(session: GameSession, outcome: dict, is_boss: bool = Fals
         return {}
     rewards = {"gold": 20, "xp": 10}
     if is_boss:
-        skill_id = _boss_for(session.current_floor)["skill_unlock"]
+        boss = _boss_for(session.current_floor)
+        if boss["id"] not in session.bosses_defeated:
+            session.bosses_defeated.append(boss["id"])
+        skill_id = boss["skill_unlock"]
         session.learnt_boss_skills = unlock_or_level(session.learnt_boss_skills, skill_id)
         rewards["skill_unlocked"] = skill_id
     session.player.gold += rewards["gold"]

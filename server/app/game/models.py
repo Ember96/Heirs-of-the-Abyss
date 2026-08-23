@@ -133,6 +133,7 @@ class GameSession(GameModel):
     run_state: str = "hometown"
     terminal: bool = False
     learnt_boss_skills: list[BossSkill] = Field(default_factory=list)
+    bosses_defeated: list[str] = Field(default_factory=list)
     shrine: ShrineState = Field(default_factory=ShrineState)
     market: MarketState = Field(default_factory=MarketState)
     hometown: HometownState = Field(default_factory=HometownState)

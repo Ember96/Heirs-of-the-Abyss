@@ -22,7 +22,7 @@ from fastapi import WebSocket, WebSocketDisconnect
 from . import config
 from . import protocol as P
 from .game import progression
-from .game.fight import FightSession
+from .game.fight import REJECT_LIMIT, FightSession
 from .persistence import SessionStore
 
 _security_logger = logging.getLogger("endlessdungeon.security")
@@ -33,6 +33,9 @@ _narrative_state: dict[str, dict] = {}
 def _mark_narration(session_id: str, complete: bool) -> None:
     if session_id:
         _narrative_state[session_id] = {"complete": complete}
+
+
+FIGHT_PERSIST_EVERY_TICKS = 25
 
 
 def log_security_event(code: str, detail: str) -> None:
@@ -223,6 +226,9 @@ class Connection:
     async def _handle_action(self, id_: str, payload: dict) -> None:
         action = payload.get("action", "")
         params = payload.get("params", {})
+        if self._session is not None and self._session.terminal:
+            await self.send_error("session_terminal", "your run is over", recoverable=False)
+            return
         if action == "talk":
             if self._generations.in_flight:
                 await self.send_error("busy", "a narration is already in flight", recoverable=True)
@@ -252,6 +258,7 @@ class Connection:
             elif action == "attack":
                 fight, spec = progression.start_fight(self._session, params.get("room_index", 0))
                 self._fights[fight.fight_id] = fight
+                await self._persist_fight(fight, force=True)
                 await self._send("fight_begin", fight.fight_id, spec)
                 return
             else:
@@ -267,8 +274,16 @@ class Connection:
         if fight is None:
             await self.send_error("session_not_found", "unknown fight_id", recoverable=True)
             return
+        if fight.status != "open":
+            await self.send_error("rule_violation", f"fight already {fight.status}", recoverable=True)
+            return
+        if fight.expired:
+            await self._resolve_flee(fight, "tick_limit")
+            return
         move = payload.get("params", {}).get("move", [0, 0])
         last_tick = fight.record_input(payload["tick"], payload["action"], move)
+        if last_tick % FIGHT_PERSIST_EVERY_TICKS == 0:
+            await self._persist_fight(fight)
         await self._send("fight_input_ack", payload["fight_id"], {"fight_id": payload["fight_id"], "last_tick": last_tick})
 
     async def _handle_fight_submit(self, id_: str, payload: dict) -> None:
@@ -276,16 +291,75 @@ class Connection:
         if fight is None:
             await self.send_error("session_not_found", "unknown fight_id", recoverable=True)
             return
+        if fight.status != "open":
+            await self.send_error("rule_violation", f"fight already {fight.status}", recoverable=True)
+            return
+        if fight.expired:
+            await self._resolve_flee(fight, "tick_limit")
+            return
+
         verified, outcome = fight.verify(payload["state_hash"], payload["sim_version"])
-        rewards = {}
-        if verified and self._session is not None:
-            rewards = progression.apply_fight_result(self._session, outcome, fight.is_boss)
+        if not verified:
+            fight.fail_count += 1
+            log_security_event("fight_verify_failed", f"{fight.fight_id} fails={fight.fail_count}")
+            await self._persist_fight(fight, force=True)
+            if fight.fail_count >= REJECT_LIMIT:
+                await self._resolve_flee(fight, "reject_cap")
+                return
+            await self._send("fight_result", payload["fight_id"], {
+                "fight_id": payload["fight_id"],
+                "verified": False,
+                "outcome": {**outcome, "fail_count": fight.fail_count},
+                "rewards": {},
+            })
+            return
+
+        rewards: dict = {}
+        if outcome["ehp"] <= 0:
+            fight.status = "won"
+            if self._session is not None:
+                rewards = progression.apply_fight_result(self._session, outcome, fight.is_boss)
+                await self._save_session()
+        elif outcome["php"] <= 0:
+            fight.status = "lost"
+            if self._session is not None:
+                self._session.terminal = True
+                await self._save_session()
+
+        if fight.status != "open":
+            await self._persist_fight(fight, force=True)
+
         await self._send("fight_result", payload["fight_id"], {
             "fight_id": payload["fight_id"],
-            "verified": verified,
+            "verified": True,
             "outcome": outcome,
             "rewards": rewards,
         })
+        if fight.status == "lost":
+            await self._send("game_over", secrets.token_urlsafe(6), {"reason": "death"})
+
+    async def _resolve_flee(self, fight: FightSession, reason: str) -> None:
+        fight.status = "fled"
+        log_security_event("fight_fled", f"{fight.fight_id} reason={reason}")
+        await self._persist_fight(fight, force=True)
+        await self._send("fight_result", fight.fight_id, {
+            "fight_id": fight.fight_id,
+            "verified": False,
+            "outcome": {"reason": reason},
+            "rewards": {},
+        })
+
+    async def _persist_fight(self, fight: FightSession, *, force: bool = False) -> None:
+        if self.store is None or not self.session_id:
+            return
+        if not force and fight.status == "open" and fight.last_saved_tick == fight.last_tick:
+            return
+        fight.last_saved_tick = fight.last_tick
+        await self.store.save_fight(fight.to_row(self.session_id))
+
+    async def _save_session(self) -> None:
+        if self.store is not None and self._session is not None:
+            await self.store.save(self._session)
 
     async def _simulated_narrative(self, narrative_id: str) -> None:
         await asyncio.sleep(0.05)
@@ -363,6 +437,11 @@ class Connection:
         self.session_id = session.session_id
         self.resume_token = session.resume_token
         self._session = session
+        if self.store is not None:
+            for row in await self.store.open_fights(self.session_id):
+                fight = FightSession.from_row(row)
+                self._fights[fight.fight_id] = fight
+                fight.last_saved_tick = fight.last_tick
         await self._send("state_sync", self.session_id, {
             "seq": self._out_seq,
             "frame_index": 1,

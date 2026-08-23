@@ -72,6 +72,7 @@ erDiagram
     string run_state
     string terminal
     string learnt_boss_skills
+    string bosses_defeated
     string shrine
     string market
     string hometown

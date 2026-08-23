@@ -51,7 +51,7 @@ def _simulate(seed: int, opp: dict) -> tuple[list[tuple[int, str, tuple[int, int
     return log, state
 
 
-def test_fight_verified_true_then_tampered_false():
+def test_tampered_claim_counted_honest_win_stale_rejected():
     with TestClient(app) as client:
         with client.websocket_connect("/game") as ws:
             hk = _hello(ws)["payload"]["hmac_key"]
@@ -73,22 +73,32 @@ def test_fight_verified_true_then_tampered_false():
                 ack = ws.receive_json()
                 assert ack["type"] == "fight_input_ack"
 
-            # correct hash -> verified:true, with rewards
-            seq += 1
-            _signed(ws, hk, "fight_submit", fight_id, seq,
-                    {"fight_id": fight_id, "claimed_result": {"php": state["php"], "ehp": state["ehp"]},
-                     "state_hash": state_hash(state), "sim_version": "1"})
-            fr = ws.receive_json()
-            assert fr["type"] == "fight_result"
-            assert fr["payload"]["verified"] is True
-            assert fr["payload"]["rewards"]["gold"] == 20
-
-            # tampered hash -> verified:false, no rewards
+            # tampered claim while open -> verified:false, counted, no rewards
             seq += 1
             _signed(ws, hk, "fight_submit", fight_id, seq,
                     {"fight_id": fight_id, "claimed_result": {"php": 999, "ehp": 0},
                      "state_hash": "0" * 64, "sim_version": "1"})
-            fr2 = ws.receive_json()
-            assert fr2["type"] == "fight_result"
-            assert fr2["payload"]["verified"] is False
-            assert fr2["payload"]["rewards"] == {}
+            bad = ws.receive_json()
+            assert bad["type"] == "fight_result"
+            assert bad["payload"]["verified"] is False
+            assert bad["payload"]["outcome"]["fail_count"] == 1
+            assert bad["payload"]["rewards"] == {}
+
+            # honest claim still wins inside the reject budget
+            seq += 1
+            _signed(ws, hk, "fight_submit", fight_id, seq,
+                    {"fight_id": fight_id, "claimed_result": {"php": state["php"], "ehp": state["ehp"]},
+                     "state_hash": state_hash(state), "sim_version": "1"})
+            good = ws.receive_json()
+            assert good["type"] == "fight_result"
+            assert good["payload"]["verified"] is True
+            assert good["payload"]["rewards"]["gold"] == 20
+
+            # stale resubmit after resolution -> typed rejection
+            seq += 1
+            _signed(ws, hk, "fight_submit", fight_id, seq,
+                    {"fight_id": fight_id, "claimed_result": {"php": state["php"], "ehp": 0},
+                     "state_hash": state_hash(state), "sim_version": "1"})
+            stale = ws.receive_json()
+            assert stale["type"] == "error"
+            assert stale["payload"]["code"] == "rule_violation"
