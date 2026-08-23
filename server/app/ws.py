@@ -1,9 +1,11 @@
-"""WS connection handler — the hardened protocol gateway (T1.3).
+"""WS connection handler — the hardened protocol gateway + engine-first dispatch.
 
 Handles: auth (first-message `hello`), seq anti-replay, HMAC verify, per-session
-rate limiting, ping/pong, and the generation tracker (force-clear a hung
-generation after `GENERATION_TIMEOUT` with a terminal `error`). Game logic is
-stubbed until T2 — this is the envelope layer only.
+rate limiting, ping/pong, the generation tracker (force-clear a hung generation
+after `GENERATION_TIMEOUT`), and the gameplay loop — typed `action` frames go
+straight to the progression handlers, `fight_input`/`fight_submit` feed the
+deterministic re-sim validator, and `talk` runs a simulated narrative (the
+LangGraph director wires in when the LLM lands).
 """
 
 from __future__ import annotations
@@ -19,6 +21,8 @@ from fastapi import WebSocket, WebSocketDisconnect
 
 from . import config
 from . import protocol as P
+from .game import progression
+from .game.fight import FightSession
 from .persistence import SessionStore
 
 _security_logger = logging.getLogger("endlessdungeon.security")
@@ -111,6 +115,8 @@ class Connection:
         self.session_id: str | None = None
         self.resume_token: str | None = None
         self.hmac_key: bytes | None = None
+        self._session = None
+        self._fights: dict[str, FightSession] = {}
         self._in_seq = P.SeqTracker()
         self._out_seq = 0
         self._generations = GenerationTracker(self.generation_timeout, self._on_generation_timeout)
@@ -200,21 +206,73 @@ class Connection:
             await self.send_error(err, "no pending decision", recoverable=True)
         elif type_ == "resume":
             await self._handle_resume(payload)
-        elif type_ in ("fight_input", "fight_submit"):
-            await self.send_error("generation_not_ready", "combat lands in Wave 2", recoverable=True)
+        elif type_ == "fight_input":
+            await self._handle_fight_input(id_, payload)
+        elif type_ == "fight_submit":
+            await self._handle_fight_submit(id_, payload)
         else:
             await self.send_error("rule_violation", f"unexpected frame type {type_}", recoverable=True)
 
     async def _handle_action(self, id_: str, payload: dict) -> None:
         action = payload.get("action", "")
+        params = payload.get("params", {})
         if action == "talk":
             narrative_id = f"n-{secrets.token_urlsafe(6)}"
             self._generations.start(narrative_id, self._simulated_narrative(narrative_id))
-        elif action == "_test_hang":
+            return
+        if action == "_test_hang":
             narrative_id = f"n-{secrets.token_urlsafe(6)}"
             self._generations.start(narrative_id, self._hang())
-        else:
-            await self._send("turn_result", id_, {"action_id_echo": id_, "result": {}})
+            return
+        if self._session is None:
+            await self.send_error("auth_failed", "no active session", recoverable=False)
+            return
+        try:
+            if action == "descend":
+                result = progression.descend(self._session)
+            elif action == "rest":
+                result = progression.rest(self._session)
+            elif action == "return_home":
+                result = progression.return_home(self._session)
+            elif action == "shop":
+                result = progression.shop(self._session, params.get("item_id", ""))
+            elif action == "attack":
+                fight, spec = progression.start_fight(self._session, params.get("room_index", 0))
+                self._fights[fight.fight_id] = fight
+                await self._send("fight_begin", fight.fight_id, spec)
+                return
+            else:
+                await self._send("turn_result", id_, {"action_id_echo": id_, "result": {}})
+                return
+        except progression.ProgressionError as e:
+            await self.send_error(e.code, e.message, recoverable=True)
+            return
+        await self._send("turn_result", id_, {"action_id_echo": id_, "result": result})
+
+    async def _handle_fight_input(self, id_: str, payload: dict) -> None:
+        fight = self._fights.get(payload["fight_id"])
+        if fight is None:
+            await self.send_error("session_not_found", "unknown fight_id", recoverable=True)
+            return
+        move = payload.get("params", {}).get("move", [0, 0])
+        last_tick = fight.record_input(payload["tick"], payload["action"], move)
+        await self._send("fight_input_ack", payload["fight_id"], {"fight_id": payload["fight_id"], "last_tick": last_tick})
+
+    async def _handle_fight_submit(self, id_: str, payload: dict) -> None:
+        fight = self._fights.get(payload["fight_id"])
+        if fight is None:
+            await self.send_error("session_not_found", "unknown fight_id", recoverable=True)
+            return
+        verified, outcome = fight.verify(payload["state_hash"], payload["sim_version"])
+        rewards = {}
+        if verified and self._session is not None:
+            rewards = progression.apply_fight_result(self._session, outcome)
+        await self._send("fight_result", payload["fight_id"], {
+            "fight_id": payload["fight_id"],
+            "verified": verified,
+            "outcome": outcome,
+            "rewards": rewards,
+        })
 
     async def _simulated_narrative(self, narrative_id: str) -> None:
         await asyncio.sleep(0.05)
@@ -234,8 +292,10 @@ class Connection:
         self.session_id = f"s-{secrets.token_urlsafe(8)}"
         self.resume_token = secrets.token_urlsafe(P.RESUME_TOKEN_BYTES)
         self.hmac_key = secrets.token_bytes(32)
+        session = self._new_session()
+        self._session = session
         if self.store is not None:
-            await self.store.create(self._new_session())
+            await self.store.create(session)
         await self._send(
             "welcome",
             self.session_id,
@@ -276,6 +336,7 @@ class Connection:
             return
         self.session_id = session.session_id
         self.resume_token = session.resume_token
+        self._session = session
         await self._send("state_sync", self.session_id, {
             "seq": self._out_seq,
             "frame_index": 1,

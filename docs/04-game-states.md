@@ -58,6 +58,11 @@ stateDiagram-v2
   class RIPOSTE ok
 ```
 
+## Server loop wiring (fight validation + progression)
+
+> [!TIP]
+> The WS gateway dispatches gameplay frames to the engine: `fight_input`/`fight_submit` feed the deterministic re-sim validator (`app/game/fight.py`), and `descend`/`rest`/`return_home`/`shop`/`attack` run the progression handlers (`app/game/progression.py`). A tampered fight result fails the hash check (`verified:false`, no rewards); floors regenerate statelessly from `(session.seed, floor_index)`.
+
 ## See also
 
 - [System architecture (engine)](02-architecture.md)

@@ -123,6 +123,12 @@
     ],
     "server/app/evals/latency.py": [
       "docs/11-evals.md"
+    ],
+    "server/app/game/fight.py": [
+      "docs/04-game-states.md"
+    ],
+    "server/app/game/progression.py": [
+      "docs/04-game-states.md"
     ]
   }
 }

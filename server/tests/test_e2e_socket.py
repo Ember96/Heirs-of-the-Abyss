@@ -49,7 +49,7 @@ def test_action_ordering():
         with c.websocket_connect("/game") as ws:
             hk = _hello(ws)["payload"]["hmac_key"]
             ws.send_json(_signed(hk, "action", "a1", 1, {"action": "move", "params": {}}))
-            ws.send_json(_signed(hk, "action", "a2", 2, {"action": "attack", "params": {}}))
+            ws.send_json(_signed(hk, "action", "a2", 2, {"action": "run", "params": {}}))
             r1, r2 = ws.receive_json(), ws.receive_json()
             assert r1["type"] == "turn_result" and r1["id"] == "a1"
             assert r2["type"] == "turn_result" and r2["id"] == "a2"
