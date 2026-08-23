@@ -188,5 +188,6 @@ func _rect(pos: Vector2, size: Vector2, color: Color, z: int) -> ColorRect:
 	rect.size = size
 	rect.color = color
 	rect.z_index = z
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(rect)
 	return rect
