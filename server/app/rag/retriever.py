@@ -1,12 +1,18 @@
-"""Hybrid retrieval: dense + BM25 + payload filters + RRF fusion.
+"""Hybrid retrieval: dense (Cohere) + BM25 + payload filters + RRF fusion.
 
-`search_local` is the deterministic, dependency-free fallback (no Qdrant, no
-embeddings) used for tests and when Qdrant is down. `Retriever` wraps Qdrant
-for production and falls back to `search_local` when no client is configured.
+`search_local` is the deterministic, dependency-free fallback used for tests
+and whenever embeddings are unavailable (no key, API down). When a Cohere key
+is configured, `hybrid_search` embeds the query + records, ranks both ways,
+and fuses with RRF — no Qdrant/docker required for the local single-process path.
 """
 
 from __future__ import annotations
 
+import math
+
+import httpx
+
+from .. import config
 from .indexer import render_record
 
 
@@ -40,12 +46,82 @@ def search_local(query: str, records: list[dict], limit: int = 5, filters: dict 
     return [record for _, record in scored[:limit]]
 
 
+def embed_texts(texts: list[str], *, input_type: str) -> list[list[float]] | None:
+    """Cohere embeddings; returns None when unavailable so callers fall back to BM25."""
+    if not config.COHERE_API_KEY or not texts:
+        return None
+    try:
+        resp = httpx.post(
+            "https://api.cohere.com/v2/embed",
+            headers={"Authorization": f"Bearer {config.COHERE_API_KEY}"},
+            json={
+                "model": config.COHERE_EMBED_MODEL,
+                "texts": texts,
+                "input_type": input_type,
+                "embedding_types": ["float"],
+            },
+            timeout=30.0,
+        )
+        if resp.status_code != 200:
+            return None
+        payload = resp.json()["embeddings"]
+        return payload["float"] if isinstance(payload, dict) else payload
+    except httpx.HTTPError:
+        return None
+
+
+def _cosine(a: list[float], b: list[float]) -> float:
+    dot = sum(x * y for x, y in zip(a, b))
+    na = math.sqrt(sum(x * x for x in a))
+    nb = math.sqrt(sum(y * y for y in b))
+    if na == 0.0 or nb == 0.0:
+        return 0.0
+    return dot / (na * nb)
+
+
+_DOC_CACHE: dict[int, list[list[float]]] = {}
+
+
+def _document_embeddings(records: list[dict]) -> list[list[float]] | None:
+    fingerprint = hash(tuple((r.get("id", ""), r.get("name", "")) for r in records))
+    cached = _DOC_CACHE.get(fingerprint)
+    if cached is not None:
+        return cached
+    vectors = embed_texts([render_record(r) for r in records], input_type="search_document")
+    if vectors is not None:
+        _DOC_CACHE.clear()
+        _DOC_CACHE[fingerprint] = vectors
+    return vectors
+
+
+def hybrid_search(query: str, records: list[dict], limit: int = 5, filters: dict | None = None) -> list[dict]:
+    """Dense + BM25 fused with RRF. Falls back to pure BM25 without embeddings."""
+    filtered = [r for r in records if not filters or _matches_filters(r, filters)]
+    bm25 = search_local(query, filtered, limit=max(limit * 2, 10))
+
+    q_vec = embed_texts([query], input_type="search_query")
+    doc_vecs = _document_embeddings(filtered)
+    dense: list[str] = []
+    if q_vec and doc_vecs:
+        scored = sorted(
+            (( _cosine(q_vec[0], dv), rid) for rid, dv in zip([r.get("id", "") for r in filtered], doc_vecs)),
+            key=lambda x: -x[0],
+        )
+        dense = [rid for _, rid in scored[: max(limit * 2, 10)]]
+
+    if not dense:
+        return bm25[:limit]
+    by_id = {r.get("id", ""): r for r in filtered}
+    fused = rrf_fusion([dense, [r.get("id", "") for r in bm25]])
+    return [by_id[rid] for rid in fused if rid in by_id][:limit]
+
+
 class Retriever:
     def __init__(self, client=None, collection: str = "catalog") -> None:
         self.client = client
         self.collection = collection
 
     def retrieve(self, query: str, records: list[dict], limit: int = 5, filters: dict | None = None) -> list[dict]:
-        if self.client is None:
-            return search_local(query, records, limit, filters)
-        raise NotImplementedError("Qdrant hybrid retrieval is wired when docker + embeddings are available")
+        if self.client is not None:
+            raise NotImplementedError("Qdrant path requires docker; use the local hybrid instead")
+        return hybrid_search(query, records, limit, filters)

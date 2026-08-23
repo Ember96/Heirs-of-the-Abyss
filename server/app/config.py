@@ -48,3 +48,7 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 OPENROUTER_BASE_URL = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
 MODEL_FAST = os.environ.get("MODEL_FAST", "meta-llama/llama-3.1-8b-instruct")  # routing / judges
 MODEL_CHAT = os.environ.get("MODEL_CHAT", "meta-llama/llama-3.3-70b-instruct")  # composition / narrative
+
+# ── Embeddings (Cohere) ──────────────────────────────────────────────────────
+COHERE_API_KEY = os.environ.get("COHERE_API_KEY", "")
+COHERE_EMBED_MODEL = os.environ.get("COHERE_EMBED_MODEL", "embed-english-v3.0")
