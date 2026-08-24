@@ -2,7 +2,6 @@ extends MainLoop
 
 const FightViewScript = preload("res://scripts/fight_view.gd")
 
-var _done := false
 
 func _initialize():
 	var args = OS.get_cmdline_user_args()

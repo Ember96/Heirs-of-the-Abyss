@@ -4,7 +4,6 @@ extends RefCounted
 const Sim = preload("res://scripts/sim_core.gd")
 const Hmac = preload("res://scripts/hmac_utils.gd")
 
-const INPUT_BUFFER_TICKS := 12
 
 var sim_state: Dictionary
 var fight_log: Array = []

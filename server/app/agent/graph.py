@@ -12,7 +12,7 @@ pipeline — room typing decides commit eligibility.
 from __future__ import annotations
 
 import asyncio
-from typing import Literal, TypedDict
+from typing import TypedDict
 
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph

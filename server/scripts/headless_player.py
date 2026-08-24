@@ -10,7 +10,7 @@ import sys
 
 from app.game import floorgen, rules as R
 from app.game.catalog import get_class, load
-from app.game.models import BossSkill, Player, RoomType
+from app.game.models import Player, RoomType
 from app.game.sim import core
 
 
