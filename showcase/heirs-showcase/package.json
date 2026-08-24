@@ -1,0 +1,11 @@
+{
+  "name": "heirs-showcase",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.8.13 preview",
+    "check": "npx --yes hyperframes@0.8.13 check",
+    "render": "npx --yes hyperframes@0.8.13 render",
+    "publish": "npx --yes hyperframes@0.8.13 publish"
+  }
+}
