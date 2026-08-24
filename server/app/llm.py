@@ -3,11 +3,15 @@
 `MODEL_FAST` drives routing/classification and the verifier judges; `MODEL_CHAT`
 drives composition and narrative. Calls are synchronous; the WS layer runs them
 in `asyncio.to_thread` so they never block the event loop.
+
+Every call is traced to LangSmith via the `@traceable` decorator — visible in
+the LangSmith UI as named runs with prompt/completion/latency.
 """
 
 from __future__ import annotations
 
 import httpx
+from langsmith import traceable
 
 from . import config
 
@@ -16,6 +20,10 @@ class LLMError(Exception):
     pass
 
 
+@traceable(
+    name="llm_complete",
+    run_type="llm",
+)
 def complete(
     prompt: str,
     *,

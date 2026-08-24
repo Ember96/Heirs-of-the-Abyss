@@ -38,7 +38,7 @@ cd ../server && uv run docs-check
 | `MODEL_EMBED` | `text-embedding-3-small` | RAG embeddings |
 | `COHERE_API_KEY` | *(empty)* | embeddings for hybrid retrieval; empty = pure-BM25 fallback |
 | `COHERE_EMBED_MODEL` | `embed-english-v3.0` | embedding model (1024 dims) |
-| `DATABASE_URL` | `sqlite:///data/endless-dungeon.db` | game DB |
+| `DATABASE_URL` | `sqlite:///data/heirs-of-the-abyss.db` | game DB |
 | `DEV_TOKEN` | `dev-secret-change-me` | must override (see caution) |
 | `ENABLE_SIGNING` | `true` | per-session HMAC |
 | `ENABLE_MODERATION` | `false` | content moderation hook |

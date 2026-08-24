@@ -1,6 +1,6 @@
-# EndlessDungeon — Specification (Spec-Driven Development)
+# Heirs of the Abyss — Specification (Spec-Driven Development)
 
-Status: **Spec** (this document is the source of truth for WHAT to build; `plan.md` = HOW, `tasks.md` = execution order). Supersedes the prose work plan in `.omo/plans/endless-dungeon.md`, which remains the design rationale record.
+Status: **Spec** (this document is the source of truth for WHAT to build; `plan.md` = HOW, `tasks.md` = execution order). Supersedes the prose work plan in `.omo/plans/heirs-of-the-abyss.md`, which remains the design rationale record.
 
 > **Legend** — 🟠 critical rule / invariant · 🟢 success / goal · 🔴 problem / must-not · 🔵 info / context
 

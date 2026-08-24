@@ -1,4 +1,4 @@
-# EndlessDungeon — Tasks (Spec-Driven Development)
+# Heirs of the Abyss — Tasks (Spec-Driven Development)
 
 Status: **Tasks** — executable, dependency-ordered list implementing `plan.md`. Each task = one atomic commit (conventional commits). Acceptance criteria reference `spec.md` (FR/NFR/invariants) and require evidence under `docs/evidence/<task-id>/`.
 

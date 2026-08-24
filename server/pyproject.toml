@@ -1,7 +1,7 @@
 [project]
-name = "endless-dungeon-server"
+name = "heirs-of-the-abyss-server"
 version = "0.1.0"
-description = "EndlessDungeon game server — deterministic soulslike engine + LangGraph dungeon master + RAG"
+description = "Heirs of the Abyss game server — deterministic soulslike engine + LangGraph dungeon master + RAG"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115",

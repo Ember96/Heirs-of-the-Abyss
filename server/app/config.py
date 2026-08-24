@@ -53,4 +53,4 @@ MODEL_CHAT = os.environ.get("MODEL_CHAT", "meta-llama/llama-3.3-70b-instruct")  
 COHERE_API_KEY = os.environ.get("COHERE_API_KEY", "")
 COHERE_EMBED_MODEL = os.environ.get("COHERE_EMBED_MODEL", "embed-english-v3.0")
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///data/endless-dungeon.db")
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///data/heirs-of-the-abyss.db")

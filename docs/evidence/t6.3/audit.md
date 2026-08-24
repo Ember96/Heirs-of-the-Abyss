@@ -23,7 +23,7 @@
 
 ## Telemetry hook
 
-- `log_security_event(code, detail)` — single structured log point (logger `endlessdungeon.security`) wired into every rejection path: `frame_too_large`, `bad_json`, `unsupported_version`, `frame_invalid`, `seq_replay`, `auth_failed`, `hmac_invalid`, `rate_limited`.
+- `log_security_event(code, detail)` — single structured log point (logger `heirs-of-the-abyss.security`) wired into every rejection path: `frame_too_large`, `bad_json`, `unsupported_version`, `frame_invalid`, `seq_replay`, `auth_failed`, `hmac_invalid`, `rate_limited`.
 
 ## WSS/TLS
 

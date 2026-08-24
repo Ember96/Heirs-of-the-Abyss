@@ -27,7 +27,7 @@ from .game import rules as R
 from .game.fight import REJECT_LIMIT, SIM_VERSION, FightSession
 from .persistence import SessionStore
 
-_security_logger = logging.getLogger("endlessdungeon.security")
+_security_logger = logging.getLogger("heirs-of-the-abyss.security")
 
 _narrative_state: dict[str, dict] = {}
 

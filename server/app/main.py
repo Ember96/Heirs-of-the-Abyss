@@ -1,4 +1,4 @@
-"""EndlessDungeon server — FastAPI app.
+"""Heirs of the Abyss server — FastAPI app.
 
 `GET /health` + `WS /game`. The WS endpoint wires each connection through the
 hardened `Connection` gateway (auth, seq, HMAC, rate-limit, generation tracker)
@@ -42,7 +42,7 @@ async def lifespan(_: FastAPI):
     yield
 
 
-app = FastAPI(title="EndlessDungeon", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title="Heirs of the Abyss", version="0.1.0", lifespan=lifespan)
 
 
 @app.get("/health")

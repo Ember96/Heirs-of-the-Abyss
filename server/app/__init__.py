@@ -1,4 +1,4 @@
-"""EndlessDungeon game server.
+"""Heirs of the Abyss game server.
 
 Deterministic soulslike engine + LangGraph dungeon master + RAG.
 Wave 1 scaffold only — `main`, `game`, `agent`, and `rag` modules land in

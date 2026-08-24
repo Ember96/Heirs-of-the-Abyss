@@ -1,4 +1,4 @@
-"""EndlessDungeon WS v1 protocol — Python reference implementation.
+"""Heirs of the Abyss WS v1 protocol — Python reference implementation.
 
 Mirrors ``docs/05-protocol.md`` exactly. T1.3 wires this into the FastAPI WS
 handler; T1.4 adds the GDScript HMAC mirror + the cross-language conformance test.

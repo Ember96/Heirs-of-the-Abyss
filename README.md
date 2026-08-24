@@ -1,4 +1,4 @@
-# 🗡️ EndlessDungeon
+# 🗡️ Heirs of the Abyss
 
 A single-player **soulslike roguelike** with unbounded AI-generated floors. A LangGraph "dungeon master" agent composes enemies, encounters, and narrative from your actions and character build — grounded in a game-design corpus, gated by four verification agents — while a deterministic Python engine owns all rules and combat.
 

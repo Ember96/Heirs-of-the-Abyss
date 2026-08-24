@@ -1,4 +1,4 @@
-# Contributing to EndlessDungeon
+# Contributing to Heirs of the Abyss
 
 Thanks for contributing. This project is meant to be **shared and well-documented** — so a contribution that changes code or docs must keep the documentation coherent.
 

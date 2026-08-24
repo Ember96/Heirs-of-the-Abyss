@@ -1,4 +1,4 @@
-# EndlessDungeon — Agent Instructions
+# Heirs of the Abyss — Agent Instructions
 
 Guidance for AI agents and automated tooling working in this repository. Read `docs/STYLE.md` for the full documentation style guide — it is binding.
 

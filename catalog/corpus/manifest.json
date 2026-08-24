@@ -1,5 +1,5 @@
 {
-  "$comment": "Game-design corpus for the EndlessDungeon RAG. License gate: only FREE + redistributable sources ingested (MIT-compatible where the corpus is redistributed). Ironsworn (CC-BY-NC-SA) and RogueBasin wiki (CC-BY-SA) are intentionally ABSENT (link-only per the license gate).",
+  "$comment": "Game-design corpus for the Heirs of the Abyss RAG. License gate: only FREE + redistributable sources ingested (MIT-compatible where the corpus is redistributed). Ironsworn (CC-BY-NC-SA) and RogueBasin wiki (CC-BY-SA) are intentionally ABSENT (link-only per the license gate).",
   "ingested_at": "2026-08-20",
   "records": [
     {

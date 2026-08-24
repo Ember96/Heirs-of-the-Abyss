@@ -47,7 +47,7 @@ flowchart TD
 ## Telemetry hook
 
 > [!NOTE]
-> Every rejected frame routes through `log_security_event(code, detail)` — a single structured log point (logger `endlessdungeon.security`) covering auth failure, HMAC mismatch, seq replay, rate-limit hit, oversized frame, and malformed JSON. Operators alert on this one logger; no per-branch instrumentation is needed.
+> Every rejected frame routes through `log_security_event(code, detail)` — a single structured log point (logger `heirs-of-the-abyss.security`) covering auth failure, HMAC mismatch, seq replay, rate-limit hit, oversized frame, and malformed JSON. Operators alert on this one logger; no per-branch instrumentation is needed.
 
 ## Client audit (T6.3)
 

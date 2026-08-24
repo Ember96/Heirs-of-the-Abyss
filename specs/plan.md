@@ -1,4 +1,4 @@
-# EndlessDungeon — Technical Plan (Spec-Driven Development)
+# Heirs of the Abyss — Technical Plan (Spec-Driven Development)
 
 Status: **Plan** — implements `spec.md`. Source of truth for HOW. Maps 1:1 to `tasks.md`.
 
