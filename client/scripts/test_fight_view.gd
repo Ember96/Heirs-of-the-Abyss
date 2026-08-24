@@ -20,7 +20,7 @@ func _initialize():
 		"opponent_spec": {"stats": {"max_hp": 5, "attack": 1, "defense": 0, "posture": 10}, "behavior_table": []},
 		"player_spec": {"attack": 99, "defense": 50},
 	}, null)
-	for i in range(8):  # close the gap: 8 steps of 500 covers the 3000-unit spawn distance
+	for i in range(5):  # close the gap — player 500/t + enemy approach 90/t converge by tick ~4
 		fv.controller.queue_input("none", 500, 0)
 	fv.controller.queue_input("attack", 0, 0)
 

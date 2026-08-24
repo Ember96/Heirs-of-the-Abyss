@@ -31,6 +31,10 @@ POSTURE_BREAK_TICKS = 150  # 2.5 s at 60 Hz
 ROLL_TICKS = 13
 ATTACK_TICKS = 10
 ATTACK_RANGE = 1000
+ATTACK_RANGE_SQ = ATTACK_RANGE * ATTACK_RANGE
+STRIKE_RANGE = 700
+STRIKE_RANGE_SQ = STRIKE_RANGE * STRIKE_RANGE
+ENEMY_SPEED = 90
 PARRY_STARTUP_TICKS = 10
 PARRY_ACTIVE_TICKS = 12
 PARRY_TOTAL_TICKS = PARRY_STARTUP_TICKS + PARRY_ACTIVE_TICKS
@@ -56,7 +60,7 @@ def new_fight(seed: int = 0, player_atk: int = 10, player_def: int = 5,
         "pstate": IDLE, "pticks": 0, "piframe": 0, "preg": 0, "ppreg": 0,
         "ex": enemy_x, "ey": 0, "ehp": enemy_hp, "epost": enemy_posture,
         "epost_base": enemy_posture, "estate": IDLE, "eticks": 0, "ecooldown": ENEMY_ATTACK_BASE,
-        "prip": 0, "eaware": 0,
+        "prip": 0, "eaware": 0, "efx": 0, "efy": 0,
         "patk": player_atk, "pdef": player_def, "eatk": enemy_atk, "edef": enemy_def,
         "bt": list(behavior_table) if behavior_table else [],
         "rng": seed & MASK32,
@@ -84,6 +88,9 @@ def step(state: dict, move: tuple[int, int], action: str) -> tuple[dict, list[st
     s["px"] += dx
     s["py"] += dy
 
+    if action != "block" and s["pstate"] == GUARDING:
+        s["pstate"] = IDLE
+
     if action == "roll" and s["pstate"] == IDLE and s["pstam"] >= STAMINA_ROLL:
         s["pstam"] -= STAMINA_ROLL
         s["pstate"] = ROLLING
@@ -94,7 +101,9 @@ def step(state: dict, move: tuple[int, int], action: str) -> tuple[dict, list[st
         s["pstam"] -= STAMINA_ATTACK
         s["pstate"] = ATTACKING
         s["pticks"] = ATTACK_TICKS
-        if abs(s["px"] - s["ex"]) <= ATTACK_RANGE:
+        ddx = s["px"] - s["ex"]
+        ddy = s["py"] - s["ey"]
+        if ddx * ddx + ddy * ddy <= ATTACK_RANGE_SQ:
             dmg = max(1, s["patk"] - s["edef"])
             if s["prip"] == 1:
                 dmg = dmg * 2  # riposte x2, pure integer
@@ -103,8 +112,8 @@ def step(state: dict, move: tuple[int, int], action: str) -> tuple[dict, list[st
             else:
                 if s["estate"] == STAGGERED:
                     dmg = (dmg * 3 + 1) // 2  # stagger x1.5, pure integer
-                elif s["eaware"] == 0:
-                    dmg = (dmg * 3 + 1) // 2  # backstab x1.5, pure integer
+                elif s["efx"] * ddx + s["efy"] * ddy < 0:
+                    dmg = (dmg * 3 + 1) // 2  # backstab x1.5 — attacker in rear arc
                 events.append("hit")
             s["ehp"] -= dmg
             s["epost"] -= dmg
@@ -122,40 +131,55 @@ def step(state: dict, move: tuple[int, int], action: str) -> tuple[dict, list[st
     elif action == "block":
         s["pstate"] = GUARDING
 
-    s["ecooldown"] -= 1
-    if s["ecooldown"] <= 0 and s["estate"] == IDLE:
-        s["rng"] = xorshift32(s["rng"])
-        s["ecooldown"] = ENEMY_ATTACK_BASE + (s["rng"] % 60)
-        s["eaware"] = 1
-        edmg = s["eatk"]
-        bt = s.get("bt") or []
-        if bt:
-            s["rng"] = xorshift32(s["rng"])
-            total = sum(b["weight"] for b in bt)
-            pick = s["rng"] % total
-            acc = 0
-            for entry in bt:
-                acc += entry["weight"]
-                if pick < acc:
-                    edmg = entry["damage"]
-                    break
-        dmg = max(1, edmg - s["pdef"])
-        if s["piframe"] > 0:
-            events.append("enemy_miss")
-        elif s["pstate"] == PARRYING and s["pticks"] <= PARRY_ACTIVE_TICKS:
-            s["estate"] = STAGGERED
-            s["eticks"] = POSTURE_BREAK_TICKS
-            s["epost"] = s["epost_base"]
-            s["prip"] = 1
-            events.append("parry_success")
-        elif s["pstate"] == GUARDING:
-            reduced = max(1, dmg // 2)
-            s["php"] -= reduced
-            s["pstam"] = max(0, s["pstam"] - STAMINA_BLOCK)
-            events.append("enemy_blocked")
+    if s["estate"] == IDLE:
+        ddx = s["px"] - s["ex"]
+        ddy = s["py"] - s["ey"]
+        if ddx * ddx + ddy * ddy > STRIKE_RANGE_SQ:
+            if ddx != 0:
+                step_x = min(ENEMY_SPEED, abs(ddx))
+                s["ex"] += step_x if ddx > 0 else -step_x
+                s["efx"] = 1 if ddx > 0 else -1
+            if ddy != 0:
+                step_y = min(ENEMY_SPEED, abs(ddy))
+                s["ey"] += step_y if ddy > 0 else -step_y
+                s["efy"] = 1 if ddy > 0 else -1
         else:
-            s["php"] -= dmg
-            events.append("enemy_hit")
+            s["ecooldown"] -= 1
+            if s["ecooldown"] <= 0:
+                s["rng"] = xorshift32(s["rng"])
+                s["ecooldown"] = ENEMY_ATTACK_BASE + (s["rng"] % 60)
+                s["eaware"] = 1
+                s["efx"] = 1 if ddx > 0 else -1
+                s["efy"] = 1 if ddy > 0 else -1
+                edmg = s["eatk"]
+                bt = s.get("bt") or []
+                if bt:
+                    s["rng"] = xorshift32(s["rng"])
+                    total = sum(b["weight"] for b in bt)
+                    pick = s["rng"] % total
+                    acc = 0
+                    for entry in bt:
+                        acc += entry["weight"]
+                        if pick < acc:
+                            edmg = entry["damage"]
+                            break
+                dmg = max(1, edmg - s["pdef"])
+                if s["piframe"] > 0:
+                    events.append("enemy_miss")
+                elif s["pstate"] == PARRYING and s["pticks"] <= PARRY_ACTIVE_TICKS:
+                    s["estate"] = STAGGERED
+                    s["eticks"] = POSTURE_BREAK_TICKS
+                    s["epost"] = s["epost_base"]
+                    s["prip"] = 1
+                    events.append("parry_success")
+                elif s["pstate"] == GUARDING:
+                    reduced = max(1, dmg // 2)
+                    s["php"] -= reduced
+                    s["pstam"] = max(0, s["pstam"] - STAMINA_BLOCK)
+                    events.append("enemy_blocked")
+                else:
+                    s["php"] -= dmg
+                    events.append("enemy_hit")
 
     if s["pstate"] == IDLE:
         s["preg"] += STAMINA_REGEN_PER_SEC

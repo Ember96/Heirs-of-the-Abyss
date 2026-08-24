@@ -19,6 +19,10 @@ const POSTURE_BREAK_TICKS := 150
 const ROLL_TICKS := 13
 const ATTACK_TICKS := 10
 const ATTACK_RANGE := 1000
+const ATTACK_RANGE_SQ := ATTACK_RANGE * ATTACK_RANGE
+const STRIKE_RANGE := 700
+const STRIKE_RANGE_SQ := STRIKE_RANGE * STRIKE_RANGE
+const ENEMY_SPEED := 90
 const PARRY_STARTUP_TICKS := 10
 const PARRY_ACTIVE_TICKS := 12
 const PARRY_TOTAL_TICKS := PARRY_STARTUP_TICKS + PARRY_ACTIVE_TICKS
@@ -40,7 +44,7 @@ static func new_fight(seed: int, player_atk: int, player_def: int,
 		"pstate": IDLE, "pticks": 0, "piframe": 0, "preg": 0, "ppreg": 0,
 		"ex": enemy_x, "ey": 0, "ehp": enemy_hp, "epost": enemy_posture,
 		"epost_base": enemy_posture, "estate": IDLE, "eticks": 0, "ecooldown": ENEMY_ATTACK_BASE,
-		"prip": 0, "eaware": 0,
+		"prip": 0, "eaware": 0, "efx": 0, "efy": 0,
 		"patk": player_atk, "pdef": player_def, "eatk": enemy_atk, "edef": enemy_def,
 		"bt": behavior_table.duplicate(),
 		"rng": seed & MASK32,
@@ -65,6 +69,9 @@ static func step(state: Dictionary, move_x: int, move_y: int, action: String) ->
 	s["px"] = s["px"] + move_x
 	s["py"] = s["py"] + move_y
 
+	if action != "block" and s["pstate"] == GUARDING:
+		s["pstate"] = IDLE
+
 	if action == "roll" and s["pstate"] == IDLE and s["pstam"] >= STAMINA_ROLL:
 		s["pstam"] = s["pstam"] - STAMINA_ROLL
 		s["pstate"] = ROLLING
@@ -74,14 +81,16 @@ static func step(state: Dictionary, move_x: int, move_y: int, action: String) ->
 		s["pstam"] = s["pstam"] - STAMINA_ATTACK
 		s["pstate"] = ATTACKING
 		s["pticks"] = ATTACK_TICKS
-		if absi(s["px"] - s["ex"]) <= ATTACK_RANGE:
+		var ddx := int(s["px"]) - int(s["ex"])
+		var ddy := int(s["py"]) - int(s["ey"])
+		if ddx * ddx + ddy * ddy <= ATTACK_RANGE_SQ:
 			var dmg := maxi(1, s["patk"] - s["edef"])
 			if s["prip"] == 1:
 				dmg = dmg * 2
 				s["prip"] = 0
 			elif s["estate"] == STAGGERED:
 				dmg = (dmg * 3 + 1) >> 1
-			elif s["eaware"] == 0:
+			elif s["efx"] * ddx + s["efy"] * ddy < 0:
 				dmg = (dmg * 3 + 1) >> 1
 			s["ehp"] = s["ehp"] - dmg
 			s["epost"] = s["epost"] - dmg
@@ -97,39 +106,54 @@ static func step(state: Dictionary, move_x: int, move_y: int, action: String) ->
 	elif action == "block":
 		s["pstate"] = GUARDING
 
-	s["ecooldown"] = s["ecooldown"] - 1
-	if s["ecooldown"] <= 0 and s["estate"] == IDLE:
-		s["rng"] = xorshift32(s["rng"])
-		s["ecooldown"] = ENEMY_ATTACK_BASE + (s["rng"] % 60)
-		s["eaware"] = 1
-		var edmg := int(s["eatk"])
-		var bt: Array = s.get("bt", [])
-		if bt.size() > 0:
-			s["rng"] = xorshift32(s["rng"])
-			var total := 0
-			for b in bt:
-				total += int(b["weight"])
-			var pick := int(s["rng"] % total)
-			var acc := 0
-			for b in bt:
-				acc += int(b["weight"])
-				if pick < acc:
-					edmg = int(b["damage"])
-					break
-		var dmg := maxi(1, edmg - s["pdef"])
-		if s["piframe"] > 0:
-			pass
-		elif s["pstate"] == PARRYING and s["pticks"] <= PARRY_ACTIVE_TICKS:
-			s["estate"] = STAGGERED
-			s["eticks"] = POSTURE_BREAK_TICKS
-			s["epost"] = s["epost_base"]
-			s["prip"] = 1
-		elif s["pstate"] == GUARDING:
-			var reduced := maxi(1, dmg >> 1)
-			s["php"] = s["php"] - reduced
-			s["pstam"] = maxi(0, s["pstam"] - STAMINA_BLOCK)
+	if s["estate"] == IDLE:
+		var ddx := int(s["px"]) - int(s["ex"])
+		var ddy := int(s["py"]) - int(s["ey"])
+		if ddx * ddx + ddy * ddy > STRIKE_RANGE_SQ:
+			if ddx != 0:
+				var step_x := mini(ENEMY_SPEED, absi(ddx))
+				s["ex"] = s["ex"] + (step_x if ddx > 0 else -step_x)
+				s["efx"] = 1 if ddx > 0 else -1
+			if ddy != 0:
+				var step_y := mini(ENEMY_SPEED, absi(ddy))
+				s["ey"] = s["ey"] + (step_y if ddy > 0 else -step_y)
+				s["efy"] = 1 if ddy > 0 else -1
 		else:
-			s["php"] = s["php"] - dmg
+			s["ecooldown"] = s["ecooldown"] - 1
+			if s["ecooldown"] <= 0:
+				s["rng"] = xorshift32(s["rng"])
+				s["ecooldown"] = ENEMY_ATTACK_BASE + (s["rng"] % 60)
+				s["eaware"] = 1
+				s["efx"] = 1 if ddx > 0 else -1
+				s["efy"] = 1 if ddy > 0 else -1
+				var edmg := int(s["eatk"])
+				var bt: Array = s.get("bt", [])
+				if bt.size() > 0:
+					s["rng"] = xorshift32(s["rng"])
+					var total := 0
+					for b in bt:
+						total += int(b["weight"])
+					var pick := int(s["rng"] % total)
+					var acc := 0
+					for b in bt:
+						acc += int(b["weight"])
+						if pick < acc:
+							edmg = int(b["damage"])
+							break
+				var dmg := maxi(1, edmg - s["pdef"])
+				if s["piframe"] > 0:
+					pass
+				elif s["pstate"] == PARRYING and s["pticks"] <= PARRY_ACTIVE_TICKS:
+					s["estate"] = STAGGERED
+					s["eticks"] = POSTURE_BREAK_TICKS
+					s["epost"] = s["epost_base"]
+					s["prip"] = 1
+				elif s["pstate"] == GUARDING:
+					var reduced := maxi(1, dmg >> 1)
+					s["php"] = s["php"] - reduced
+					s["pstam"] = maxi(0, s["pstam"] - STAMINA_BLOCK)
+				else:
+					s["php"] = s["php"] - dmg
 
 	if s["pstate"] == IDLE:
 		s["preg"] = s["preg"] + STAMINA_REGEN_PER_SEC

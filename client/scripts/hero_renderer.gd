@@ -11,6 +11,7 @@ const SPRITE_SCALE := 2.0
 var _attack_index := 0
 var _last_pstate := -1
 var _dead := false
+var _block_visual := false
 
 
 func _ready() -> void:
@@ -63,6 +64,16 @@ func set_dead() -> void:
 
 func set_facing(facing_dir: int) -> void:
 	flip_h = facing_dir < 0
+
+
+func set_block_visual(on: bool) -> void:
+	_block_visual = on
+	if not is_inside_tree():
+		return
+	if on:
+		_stance("adventurer-crouch", Color(0.7, 0.85, 1.0))
+	else:
+		_play_loop("adventurer-idle")
 
 
 func _next_attack() -> String:

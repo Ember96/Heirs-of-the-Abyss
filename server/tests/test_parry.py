@@ -12,19 +12,27 @@ def _fight(**kw):
     return core.new_fight(**base)
 
 
-def test_backstab_first_hit_x1_5():
+def test_backstab_rear_arc_x1_5():
     s = _fight()
+    s["efx"], s["efy"] = 1, 0      # enemy faces +x
+    s["px"], s["ex"] = -1000, 0    # player stands in the rear arc (opposite facing)
     s, ev = core.step(s, (0, 0), "attack")
     assert "hit" in ev
-    assert s["ehp"] == 100 - 15  # (12-2) * 1.5 backstab = 15
-    assert s["eaware"] == 1
-    # wait out the attack animation to return to IDLE
+    assert s["ehp"] == 100 - 15    # (12-2) * 1.5 backstab = 15
+    # second hit from the same rear position: facing now tracks the player → plain
     for _ in range(core.ATTACK_TICKS):
         s, _ = core.step(s, (0, 0), "none")
-    assert s["pstate"] == core.IDLE
-    # second hit is not a backstab
     s, ev = core.step(s, (0, 0), "attack")
-    assert s["ehp"] == 85 - 10  # normal (12-2) = 10
+    assert s["ehp"] == 85 - 10     # plain (12-2) = 10
+
+
+def test_front_attack_no_backstab():
+    s = _fight()
+    s["efx"], s["efy"] = 1, 0      # enemy faces +x
+    s["px"], s["ex"] = 1000, 0     # player directly in front
+    s, ev = core.step(s, (0, 0), "attack")
+    assert "hit" in ev
+    assert s["ehp"] == 100 - 10    # plain (12-2) = 10 — no rear-arc bonus
 
 
 def test_parry_success_staggers_enemy():

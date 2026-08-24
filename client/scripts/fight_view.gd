@@ -17,6 +17,7 @@ const Sim := preload("res://scripts/sim_core.gd")
 
 const PX_PER_UNIT := 0.096
 const TICK_HZ := 60.0
+const WALK_SPEED := 150
 
 var controller
 var fight_id := ""
@@ -66,13 +67,15 @@ func _process(delta: float) -> void:
 func _tick() -> void:
 	if not _running or controller == null:
 		return
-	var move_x := (int(_held.right) - int(_held.left)) * 500
+	var move_x := (int(_held.right) - int(_held.left)) * WALK_SPEED
 	var action := "block" if _held.guard else "none"
 	controller.queue_input(action, move_x, 0)
 	controller.tick()
 	var s: Dictionary = controller.sim_state
 	_apply_delta_fx(s)
 	_update_visuals(s)
+	if hero != null:
+		hero.set_block_visual(_held.guard)
 	_update_bars(s)
 	_prev = s.duplicate(true)
 	if controller.is_fight_over():
