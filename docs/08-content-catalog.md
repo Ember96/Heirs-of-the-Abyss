@@ -42,7 +42,7 @@ flowchart TD
   R4 --> P{"Layer state rules"}
   P -->|early sector| A["loot / event likely"]:::info
   P -->|floor 1 of every sector| B["shrine (guaranteed checkpoint)"]:::ok
-  P -->|sector end (floor 5)| C["boss room mandatory"]:::crit
+  P -->|"sector end (floor 5)"| C["boss room mandatory"]:::crit
   P -->|player low HP / struggling| D["tilt: easier event or shrine (anti-punish)"]:::ok
   P -->|player dominant| E["raise: harder encounter (anti-spoil)"]:::info
   T -.-> N1["budget per floor gen · 1 floor = 4 rooms · special room by layer state · band by auditor"]:::info
