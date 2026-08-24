@@ -222,6 +222,21 @@
 
       tl.from("#s6 h2", { opacity:0, y:-20, duration:0.5 }, 39.2);
       tl.from("#s6-stats .card", { opacity:0, y:40, stagger:0.2, duration:0.6, ease:"power2.out" }, 39.8);
+      var counters = document.querySelectorAll("#s6-stats .stat-num");
+      for (var ci = 0; ci < counters.length; ci++) {
+        var el = counters[ci];
+        var target_val = parseInt(el.getAttribute("data-target")) || 0;
+        var counter_obj = { val: 0 };
+        (function(el_ref, obj, tgt) {
+          tl.to(obj, {
+            val: tgt,
+            duration: 1.5,
+            onUpdate: function() {
+              el_ref.textContent = Math.round(obj.val).toLocaleString();
+            }
+          }, 40.0 + ci * 0.2);
+        })(el, counter_obj, target_val);
+      }
       tl.from("#s6 div[style*='text-align:center'] .gothic", { opacity:0, duration:0.8 }, 42.0);
       tl.to("#s6", { opacity:0, duration:0.5 }, 45.5);
 
