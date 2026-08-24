@@ -125,7 +125,7 @@ func _build_backdrop(seed_value: int, vp: Vector2) -> void:
 
 	var floor_tex := _find_tex("tiles", "arena-floor")
 	if floor_tex:
-		var sp := _sprite(floor_tex, Vector2(vp.x / 2.0, vp.y / 2.0), -8, Color(0.85, 0.85, 0.9))
+		var sp := _sprite(floor_tex, Vector2(vp.x / 2.0, vp.y / 2.0), -8, Color(0.28, 0.25, 0.35))
 		_cover(sp, vp, false)
 
 	_rect(Vector2(0, 0), Vector2(vp.x, 64), Color(0.02, 0.02, 0.04, 0.82), -7)

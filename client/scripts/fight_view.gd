@@ -29,10 +29,12 @@ var _floor: Node2D = null
 var _running := false
 var _accum := 0.0
 var _prev: Dictionary = {}
-var _held := {"left": false, "right": false, "up": false, "down": false, "guard": false}
 var bars := {}
 var bar_bgs := {}
 var _is_boss := false
+var _prev_attack := false
+var _prev_roll := false
+var _prev_parry := false
 
 
 func begin(spec: Dictionary, arena) -> void:
@@ -75,16 +77,34 @@ func _process(delta: float) -> void:
 func _tick() -> void:
 	if not _running or controller == null:
 		return
-	var move_x := (int(_held.right) - int(_held.left)) * WALK_SPEED
-	var move_y := (int(_held.down) - int(_held.up)) * WALK_SPEED
-	var action := "block" if _held.guard else "none"
+
+	var move_x := (int(Input.is_key_pressed(KEY_D)) - int(Input.is_key_pressed(KEY_A))) * WALK_SPEED
+	var move_y := (int(Input.is_key_pressed(KEY_S)) - int(Input.is_key_pressed(KEY_W))) * WALK_SPEED
+	var guarding := Input.is_key_pressed(KEY_L) or Input.is_key_pressed(KEY_SHIFT)
+	var action := "block" if guarding else "none"
+
+	var attack_now := Input.is_key_pressed(KEY_X) or Input.is_key_pressed(KEY_J)
+	if attack_now and not _prev_attack:
+		_press_attack()
+	_prev_attack = attack_now
+
+	var roll_now := Input.is_key_pressed(KEY_SPACE) or Input.is_key_pressed(KEY_C) or Input.is_key_pressed(KEY_K)
+	if roll_now and not _prev_roll:
+		controller.queue_input("roll", 0, 0)
+	_prev_roll = roll_now
+
+	var parry_now := Input.is_key_pressed(KEY_P)
+	if parry_now and not _prev_parry:
+		controller.queue_input("parry", 0, 0)
+	_prev_parry = parry_now
+
 	controller.queue_input(action, move_x, move_y)
 	controller.tick()
 	var s: Dictionary = controller.sim_state
 	_apply_delta_fx(s)
 	_update_visuals(s)
 	if hero != null:
-		hero.set_block_visual(_held.guard)
+		hero.set_block_visual(guarding)
 	_update_bars(s)
 	_prev = s.duplicate(true)
 	if controller.is_fight_over():
@@ -174,33 +194,6 @@ func _update_bars(s: Dictionary) -> void:
 	var r: Dictionary = HudLib.bar_ratios(s, enemy_max_hp)
 	for key in bars:
 		bars[key].size.x = 220.0 * clampf(float(r[key]), 0.0, 1.0)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if not _running or controller == null:
-		return
-		if event is InputEventKey:
-			var pressed: bool = event.pressed and not event.echo
-			match event.physical_keycode:
-				KEY_W:
-					_held.up = event.pressed
-				KEY_A:
-					_held.left = event.pressed
-				KEY_S:
-					_held.down = event.pressed
-				KEY_D:
-					_held.right = event.pressed
-				KEY_SHIFT, KEY_L:
-					_held.guard = event.pressed
-				KEY_X, KEY_J:
-					if pressed:
-						_press_attack()
-				KEY_SPACE, KEY_C, KEY_K:
-					if pressed:
-						controller.queue_input("roll", 0, 0)
-				KEY_P:
-					if pressed:
-						controller.queue_input("parry", 0, 0)
 
 
 func _press_attack() -> void:
