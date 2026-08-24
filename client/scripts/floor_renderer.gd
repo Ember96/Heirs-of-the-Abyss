@@ -60,13 +60,11 @@ func render_floor(seed_value: int, width: int, height: int) -> void:
 		child.queue_free()
 
 	var vp := get_viewport_rect().size
-	_ground_y = vp.y * 0.78
+	_ground_y = vp.y * 0.54
 	_arena_w = width * 96.0
 	_arena_x0 = maxf(0.0, (vp.x - _arena_w) / 2.0)
 
 	_build_backdrop(seed_value, vp)
-	_build_ground(vp)
-	_build_room_ticks(vp, width)
 
 
 func _find_tex(dir_rel: String, prefix: String) -> Texture2D:
@@ -125,46 +123,10 @@ func _rect(pos: Vector2, size: Vector2, color: Color, z: int) -> ColorRect:
 func _build_backdrop(seed_value: int, vp: Vector2) -> void:
 	_rect(Vector2.ZERO, vp, Color(0.039, 0.039, 0.071), -10)
 
-	var moon := _find_tex("gothicvania/cemetery", "bg-moon")
-	if moon:
-		var sp := _sprite(moon, Vector2(vp.x * 0.72, vp.y * 0.22), -9)
-		sp.flip_h = seed_value % 2 == 1
+	var floor_tex := _find_tex("tiles", "arena-floor")
+	if floor_tex:
+		var sp := _sprite(floor_tex, Vector2(vp.x / 2.0, vp.y / 2.0), -8, Color(0.85, 0.85, 0.9))
+		_cover(sp, vp, false)
 
-	var mountains := _find_tex("gothicvania/cemetery", "bg-mountains")
-	if mountains:
-		var sp := _sprite(mountains, Vector2.ZERO, -8, Color(0.6, 0.6, 0.68))
-		_cover(sp, Vector2(vp.x, vp.y), true)
+	_rect(Vector2(0, 0), Vector2(vp.x, 64), Color(0.02, 0.02, 0.04, 0.82), -7)
 
-	var church_bg := _find_tex("gothicvania/church/environment", "backgrounds")
-	var yard := _find_tex("gothicvania/cemetery", "bg-graveyard")
-	var mid := yard if yard else church_bg
-	if mid:
-		var sp := _sprite(mid, Vector2.ZERO, -7, Color(0.78, 0.78, 0.82))
-		_cover(sp, Vector2(vp.x, _ground_y + 8.0), true)
-
-
-func _build_ground(vp: Vector2) -> void:
-	var band_h := vp.y - _ground_y
-	_rect(Vector2(0, _ground_y), Vector2(vp.x, band_h), Color(0.055, 0.055, 0.078), -5)
-	_rect(Vector2(0, _ground_y), Vector2(vp.x, 3), Color(0.16, 0.16, 0.20), -4)
-
-	var column := _find_tex("gothicvania/church/environment", "column")
-	if column:
-		var cs := column.get_size()
-		if cs.y > 0:
-			var s: float = (band_h * 0.92) / cs.y
-			var scaled := cs * s
-			var step := scaled.x + 56.0
-			var x := 40.0
-			while x < vp.x:
-				var sp := _sprite(column, Vector2(x, _ground_y + band_h / 2.0), -6, Color(0.85, 0.85, 0.9))
-				sp.scale = Vector2(s, s)
-				x += step
-
-
-func _build_room_ticks(vp: Vector2, width: int) -> void:
-	var tick_color := Color(0.55, 0.5, 0.65, 0.13)
-	var tick_h := vp.y * 0.11
-	for i in range(width + 1):
-		var x := _arena_x0 + i * (_arena_w / width) - 1.0
-		_rect(Vector2(x, _ground_y - tick_h), Vector2(2, tick_h), tick_color, -3)

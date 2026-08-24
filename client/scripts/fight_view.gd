@@ -16,6 +16,7 @@ const HudLib := preload("res://scripts/hud.gd")
 const Sim := preload("res://scripts/sim_core.gd")
 
 const PX_PER_UNIT := 0.096
+const DEPTH_SCALE := 0.12
 const TICK_HZ := 60.0
 const WALK_SPEED := 150
 
@@ -102,10 +103,20 @@ func flash_hero() -> void:
 
 
 func _update_visuals(s: Dictionary) -> void:
+	var vp := get_viewport_rect().size
 	var base_x := _arena_origin_x()
-	var ground := _ground_line()
-	hero.position = Vector2(base_x + s["px"] * PX_PER_UNIT, ground)
-	enemy.position = Vector2(base_x + s["ex"] * PX_PER_UNIT, ground)
+	var mid_y := _ground_line()
+
+	var hx: float = base_x + float(s["px"]) * PX_PER_UNIT
+	var hy: float = clampf(mid_y + float(s["py"]) * DEPTH_SCALE, 80.0, vp.y - 16.0)
+	hero.position = Vector2(hx, hy)
+	hero.z_index = int(hy)
+
+	var ex: float = base_x + float(s["ex"]) * PX_PER_UNIT
+	var ey: float = clampf(mid_y + float(s["ey"]) * DEPTH_SCALE, 80.0, vp.y - 16.0)
+	enemy.position = Vector2(ex, ey)
+	enemy.z_index = int(ey)
+
 	hero.set_facing(int(signf(float(s["ex"] - s["px"]))))
 	enemy.flip_h = s["px"] > s["ex"]
 	if s["php"] <= 0:
@@ -120,7 +131,7 @@ func _arena_origin_x() -> float:
 
 
 func _ground_line() -> float:
-	return _floor.get_ground_y() if _floor != null else 400.0
+	return _floor.get_ground_y() if _floor != null else 364.0
 
 
 func _finish(s: Dictionary) -> void:
