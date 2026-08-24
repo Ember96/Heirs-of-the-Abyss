@@ -147,6 +147,9 @@
     ],
     "client/scripts/fight_view.gd": [
       "docs/04-game-states.md"
+    ],
+    "server/app/evals/llm_judge.py": [
+      "docs/11-evals.md"
     ]
   }
 }

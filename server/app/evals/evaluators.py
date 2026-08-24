@@ -61,6 +61,21 @@ def main() -> int:
         ok = value >= threshold
         print(f"  {key}: {value:.2f} (threshold {threshold}) {'PASS' if ok else 'FAIL'}")
         failed = failed or not ok
+
+    from .. import config
+
+    if config.OPENROUTER_API_KEY:
+        from .llm_judge import judge_narrative
+        from ..agent.director import narrate
+
+        text = narrate(2, "I enter the room", ["brawler"])
+        nq = judge_narrative(text, 2, ["brawler"])
+        ok = nq >= 80.0
+        print(f"  narrative_quality: {nq:.0f} (threshold 80) {'PASS' if ok else 'FAIL'}")
+        failed = failed or not ok
+    else:
+        print("  narrative_quality: SKIPPED (no API key)")
+
     return 1 if failed else 0
 
 
