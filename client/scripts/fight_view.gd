@@ -165,6 +165,7 @@ func _ground_line() -> float:
 func _finish(s: Dictionary) -> void:
 	_running = false
 	submit_ready.emit(fight_id, {
+		"fight_id": fight_id,
 		"claimed_result": {"php": s["php"], "ehp": s["ehp"]},
 		"state_hash": FightControllerScript.state_hash(s),
 		"sim_version": "1",
