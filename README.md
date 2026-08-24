@@ -55,7 +55,7 @@ uv run docs-check
 
 ```
 server/   Python 3.12 (uv): FastAPI + LangGraph + hybrid RAG — engine, agent, RAG
-client/   Godot 4.7.2 (GDScript): isometric renderer, NetworkManager, combat scenes
+client/   Godot 4.7.2 (GDScript): top-down 2.5-D renderer, NetworkManager, combat scenes
 catalog/  content catalog + game-design corpus (see catalog/corpus/manifest.json)
 docs/     living documentation (13 docs + Mermaid diagrams, docs-check drift gate)
 specs/    spec-driven plan (spec.md → plan.md → tasks.md)
