@@ -31,6 +31,7 @@ var _accum := 0.0
 var _prev: Dictionary = {}
 var _held := {"left": false, "right": false, "up": false, "down": false, "guard": false}
 var bars := {}
+var bar_bgs := {}
 var _is_boss := false
 
 
