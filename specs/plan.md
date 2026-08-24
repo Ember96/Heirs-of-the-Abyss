@@ -10,7 +10,7 @@ Status: **Plan** — implements `spec.md`. Source of truth for HOW. Maps 1:1 to 
 Godot 4.7 client (GDScript)          Python 3.12 server (FastAPI + uv)
 ├── NetworkManager (WebSocketPeer)   ├── WS gateway (auth, seq, HMAC, rate-limit, generation tracker)
 ├── sim_core.gd (deterministic)      ├── Deterministic engine (rules, floorgen, sim core in Python)
-├── isometric render (TileMapLayer)  ├── LangGraph director (engine-first routing, interrupts)
+├── 2.5-D top-down render (Node2D + y-sort)  ├── LangGraph director (engine-first routing, interrupts)
 └── combat scenes (hitbox=feedback)  ├── Tools (commit_encounter = single write path)
                                       ├── RAG (Qdrant hybrid: catalog + game-design corpus)
                                       └── Verifiers (Balance/Rules/Lore/Progression)
@@ -98,7 +98,7 @@ Tables: `sessions`, `pregen_cache`, `generated_lore`, `action_ids` (dedup, last 
 | 2 | ⚙️ Core | models + seeded RNG, combat sim spec, dual sim core + conformance, floorgen, persistence + headless player | headless playable (AI off) |
 | 3 | 🧠 Director | graph + checkpointer + mutex, tools (commit_encounter), input pipeline, generator, resume/retention, verifiers | full AI loop, verifier-gated |
 | 4 | 📚 RAG | catalog seed, Qdrant hybrid, composer + clamps, corpus ingestion, lore quarantine | retrieval + compose gates green |
-| 5 | 🗡️ Client | isometric render, sim-core wiring, real-time combat + fight-log validation, scenes, reconnect | human-playable soulslike loop |
+| 5 | 🗡️ Client | 2.5-D top-down render, sim-core wiring, real-time combat + fight-log validation, scenes, reconnect | human-playable soulslike loop |
 | 6 | 🛡️ Hardening | evals, latency/cost, anti-tamper verification, docs/quickstart/balance | all gates green |
 
 ## 7. Testing strategy

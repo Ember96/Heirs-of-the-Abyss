@@ -17,7 +17,7 @@ A single-player **soulslike roguelike** with unbounded procedural floors. A Lang
 
 | Id | Goal |
 |----|------|
-| **G1** | Playable soulslike loop: hometown → descend a sector (5 floors) → real-time isometric combat → loot/market/shrine → boss → unlock a boss skill → return home → descend deeper |
+| **G1** | Playable soulslike loop: hometown → descend a sector (5 floors) → real-time 2.5-D top-down combat *(amended from isometric per design pivot — see tasks.md Wave 8)* → loot/market/shrine → boss → unlock a boss skill → return home → descend deeper |
 | **G2** | Deterministic, dice-free combat: outcomes are pure functions of inputs + seed; a hacked/modded client cannot report a false result |
 | **G3** | AI-director content: floors/encounters/narrative generated from player actions/build, within token budgets, verified by 4 judges before commit |
 | **G4** | Grounded, safe GM: narrative references only engine facts; player text and corpus content cannot inject into the model |
