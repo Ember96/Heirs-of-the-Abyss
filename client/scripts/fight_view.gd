@@ -3,8 +3,8 @@ extends Node2D
 
 ## Live side-view fight: mirrors the server re-sim locally (same seed/setup),
 ## drives hero/enemy renderers from sim state, and emits the claim for the
-## server's hash verification. Inputs: A/D move · S/L hold guard · X/J attack
-## (auto-riposte when riposte window open) · C/K roll · P parry.
+## server's hash verification. Inputs: WASD move · Shift/L hold guard · X/J attack
+## (auto-riposte when riposte window open) · Space/C/K roll · P parry.
 
 signal submit_ready(fight_id: String, payload: Dictionary)
 signal finished()
@@ -29,7 +29,7 @@ var _floor: Node2D = null
 var _running := false
 var _accum := 0.0
 var _prev: Dictionary = {}
-var _held := {"left": false, "right": false, "guard": false}
+var _held := {"left": false, "right": false, "up": false, "down": false, "guard": false}
 var bars := {}
 
 
@@ -69,8 +69,9 @@ func _tick() -> void:
 	if not _running or controller == null:
 		return
 	var move_x := (int(_held.right) - int(_held.left)) * WALK_SPEED
+	var move_y := (int(_held.down) - int(_held.up)) * WALK_SPEED
 	var action := "block" if _held.guard else "none"
-	controller.queue_input(action, move_x, 0)
+	controller.queue_input(action, move_x, move_y)
 	controller.tick()
 	var s: Dictionary = controller.sim_state
 	_apply_delta_fx(s)
@@ -169,24 +170,28 @@ func _update_bars(s: Dictionary) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not _running or controller == null:
 		return
-	if event is InputEventKey:
-		var pressed: bool = event.pressed and not event.echo
-		match event.physical_keycode:
-			KEY_A:
-				_held.left = event.pressed
-			KEY_D:
-				_held.right = event.pressed
-			KEY_S, KEY_L:
-				_held.guard = event.pressed
-			KEY_X, KEY_J:
-				if pressed:
-					_press_attack()
-			KEY_C, KEY_K:
-				if pressed:
-					controller.queue_input("roll", 0, 0)
-			KEY_P:
-				if pressed:
-					controller.queue_input("parry", 0, 0)
+		if event is InputEventKey:
+			var pressed: bool = event.pressed and not event.echo
+			match event.physical_keycode:
+				KEY_W:
+					_held.up = event.pressed
+				KEY_A:
+					_held.left = event.pressed
+				KEY_S:
+					_held.down = event.pressed
+				KEY_D:
+					_held.right = event.pressed
+				KEY_SHIFT, KEY_L:
+					_held.guard = event.pressed
+				KEY_X, KEY_J:
+					if pressed:
+						_press_attack()
+				KEY_SPACE, KEY_C, KEY_K:
+					if pressed:
+						controller.queue_input("roll", 0, 0)
+				KEY_P:
+					if pressed:
+						controller.queue_input("parry", 0, 0)
 
 
 func _press_attack() -> void:
