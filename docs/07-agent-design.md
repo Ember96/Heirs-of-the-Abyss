@@ -36,7 +36,7 @@ flowchart LR
   CE --> CACHE["pre-gen cache (session LRU, content_version, TTL)"]
   NA --> WD
   FL --> WD
-  note right of WD: typed actions NEVER enter the graph; busy covers graph-routed actions only
+  WD -.-> N1["typed actions NEVER enter the graph"]:::info
 ```
 
 ### D9 — Verification-agent loop

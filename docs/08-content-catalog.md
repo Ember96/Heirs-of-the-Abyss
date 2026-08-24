@@ -45,7 +45,7 @@ flowchart TD
   P -->|sector end (floor 5)| C["boss room mandatory"]:::crit
   P -->|player low HP / struggling| D["tilt: easier event or shrine (anti-punish)"]:::ok
   P -->|player dominant| E["raise: harder encounter (anti-spoil)"]:::info
-  note right of T: budget per floor gen; 1 floor = 4 rooms; special room picked by layer state; difficulty band enforced by Progression Auditor
+  T -.-> N1["budget per floor gen · 1 floor = 4 rooms · special room by layer state · band by auditor"]:::info
 ```
 
 ## Retrieval scale-out path
