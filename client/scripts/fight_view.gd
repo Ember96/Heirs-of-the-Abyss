@@ -103,8 +103,8 @@ func _tick() -> void:
 	var s: Dictionary = controller.sim_state
 	_apply_delta_fx(s)
 	_update_visuals(s)
-	if hero != null:
-		hero.set_block_visual(guarding)
+	if guarding:
+		hero.set_block_visual(true)
 	_update_bars(s)
 	_prev = s.duplicate(true)
 	if controller.is_fight_over():

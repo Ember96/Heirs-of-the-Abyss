@@ -72,8 +72,6 @@ func set_block_visual(on: bool) -> void:
 		return
 	if on:
 		_stance("adventurer-crouch", Color(0.7, 0.85, 1.0))
-	else:
-		_play_loop("adventurer-idle")
 
 
 func _next_attack() -> String:
