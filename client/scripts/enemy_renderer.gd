@@ -1,19 +1,22 @@
 class_name EnemyRenderer
 extends AnimatedSprite2D
 
-## Burning-ghoul enemy cycle with hit-flash and stagger feedback.
+## Enemy sprite with hit-flash and stagger feedback.
+## Configure `frames_dir` / `anim_name` / `sprite_scale` before adding to the
+## tree to swap skins (e.g. necromancer boss vs burning-ghoul regular).
 
-const FRAMES_DIR := "res://assets/art/gothicvania/church/burning-ghoul/sprites/v1"
-const ANIM := "burning-ghoul"
+var frames_dir := "res://assets/art/gothicvania/church/burning-ghoul/sprites/v1"
+var anim_name := "burning-ghoul"
+var sprite_scale := 2.0
 
 
 func _ready() -> void:
-	sprite_frames = SpriteFramesBuilder.build(FRAMES_DIR, [ANIM], ANIM + "-")
-	scale = Vector2(2.0, 2.0)
-	if sprite_frames.has_animation(ANIM):
-		var ts := sprite_frames.get_frame_texture(ANIM, 0).get_size()
+	sprite_frames = SpriteFramesBuilder.build(frames_dir, [anim_name], anim_name + "-")
+	scale = Vector2(sprite_scale, sprite_scale)
+	if sprite_frames.has_animation(anim_name):
+		var ts := sprite_frames.get_frame_texture(anim_name, 0).get_size()
 		offset = Vector2(0, -ts.y / 2.0)
-		play(ANIM)
+		play(anim_name)
 
 
 func flash() -> void:

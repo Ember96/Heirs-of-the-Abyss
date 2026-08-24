@@ -16,8 +16,22 @@ func _ready() -> void:
 	NetworkManager.message_received.connect(_on_message)
 	NetworkManager.disconnected.connect(_on_disconnected)
 	start_button.pressed.connect(_on_start_pressed)
+	_style_button(start_button)
 	status_label.text = "Ready"
 	floor_node.render_floor(_seed, 12, 8)
+
+func _style_button(btn: Button) -> void:
+	var normal := StyleBoxTexture.new()
+	normal.texture = load("res://assets/art/ui/buttonLong_brown.png")
+	var pressed_sb := StyleBoxTexture.new()
+	pressed_sb.texture = load("res://assets/art/ui/buttonLong_brown_pressed.png")
+	var hover := StyleBoxTexture.new()
+	hover.texture = load("res://assets/art/ui/buttonLong_beige.png")
+	btn.add_theme_stylebox_override("normal", normal)
+	btn.add_theme_stylebox_override("pressed", pressed_sb)
+	btn.add_theme_stylebox_override("hover", hover)
+	btn.add_theme_color_override("font_color", Color(1.0, 0.95, 0.85))
+	btn.add_theme_font_size_override("font_size", 20)
 
 func _on_start_pressed() -> void:
 	if NetworkManager.is_authenticated():

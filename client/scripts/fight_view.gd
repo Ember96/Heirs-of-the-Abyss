@@ -31,6 +31,7 @@ var _accum := 0.0
 var _prev: Dictionary = {}
 var _held := {"left": false, "right": false, "up": false, "down": false, "guard": false}
 var bars := {}
+var _is_boss := false
 
 
 func begin(spec: Dictionary, arena) -> void:
@@ -39,6 +40,7 @@ func begin(spec: Dictionary, arena) -> void:
 	var opp: Dictionary = spec.get("opponent_spec", {}).get("stats", {})
 	var pspec: Dictionary = spec.get("player_spec", {})
 	var bt: Array = spec.get("opponent_spec", {}).get("behavior_table", [])
+	_is_boss = spec.get("opponent_spec", {}).get("is_boss", false)
 	controller = FightControllerScript.new()
 	controller.start_fight(
 		int(spec.get("seed", 0)),
@@ -50,6 +52,10 @@ func begin(spec: Dictionary, arena) -> void:
 	hero = HeroRendererScript.new()
 	add_child(hero)
 	enemy = EnemyRendererScript.new()
+	if _is_boss:
+		enemy.frames_dir = "res://assets/art/gothicvania/church/wizard/idle-sprites"
+		enemy.anim_name = "wizard-idle"
+		enemy.sprite_scale = 2.5
 	add_child(enemy)
 	_build_bars()
 	_running = true
