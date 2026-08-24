@@ -69,6 +69,8 @@ def descend(session: GameSession) -> dict:
             raise ProgressionError("rule_violation", "the boss must fall before you descend")
     session.current_floor += 1
     session.sector = R.sector_of(session.current_floor)
+    session.market.restock_tick += 1
+    session.market.stock = list(load().get("market_stock", []))
     return floor_summary(session)
 
 
@@ -95,16 +97,19 @@ def return_home(session: GameSession) -> dict:
 
 
 def shop(session: GameSession, item_id: str) -> dict:
+    if not session.market.stock:
+        session.market.stock = list(load().get("market_stock", []))
+    if item_id not in session.market.stock:
+        raise ProgressionError("rule_violation", f"{item_id} not in stock")
     data = load()
     item = next((i for i in data["items"] if i["id"] == item_id), None)
     if item is None:
         raise ProgressionError("rule_violation", f"unknown item {item_id}")
-    if item_id not in data.get("market_stock", []):
-        raise ProgressionError("rule_violation", f"{item_id} not in stock")
     price = item.get("price", 0)
     if session.player.gold < price:
         raise ProgressionError("rule_violation", "not enough gold")
     session.player.gold -= price
+    session.market.stock.remove(item_id)
     session.hometown.banked_inventory.items.append(
         Item(
             id=item["id"],

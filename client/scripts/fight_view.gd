@@ -163,7 +163,9 @@ func _build_bars() -> void:
 	}
 	for key in defs:
 		var d: Dictionary = defs[key]
-		_rect(d.pos, Vector2(224, 12), Color(0, 0, 0, 0.55), 10)
+		var bg := _rect(d.pos, Vector2(224, 12), Color(0, 0, 0, 0.55), 10)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		bar_bgs[key] = bg
 		bars[key] = _rect(d.pos + Vector2(2, 2), Vector2(220, 8), d.color, 11)
 
 
